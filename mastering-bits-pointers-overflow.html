@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering Bits, Pointers &amp; Overflow · The Growth Lab</title>
+<meta name="description" content="An interactive course on primitive types, pointers, variable references, and overflow — how values are really stored as bits in memory, and what happens when they don't fit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-bits-pointers-overflow.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2.5" y="6" width="19" height="12" rx="3" stroke="#56C7FF" stroke-width="1.4"/>
+        <rect x="4.6" y="8.4" width="3" height="3.1" rx="1" fill="#56C7FF"/>
+        <rect x="8.4" y="8.4" width="3" height="3.1" rx="1" fill="#565F79"/>
+        <rect x="12.2" y="8.4" width="3" height="3.1" rx="1" fill="#E8B341"/>
+        <rect x="16" y="8.4" width="3" height="3.1" rx="1" fill="#56C7FF"/>
+        <rect x="4.6" y="12.5" width="3" height="3.1" rx="1" fill="#565F79"/>
+        <rect x="8.4" y="12.5" width="3" height="3.1" rx="1" fill="#A78BFA"/>
+        <rect x="12.2" y="12.5" width="3" height="3.1" rx="1" fill="#565F79"/>
+        <rect x="16" y="12.5" width="3" height="3.1" rx="1" fill="#4ED66B"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Bits &amp; Pointers</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2.5" y="6" width="19" height="12" rx="3" stroke="#56C7FF" stroke-width="1.4"/>
+            <rect x="4.6" y="8.4" width="3" height="3.1" rx="1" fill="#56C7FF"/>
+            <rect x="8.4" y="8.4" width="3" height="3.1" rx="1" fill="#565F79"/>
+            <rect x="12.2" y="8.4" width="3" height="3.1" rx="1" fill="#E8B341"/>
+            <rect x="16" y="8.4" width="3" height="3.1" rx="1" fill="#56C7FF"/>
+            <rect x="4.6" y="12.5" width="3" height="3.1" rx="1" fill="#565F79"/>
+            <rect x="8.4" y="12.5" width="3" height="3.1" rx="1" fill="#A78BFA"/>
+            <rect x="12.2" y="12.5" width="3" height="3.1" rx="1" fill="#565F79"/>
+            <rect x="16" y="12.5" width="3" height="3.1" rx="1" fill="#4ED66B"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Bits &amp; Pointers</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Bits, bytes &amp; binary</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Primitive types</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Integers &amp; two's complement</span></a>
+      <div class="nav-group-label">Representation · Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Integer overflow</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Floating point</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Variables &amp; memory</span></a>
+      <div class="nav-group-label">Indirection · Advanced</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Pointers</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>References &amp; aliasing</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>The stack &amp; the heap</span></a>
+      <div class="nav-group-label">Under the Hood · Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Memory layout &amp; safety</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Across languages</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Putting it together</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert</div>
+        <h1>It's all just<br><span class="grad">bits in a box.</span></h1>
+        <p class="lede">Every value your program touches is a pattern of <strong>bits</strong> sitting in a <strong>box</strong> in memory. A type decides how to read those bits; a variable names the box; a pointer holds the address of another box; and overflow is what happens when a value won't fit. Strip away the syntax and it's all the same handful of ideas — and you can <strong>poke at every one of them</strong> right here on the page.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A variable as a named box of bits at a memory address, with a pointer holding that address"></svg>
+          <div class="hero-cap">a value is a pattern of <span style="color:var(--bit)">bits</span> · in a <span style="color:var(--mem)">box</span> at an <span style="color:var(--addr)">address</span> · a <span style="color:var(--ptr)">pointer</span> just holds that address</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start with bits →</a>
+          <a class="btn btn-ghost" href="#m6">Jump to pointers</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>Bits, bytes &amp; binary</h2></div>
+        <p>Underneath every number, letter, image, and instruction is the same raw material: the <span class="concept bit">bit</span>. A bit is the smallest possible piece of information — a single thing that is either <strong>0</strong> or <strong>1</strong>, off or on. A computer is, at bottom, an enormous field of switches, and a bit is one switch. Everything in this course is a story about how we arrange and interpret those switches.</p>
+        <p>One bit alone says very little, so we group them. Eight bits make a <strong>byte</strong>, and the byte is the fundamental unit memory is measured and addressed in. With eight switches you can make 2&#8312; = <strong>256</strong> distinct patterns, from <code class="tok">00000000</code> to <code class="tok">11111111</code> — enough for a small number, one character, or one slice of a bigger value.</p>
+        <p>To read a binary number, you use <strong>place values</strong>, exactly like decimal — except each place is a power of <strong>two</strong> instead of ten. The rightmost bit is worth 1, the next 2, then 4, 8, 16, and so on, doubling each step. A bit that is <strong>on</strong> contributes its place value; a bit that is <strong>off</strong> contributes nothing. Add up the on-bits and you have the value.</p>
+        <pre><span class="tag">binary</span>  1   0   1   0   1   0   1   0     <span class="cmt">// the bits</span>
+128  64  32  16   8   4   2   1     <span class="cmt">// place values (powers of two)</span>
+128 +     32 +     8 +     2        = <span class="num">170</span></pre>
+        <p>Binary is correct but hard for humans to read, so we lean on <strong>hexadecimal</strong> (base 16) as shorthand. The trick: one hex digit (0–9, then A–F for 10–15) encodes exactly <strong>four</strong> bits. So a byte is always two hex digits, and a messy <code class="tok">10101010</code> becomes a tidy <code class="tok">0xAA</code>. Hex isn't a different kind of value — it's just a more compact way of writing the same bits, which is why addresses and byte dumps are almost always shown in hex.</p>
+
+        <p>Build a byte yourself. Click the bits below to flip them on and off, and watch the place values add up to a number. This is the entire idea of binary in one widget:</p>
+        <div class="lab" id="binLab">
+          <div class="lab-head"><div><div class="pt">Binary, bit by bit</div><div class="ps">flip the switches — watch the place values add up</div></div></div>
+          <div class="lab-body">
+            <div class="bit-row" id="binCells"></div>
+            <div class="bit-readout">
+              <div class="bit-stat"><div class="bs-k">value (decimal)</div><div class="bs-v" id="binDec">0</div></div>
+              <div class="bit-stat hexv"><div class="bs-k">hex</div><div class="bs-v" id="binHex">0x00</div></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="binFoot">An 8-bit byte holds one of 256 patterns, 0 through 255.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Computers store numbers as actual digits, like we write them.</div><div class="truth">They store <b>bits</b>. The number 170 isn't kept as "1", "7", "0" — it's the switch pattern <code class="tok">10101010</code>. Decimal and hex are just human-friendly ways of reading that one underlying pattern.</div></div>
+          <div class="mc"><div class="myth">Binary is a special weird thing computers do to numbers.</div><div class="truth">Binary is just <b>base two</b> — the same positional counting you already know, with two symbols instead of ten. Hardware uses it because a switch has two states, not because two is mathematically special.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Primitive types — the atoms of data</h2></div>
+        <p><strong>Primitive types</strong> are the handful of built-in types a language and its hardware understand directly, with no assembly required. They're the atoms every other data structure is built from. A primitive has two defining properties: it occupies a <strong>fixed number of bits</strong>, and it's typically stored <strong>by value</strong> — the bits <em>are</em> the data, sitting right where the variable lives, not off somewhere behind a reference.</p>
+        <p>Here's the idea that unlocks everything else: <strong>a type is an interpretation</strong>. The bits in memory have no inherent meaning. The pattern <code class="tok">01000001</code> is the integer <code class="tok">65</code>, the character <code class="tok">'A'</code>, or part of a larger number — depending entirely on what <em>type</em> you've told the machine to read it as. The type is the lens; the bits are just the bits.</p>
+        <div class="defcard">
+          <div class="dh">The two questions a type answers</div>
+          <p class="intent">How many bits is this value? — and — how should those bits be interpreted? Fix those two answers and you have a primitive type. Everything from <code class="tok">int</code> to <code class="tok">double</code> to <code class="tok">char</code> is just a different pair of answers.</p>
+        </div>
+        <p>Most languages offer a small, familiar menu of primitives. The exact names vary, but the categories are universal: whole numbers (<strong>integers</strong>) in several widths and in signed or unsigned flavors; <strong>floating-point</strong> numbers for fractions and huge ranges; a one-bit-of-meaning <strong>boolean</strong>; and a <strong>character</strong> or raw byte. Width matters because it sets both the range of values and the memory cost.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Typical size</th><th>Holds</th><th>Range</th></tr></thead>
+            <tbody>
+              <tr><td><span class="ty">bool</span></td><td>1 byte*</td><td>true / false</td><td class="mono"><span class="rng">0 or 1</span></td></tr>
+              <tr><td><span class="ty">char / int8</span></td><td>1 byte (8 bits)</td><td>a character / small int</td><td class="mono"><span class="rng">0..255 or −128..127</span></td></tr>
+              <tr><td><span class="ty">int16 (short)</span></td><td>2 bytes (16 bits)</td><td>whole numbers</td><td class="mono"><span class="rng">−32,768..32,767</span></td></tr>
+              <tr><td><span class="ty">int32 (int)</span></td><td>4 bytes (32 bits)</td><td>whole numbers</td><td class="mono"><span class="rng">±2.1 billion</span></td></tr>
+              <tr><td><span class="ty">int64 (long)</span></td><td>8 bytes (64 bits)</td><td>whole numbers</td><td class="mono"><span class="rng">±9.2 quintillion</span></td></tr>
+              <tr><td><span class="ty">float</span></td><td>4 bytes (32 bits)</td><td>approx. fractions</td><td class="mono"><span class="rng">±3.4×10³⁸ (≈7 digits)</span></td></tr>
+              <tr><td><span class="ty">double</span></td><td>8 bytes (64 bits)</td><td>approx. fractions</td><td class="mono"><span class="rng">±1.8×10³⁰⁸ (≈15 digits)</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="ps" style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);margin-top:-10px">* a bool needs only one bit of information, but is usually given a whole byte because memory is addressed in bytes, not bits.</p>
+        <div class="note">
+          <div class="nh">Fixed width is the whole story</div>
+          <p>Because a primitive is a fixed number of bits, it can hold only a fixed number of distinct values — and that single fact is the seed of nearly everything that follows. It's why integers <em>overflow</em>, why floats can't represent every fraction, and why a value fits neatly into a known-size box in memory that a pointer can later refer to. Fixed width is a feature and a trap at once.</p>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A bigger type is always safer, so just use 64-bit everything.</div><div class="truth">Wider types cost more memory and bandwidth, which matters in arrays, caches, and hot loops. The skill is choosing a width that comfortably fits your real range — not reflexively maxing it out, and not cutting it so fine that you overflow.</div></div>
+          <div class="mc"><div class="myth">A character and a small integer are fundamentally different things.</div><div class="truth">At the bit level they're the <b>same</b> — a <code class="tok">char</code> is just a small integer that some code chooses to interpret as a letter via an encoding like ASCII or UTF-8. <code class="tok">'A'</code> simply <i>is</i> 65.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--int);border-color:rgba(232,179,65,.4);background:var(--int-soft)">Integers</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Signed integers &amp; two's complement</h2></div>
+        <p>An <span class="concept int">unsigned</span> integer is the easy case: read the bits straight as a binary number. Eight bits run from 0 to 255, sixteen from 0 to 65,535, and in general <em>n</em> bits cover 0 to 2&#8319;−1. No surprises. But how do you store a <strong>negative</strong> number when all you have is on/off switches and no minus sign?</p>
+        <p>The answer almost every machine uses is <strong>two's complement</strong>, and it's one of the most elegant tricks in computing. The idea: give the top bit (the most significant) a <strong>negative</strong> place value. In an 8-bit signed integer, the leftmost bit is worth <code class="tok">−128</code> instead of <code class="tok">+128</code>; the rest stay positive. So <code class="tok">10000000</code> is exactly −128, and <code class="tok">11111111</code> is −128 + 127 = −1.</p>
+        <pre><span class="tag">two's complement (8-bit)</span> <span class="addr">-128</span>  64   32   16    8    4    2    1    <span class="cmt">// note the negative top bit</span>
+   1    1    1    1    1    1    1    1
+<span class="addr">-128</span> + 64 + 32 + 16 + 8 + 4 + 2 + 1            = <span class="num">-1</span></pre>
+        <p>Two beautiful things fall out of this. First, there's exactly <strong>one zero</strong> (<code class="tok">00000000</code>), unlike schemes that waste a bit pattern on "negative zero." Second, and more importantly, <strong>ordinary binary addition just works</strong> across the sign boundary — the same adder circuit that computes 3 + 5 computes (−3) + 5 correctly, with no special handling. That's why two's complement won: the hardware gets simpler, not more complex.</p>
+        <p>To <strong>negate</strong> a number in two's complement, you flip every bit and add one (<code class="tok">−x = ~x + 1</code>). The same top bit that represents the largest negative also explains the slightly lopsided range: an 8-bit signed integer runs from −128 to +127, because zero eats one of the "positive" slots.</p>
+
+        <p>Here's the same byte read both ways at once. Flip bits and watch the <span style="color:var(--int)">signed</span> and unsigned interpretations diverge — and notice how the top bit (dashed) flips the value into the negatives. Press <strong>negate</strong> to see flip-the-bits-and-add-one in action:</p>
+        <div class="lab" id="twosLab">
+          <div class="lab-head"><div><div class="pt">The two's-complement inspector</div><div class="ps">one bit pattern, read as signed and unsigned</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="twosNegate">negate (~x+1)</button>
+              <button class="ds-btn" id="twosClear">clear</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="bit-row" id="twosCells"></div>
+            <div class="bit-readout">
+              <div class="bit-stat"><div class="bs-k">unsigned</div><div class="bs-v" id="twosUnsigned">0</div></div>
+              <div class="bit-stat signed"><div class="bs-k">signed (two's comp)</div><div class="bs-v" id="twosSigned">0</div></div>
+              <div class="bit-stat hexv"><div class="bs-k">hex</div><div class="bs-v" id="twosHex">0x00</div></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="twosFoot">The dashed cell is the sign bit. When it's on, the value is negative.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Negative numbers are stored with a separate minus-sign bit.</div><div class="truth">That scheme (called sign-magnitude) exists but is rarely used, because it has two zeros and needs special-case arithmetic. <b>Two's complement</b> bakes the sign into the place values so plain addition handles negatives for free.</div></div>
+          <div class="mc"><div class="myth">An unsigned and a signed integer with the same bits are the same number.</div><div class="truth">Same bits, different value. <code class="tok">11111111</code> is <b>255</b> read as unsigned but <b>−1</b> read as signed. The bits don't change — only the interpretation does, which is exactly why type matters.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--oflow);border-color:rgba(237,78,110,.4);background:var(--oflow-soft)">Overflow</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 03</span></div><h2>Integer overflow &amp; wraparound</h2></div>
+        <p>A fixed number of bits can hold only a fixed range of values. So what happens when a calculation produces a result too big to fit? The value doesn't grow a ninth bit or politely raise an error — it <span class="concept oflow">wraps around</span>. Think of a car's odometer rolling from 999999 back to 000000, or a clock passing 12 back to 1. The extra carry simply falls off the top and is lost.</p>
+        <p>For an 8-bit <strong>unsigned</strong> integer, the maximum is 255 (<code class="tok">11111111</code>). Add one and the carry ripples off the end, leaving <code class="tok">00000000</code> — you're back at 0. This is exact <strong>modular arithmetic</strong>: results are taken mod 2&#8319;. For a <strong>signed</strong> integer it's stranger: 127 (<code class="tok">01111111</code>) plus one becomes <code class="tok">10000000</code>, which in two's complement is −128. The largest positive number suddenly becomes the most negative.</p>
+        <pre><span class="tag">8-bit wraparound</span>  <span class="cmt">unsigned:</span>   255 + 1  =  <span class="hl">0</span>      <span class="cmt">// 11111111 + 1 → 00000000</span>
+  <span class="cmt">signed:</span>     127 + 1  =  <span class="hl">-128</span>   <span class="cmt">// 01111111 + 1 → 10000000</span></pre>
+        <div class="note warn">
+          <div class="nh">Signed overflow is undefined behavior in C/C++</div>
+          <p>Unsigned overflow is <em>defined</em> to wrap. But <strong>signed</strong> overflow is <strong>undefined behavior</strong> — the compiler is allowed to assume it never happens and optimize accordingly. A loop like <code class="tok">for (int i = 0; i &gt;= 0; i++)</code> may be "proven" infinite and have its exit deleted. This is why overflow bugs are so dangerous: the result isn't just a wrong number, it can be code that does something the source never said.</p>
+        </div>
+        <p>This isn't academic. A 32-bit signed counter caps at about 2.1 billion — which is why <strong>YouTube</strong> had to rebuild its view counter when Gangnam Style blew past it, and why the <strong>Year 2038 problem</strong> looms for systems counting seconds since 1970 in a 32-bit int. <strong>Ariane 5</strong> flight 501 was destroyed by a 64-bit float crammed into a 16-bit integer; <strong>Pac-Man</strong>'s level 256 "kill screen" is an 8-bit counter overflowing. Fixed width, finite range, real consequences.</p>
+
+        <p>Drive the odometer yourself. Step the value up and down, switch between signed and unsigned, and watch what happens at the edges. The moment it wraps, the bits tell the whole story:</p>
+        <div class="lab" id="ovfLab">
+          <div class="lab-head"><div><div class="pt">The overflow odometer</div><div class="ps">push a fixed-width integer past its limit and watch it roll over</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-ow="unsigned">unsigned</button>
+              <button class="ds-btn" data-ow="signed">signed</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ovf-stage">
+              <svg class="ovf-wheel" id="ovfWheel" width="200" height="200" viewBox="0 0 200 200"></svg>
+              <div class="ovf-side">
+                <div class="ovf-bits" id="ovfBits"></div>
+                <div class="ovf-big" id="ovfValue">0</div>
+                <div class="ovf-range" id="ovfRange">range 0 … 255</div>
+              </div>
+            </div>
+            <div class="ds-controls" style="justify-content:center;margin-top:18px">
+              <button class="ds-btn" id="ovfDec">− 1</button>
+              <button class="ds-btn" id="ovfMinus10">− 10</button>
+              <button class="ds-btn primary" id="ovfPlus10">+ 10</button>
+              <button class="ds-btn primary" id="ovfInc">+ 1</button>
+              <button class="ds-btn" id="ovfMax">jump to max</button>
+            </div>
+          </div>
+          <div class="lab-foot" id="ovfFoot">Add past the top and the carry falls off — the value rolls around to the other end.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">If a number gets too big, the program crashes or the value just caps out.</div><div class="truth">By default it silently <b>wraps</b> — 255 becomes 0, 127 becomes −128 — and execution continues with the wrong value. No crash, no cap, no warning. The damage happens downstream, far from the overflow.</div></div>
+          <div class="mc"><div class="myth">Overflow only matters for huge numbers.</div><div class="truth">It strikes at each type's edge, however small. An 8-bit counter overflows at 256; a 16-bit one at 65,536. Multiplying two modest <code class="tok">int</code>s can overflow even when each fits comfortably — the <i>product</i> is what blows the range.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--flt);border-color:rgba(91,214,194,.4);background:var(--flt-soft)">Floating point</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Floating point — fractions in bits</h2></div>
+        <p>Integers can't hold ½ or π, and they can't reach the very large or very small. <span class="concept flt">Floating point</span> solves both by storing numbers in binary <strong>scientific notation</strong>: a sign, a fraction (the <strong>mantissa</strong>), and an <strong>exponent</strong> that floats the binary point left or right. Just as 6.022×10²³ packs a huge number into few digits, a float packs an enormous range into 32 or 64 bits.</p>
+        <p>The near-universal standard is <strong>IEEE 754</strong>. A 32-bit <code class="tok">float</code> divides its bits into three fields: <strong>1</strong> sign bit, <strong>8</strong> exponent bits, and <strong>23</strong> mantissa bits. A 64-bit <code class="tok">double</code> uses 1 + 11 + 52, buying far more precision and range. The value is roughly <code class="tok">(−1)<sup>sign</sup> × 1.mantissa × 2<sup>exponent</sup></code>.</p>
+        <p>The catch is precision. With a fixed number of mantissa bits, only a fixed set of values can be represented <em>exactly</em>; everything else is rounded to the nearest one. And just as <code class="tok">1/3</code> has no exact decimal, <strong>0.1 has no exact binary</strong> — it's a repeating fraction in base two. So <code class="tok">0.1</code> is stored as something microscopically off, and the famous result follows:</p>
+        <pre><span class="tag">js</span>&gt; <span class="num">0.1</span> + <span class="num">0.2</span>
+<span class="hl">0.30000000000000004</span>   <span class="cmt">// not a bug — 0.1 and 0.2 aren't exactly representable</span></pre>
+        <p>Dissect a float and see exactly where its bits go. Type a number (or pick a preset) and watch it split into sign, exponent, and mantissa — and see the <em>actual</em> stored value, which is often not quite what you typed:</p>
+        <div class="lab" id="floatLab">
+          <div class="lab-head"><div><div class="pt">The float dissector</div><div class="ps">see a 32-bit float split into sign · exponent · mantissa</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls" style="justify-content:center">
+              <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--ink-muted)">value:</span>
+              <input class="ds-input" id="floatInput" value="0.1" style="width:130px">
+              <button class="ds-btn primary" id="floatGo">dissect</button>
+            </div>
+            <div class="ds-controls" style="justify-content:center;margin-top:-6px">
+              <button class="ds-btn float-ex" data-fv="0.1">0.1</button>
+              <button class="ds-btn float-ex" data-fv="0.2">0.2</button>
+              <button class="ds-btn float-ex" data-fv="0.3">0.3</button>
+              <button class="ds-btn float-ex" data-fv="1">1.0</button>
+              <button class="ds-btn float-ex" data-fv="3.14159265">π</button>
+              <button class="ds-btn float-ex" data-fv="-2.5">−2.5</button>
+            </div>
+            <div class="float-bits" id="floatBits"></div>
+            <div class="float-out" id="floatOut"></div>
+          </div>
+          <div class="lab-foot" id="floatFoot">Sign picks positive or negative · exponent scales · mantissa is the fraction. Few decimals land exactly.</div>
+        </div>
+
+        <div class="note warn">
+          <div class="nh">Never store money in a float</div>
+          <p>Because most decimal fractions can't be represented exactly, floats accumulate tiny rounding errors that compound — catastrophic for currency. Use integer <em>cents</em>, or a decimal type built for exact base-ten arithmetic. Floats are for measurement and science, where a relative error of 10&#8315;&#8311; is invisible; they are wrong for anything that must balance to the penny.</p>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth"><code class="tok">0.1 + 0.2 == 0.3</code> failing is a bug in the language.</div><div class="truth">It's correct behavior of the <b>IEEE 754</b> standard, identical across nearly every language. None of 0.1, 0.2, or 0.3 is exactly representable in binary, so the rounded sum misses the rounded target by one tiny step. Compare floats with a tolerance, never with <code class="tok">==</code>.</div></div>
+          <div class="mc"><div class="myth">Floats have a fixed number of decimal places.</div><div class="truth">They have a fixed number of <b>significant bits</b>, so precision is <i>relative</i>. Near zero, floats are densely packed; out at billions, the gap between consecutive floats can exceed 1, so adding a small number to a huge one can change nothing at all.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--mem);border-color:rgba(78,214,107,.4);background:var(--mem-soft)">Memory</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Variables &amp; memory</h2></div>
+        <p>Now we can say precisely what a <strong>variable</strong> is. Memory is one gigantic array of bytes, and every byte has a numeric <span class="concept ref">address</span> — its index in that array. A variable is three things bound together: a <strong>name</strong> you type, a <strong>box</strong> of memory of the type's size, and the <strong>address</strong> where that box lives. The name is a convenience for you; the machine only ever deals in addresses.</p>
+        <pre><span class="tag">c</span><span class="kw2">int</span> x = <span class="num">42</span>;        <span class="cmt">// reserve a 4-byte box, label it x, store 42's bits</span>
+<span class="kw2">char</span> c = <span class="str">'A'</span>;      <span class="cmt">// reserve a 1-byte box, label it c, store 65</span>
+<span class="kw2">double</span> d = <span class="num">3.14</span>;   <span class="cmt">// reserve an 8-byte box, label it d, store the IEEE-754 bits</span></pre>
+        <p>Declaring a variable <strong>allocates</strong> a box big enough for its type and binds the name to that location. Reading the variable fetches the bits from the box; assigning to it overwrites them. The name <code class="tok">x</code> doesn't appear anywhere in the running program — the compiler has already translated it into "the four bytes at address 0x7ffe…".</p>
+        <div class="defcard">
+          <div class="dh">Value semantics</div>
+          <p class="intent">For a primitive, assignment <strong>copies the bits</strong>. <code class="tok">b = a</code> reads a's box and writes a duplicate into b's box. They are now two independent boxes that merely happen to hold equal values — change one and the other is untouched. This "copy by value" behavior is the default for primitives in essentially every language, and it's the thing that makes pointers and references (next) feel so different.</p>
+        </div>
+        <p>Where do these boxes live? Local variables typically sit on the <strong>stack</strong> — a fast region that grows and shrinks automatically as functions are called and return. A local's box exists only while its function is running; when the function returns, the box is reclaimed and its address may be reused. That <strong>lifetime</strong> — when a box is valid — becomes critical the moment you start keeping addresses of boxes, which is exactly what pointers do. We'll return to the stack, and its longer-lived sibling the heap, in Module 08.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A variable <i>is</i> its value.</div><div class="truth">A variable is a <b>named box at an address</b>; the value is the bits currently inside it. The distinction seems pedantic until you take the <i>address</i> of the box (a pointer) or give the box a <i>second name</i> (a reference) — then the box and its contents are clearly different things.</div></div>
+          <div class="mc"><div class="myth">Assigning <code class="tok">b = a</code> links the two variables.</div><div class="truth">For primitives it <b>copies</b> — you get two independent boxes. Later changes to <code class="tok">a</code> don't touch <code class="tok">b</code>. Linking only happens when something shares a box (a reference) or holds the other's address (a pointer), which is a deliberate, different act.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--ptr);border-color:rgba(167,139,250,.4);background:var(--ptr-soft)">Indirection</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 06</span></div><h2>Pointers — a value that is an address</h2></div>
+        <p>If every box has an address, then an address is just a number — and a number can be stored in a box. A <span class="concept ptr">pointer</span> is exactly that: a variable whose value is the <strong>address of another box</strong>. It doesn't hold the data; it holds <em>where the data lives</em>. That one extra hop — going through an address to reach a value — is called <strong>indirection</strong>, and it's the foundation of nearly every interesting data structure.</p>
+        <p>Two operators run the show. <strong>Address-of</strong> (<code class="tok"><span class="ptrk">&amp;</span>x</code>) asks "where does x live?" and yields its address. <strong>Dereference</strong> (<code class="tok"><span class="ptrk">*</span>p</code>) does the reverse: "follow this address and give me the box there." Writing through a dereferenced pointer reaches across the indirection and changes the original:</p>
+        <pre><span class="tag">c</span><span class="kw2">int</span> x = <span class="num">42</span>;
+<span class="kw2">int</span> <span class="ptrk">*</span>p = <span class="ptrk">&amp;</span>x;     <span class="cmt">// p holds the ADDRESS of x  (p → x)</span>
+
+<span class="fn">printf</span>(<span class="str">"%d"</span>, <span class="ptrk">*</span>p);  <span class="cmt">// 42  — dereference: follow p to x's box</span>
+<span class="ptrk">*</span>p = <span class="num">99</span>;          <span class="hlok">// writes 99 into x, through the pointer</span>
+<span class="fn">printf</span>(<span class="str">"%d"</span>, x);   <span class="cmt">// 99  — x changed, though we never named it</span></pre>
+        <p>A pointer is itself an ordinary box — on a 64-bit machine it holds a 64-bit address, whatever it points to. A pointer that points at nothing is set to <strong>null</strong> (address 0); dereferencing it is the classic crash (a "segmentation fault" or null-reference error), because address 0 is off-limits. And because a pointer knows the <em>type</em> it points to, <strong>pointer arithmetic</strong> moves in whole elements: <code class="tok">p + 1</code> advances by one <code class="tok">int</code> (4 bytes), not one byte — which is precisely how arrays and iteration work under the hood.</p>
+
+        <p>Wire up a pointer and follow it. Point <code class="tok">p</code> at different variables, then write through it with <code class="tok">*p = …</code> and watch the change land in whichever box <code class="tok">p</code> currently targets — never the pointer itself:</p>
+        <div class="lab" id="ptrLab">
+          <div class="lab-head"><div><div class="pt">The pointer playground</div><div class="ps">point, dereference, and write through indirection</div></div></div>
+          <div class="lab-body">
+            <div class="ptr-wrap">
+              <div class="mem-col" id="ptrMem" style="position:relative">
+                <svg class="ptr-svg" id="ptrArrow"></svg>
+              </div>
+              <div class="ptr-state" id="ptrState"></div>
+            </div>
+            <div class="ds-controls" style="margin-top:18px">
+              <button class="ds-btn primary" data-pp="x">p = &amp;x</button>
+              <button class="ds-btn primary" data-pp="y">p = &amp;y</button>
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted)">·</span>
+              <input class="ds-input" id="ptrWriteVal" value="99" style="width:70px">
+              <button class="ds-btn" id="ptrWrite">*p = </button>
+            </div>
+          </div>
+          <div class="lab-foot" id="ptrFoot">p holds an address; *p reaches the box at that address. Writing through p changes whatever it points to.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A pointer and the thing it points to are the same variable.</div><div class="truth">They're two separate boxes. The pointer's box holds an <b>address</b>; the target's box holds the <b>value</b>. Reassigning <code class="tok">p</code> changes which box it aims at; writing <code class="tok">*p</code> changes the box it currently aims at. Different boxes, different operations.</div></div>
+          <div class="mc"><div class="myth">Pointers are an obsolete C thing modern languages removed.</div><div class="truth">They renamed and tamed them. Java and Python <b>references</b>, Go's pointers, C++ smart pointers, even a CPU's program counter are all addresses-to-boxes. The indirection never left; safer languages just stop you from doing arithmetic on it or dereferencing null.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--ref);border-color:rgba(242,151,60,.4);background:var(--ref-soft)">Indirection</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div><h2>References &amp; aliasing</h2></div>
+        <p>A <span class="concept ref">reference</span> is a second <strong>name</strong> for an existing box. Where a pointer is a separate box that <em>holds</em> an address you must explicitly dereference, a reference simply <em>is</em> the original box under another label — the indirection is hidden and automatic. When two names refer to one box, they are <strong>aliases</strong>, and a write through either name is instantly visible through the other.</p>
+        <p>This distinction is the heart of <strong>pass-by-value</strong> versus <strong>pass-by-reference</strong>. Pass a primitive by value and the function receives a <em>copy</em> in a fresh box — scribbling on it leaves the caller's variable untouched. Pass by reference (or hand over a pointer) and the function operates on the <em>same</em> box, so its changes persist after the call. One is a photocopy; the other is the original document.</p>
+        <pre><span class="tag">c</span><span class="kw">void</span> <span class="fn">addOne</span>(<span class="kw2">int</span> n)  { n++; }       <span class="cmt">// by value: n is a copy, caller unchanged</span>
+<span class="kw">void</span> <span class="fn">addOne</span>(<span class="kw2">int</span> <span class="ptrk">&amp;</span>n) { n++; }       <span class="hlok">// by reference: n aliases the caller's box</span></pre>
+        <p>Aliasing is where the famous surprises live. In languages like Java, Python, and JavaScript, variables that hold objects, lists, or arrays actually hold <strong>references</strong>. So <code class="tok">b = a</code> copies the reference, not the object — now <code class="tok">a</code> and <code class="tok">b</code> point at one shared box, and mutating through <code class="tok">a</code> changes what you see through <code class="tok">b</code>. This is the difference between a <strong>shallow copy</strong> (duplicate the reference, share the contents) and a <strong>deep copy</strong> (duplicate the contents too).</p>
+
+        <p>See copy versus alias side by side. Choose how <code class="tok">b = a</code> behaves, then change <code class="tok">a</code> and watch whether <code class="tok">b</code> follows. Value semantics gives two boxes; reference semantics gives one box with two names:</p>
+        <div class="lab" id="refLab">
+          <div class="lab-head"><div><div class="pt">Copy or alias?</div><div class="ps">the same assignment, two very different outcomes</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-rm="value">value (copy)</button>
+              <button class="ds-btn" data-rm="ref">reference (alias)</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ref-stage">
+              <div class="ref-boxes" id="refBoxes"></div>
+              <div class="ref-tag" id="refTag"></div>
+            </div>
+            <div class="ds-controls" style="justify-content:center">
+              <button class="ds-btn" id="refAssign">b = a</button>
+              <button class="ds-btn primary" id="refMutate">a = 99</button>
+              <button class="ds-btn" id="refReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-foot" id="refFoot">In value mode, b is an independent copy. In reference mode, a and b alias one box.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Passing an object to a function copies the object.</div><div class="truth">In reference-based languages it copies the <b>reference</b> — the function shares your actual object and can mutate it. To protect the original you must deliberately make a copy. (Primitives, by contrast, are usually passed by value.)</div></div>
+          <div class="mc"><div class="myth">A reference and a pointer are completely different mechanisms.</div><div class="truth">Underneath, a reference is usually implemented <i>as</i> a pointer — an address to a box. The difference is ergonomics: a reference auto-dereferences and can't be null or do arithmetic, so it's a safer, narrower tool for the common case of "another name for this box."</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--mem);border-color:rgba(78,214,107,.4);background:var(--mem-soft)">Memory</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 08</span></div><h2>The stack &amp; the heap</h2></div>
+        <p>A program's boxes live in two very different regions, and knowing which is which prevents a whole category of bugs. The <span class="concept ref">stack</span> is fast, automatic, and tied to function calls: each call pushes a <strong>frame</strong> holding that function's local variables, and returning pops it. Allocation is nearly free (just move a pointer), but a local's box <strong>vanishes the instant its function returns</strong>. The <span class="concept ptr">heap</span> is a large pool for boxes whose size or lifetime isn't known in advance; you request space explicitly (<code class="tok">malloc</code>, <code class="tok">new</code>) and it lives until it's explicitly released or garbage-collected.</p>
+        <div class="sh-stage">
+          <div class="sh-col stack">
+            <div class="shh"><span>▸ STACK</span><span style="color:var(--ink-faint)">auto · LIFO</span></div>
+            <div class="sh-item"><span>main() · int n</span><span style="color:var(--mem)">42</span></div>
+            <div class="sh-item"><span>main() · int *p</span><span style="color:var(--ptr)">0x9f00 →</span></div>
+            <div class="sh-item" style="opacity:.55"><span>parse() · char c</span><span style="color:var(--ink-faint)">popped on return</span></div>
+            <div class="sh-note">grows &amp; shrinks with calls · freed automatically</div>
+          </div>
+          <div class="sh-col heap">
+            <div class="shh"><span>▸ HEAP</span><span style="color:var(--ink-faint)">manual / GC</span></div>
+            <div class="sh-item"><span>0x9f00 · buffer[1024]</span><span style="color:var(--ptr)">← p</span></div>
+            <div class="sh-note" style="margin-top:64px">lives until freed · you own its lifetime</div>
+          </div>
+        </div>
+        <div class="note warn">
+          <div class="nh">The lifetime traps</div>
+          <p>Mixing addresses with lifetimes is where memory bugs breed. Return a pointer to a <strong>local</strong> and you get a <strong>dangling pointer</strong> — it aims at a stack box that no longer exists. Free a heap box but keep using the pointer and that's a <strong>use-after-free</strong>. Free it twice, a <strong>double free</strong>. Never free it at all, a <strong>memory leak</strong>. Every one of these is really the same mistake: a pointer and the box it names disagreeing about whether the box is still alive.</p>
+        </div>
+        <p>This is exactly the problem different languages attack in different ways. Garbage collectors track which heap boxes are still reachable and reclaim the rest, trading some performance and predictability for safety. Rust's borrow checker proves at compile time that no pointer outlives its box. C hands you the keys and the responsibility. Same underlying hazard — addresses and lifetimes — managed along a spectrum from "you do it" to "the system does it."</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The stack and heap are different physical hardware.</div><div class="truth">Both are just regions of the same RAM. The difference is the <b>allocation discipline</b>: the stack is a strict last-in-first-out frame per call; the heap is a general pool you carve up on demand. Same memory, different bookkeeping.</div></div>
+          <div class="mc"><div class="myth">Garbage collection means you can ignore memory entirely.</div><div class="truth">It removes manual <code class="tok">free</code>, not thinking. You can still <b>leak</b> by keeping references to things you no longer need, still alias and mutate shared objects by surprise, and still pay GC pauses. It automates reclamation, not understanding.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 09</span></div><h2>Memory layout &amp; safety</h2></div>
+        <p>Zoom in on how multi-byte values actually sit in memory and a few subtle, important details appear. The first is <strong>endianness</strong>: the order in which a value's bytes are laid out across consecutive addresses. <strong>Big-endian</strong> stores the most significant byte first (the way we write numbers); <strong>little-endian</strong> stores the least significant byte first. Most machines you use (x86, most ARM) are little-endian, which looks backwards in a memory dump but simplifies some hardware.</p>
+        <p>It usually doesn't matter — until bytes cross a boundary. Send an integer over a network, write it to a binary file, or reinterpret a buffer as a different type, and both sides must agree on byte order or the value scrambles. That's why network protocols define a canonical "network byte order" (big-endian) that everyone converts to and from.</p>
+        <p>Watch the same 32-bit value, <code class="tok">0x12345678</code>, laid out both ways. Toggle the byte order and see how the four bytes rearrange across the addresses:</p>
+        <div class="lab" id="endLab">
+          <div class="lab-head"><div><div class="pt">Byte order</div><div class="ps">one value, two layouts in memory</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-em="little">little-endian</button>
+              <button class="ds-btn" data-em="big">big-endian</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="text-align:center;font-family:var(--font-mono);font-size:14px;color:var(--ink-soft);margin-bottom:16px">value: <span style="color:var(--addr)">0x12345678</span> <span style="color:var(--ink-faint)">(stored in 4 bytes)</span></div>
+            <div class="mem-col" id="endBytes" style="max-width:320px;margin:0 auto"></div>
+          </div>
+          <div class="lab-foot" id="endFoot">Little-endian puts the least significant byte at the lowest address — it looks reversed.</div>
+        </div>
+        <p>Two more layout facts shape real programs. <strong>Alignment</strong>: the hardware prefers (or requires) a value to sit at an address that's a multiple of its size, so compilers insert invisible <strong>padding</strong> bytes inside structures to keep fields aligned — which is why a struct can be larger than the sum of its fields. And <strong>arrays</strong> are simply boxes laid end to end in one contiguous block, so <code class="tok">arr[i]</code> is really "start address + i × element size" — array indexing <em>is</em> pointer arithmetic in disguise.</p>
+        <div class="note warn">
+          <div class="nh">Buffer overflow — when writing past the box corrupts the next one</div>
+          <p>Because arrays are contiguous and most languages don't check bounds at the hardware level, writing past the end of an array spills into <strong>whatever box comes next</strong> in memory — an adjacent variable, a saved return address, anything. That's a <strong>buffer overflow</strong>, and deliberately overwriting a return address to hijack control flow is one of the oldest and most damaging classes of security exploit. It is the dark side of "a value is just bits in a box": the boxes are right next to each other, and the bits don't know where one ends.</p>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A struct's size is just the sum of its fields' sizes.</div><div class="truth">Often it's larger, because of <b>alignment padding</b> inserted to keep each field on a friendly address. Reorder fields from largest to smallest and you can shrink a struct without removing a single field — a real optimization in memory-heavy code.</div></div>
+          <div class="mc"><div class="myth">Endianness affects how I write numbers in my source code.</div><div class="truth">No — <code class="tok">0x12345678</code> means the same value everywhere. Endianness only governs the <b>byte layout in memory</b>, so it surfaces only when you inspect raw bytes, serialize, or cast a pointer to a different type. The numeric value itself is unaffected.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>How languages handle all this</h2></div>
+        <p>Every idea so far is universal, but languages expose it along a spectrum from "raw and dangerous" to "managed and safe." Understanding where your language sits tells you which bugs you must guard against yourself and which the language handles for you.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Language</th><th>Pointers</th><th>Memory</th><th>Integer overflow</th></tr></thead>
+            <tbody>
+              <tr><td><span class="ty">C / C++</span></td><td>raw, with arithmetic</td><td>manual (you free it)</td><td class="mono"><span class="rng">UB (signed) / wraps (unsigned)</span></td></tr>
+              <tr><td><span class="ty">Rust</span></td><td>references, borrow-checked</td><td>ownership, no GC</td><td class="mono"><span class="rng">panics (debug) / wraps (release)</span></td></tr>
+              <tr><td><span class="ty">Go</span></td><td>pointers, no arithmetic</td><td>garbage collected</td><td class="mono"><span class="rng">wraps (defined)</span></td></tr>
+              <tr><td><span class="ty">Java / C#</span></td><td>references only</td><td>garbage collected</td><td class="mono"><span class="rng">wraps (defined)</span></td></tr>
+              <tr><td><span class="ty">Python</span></td><td>references only</td><td>garbage collected</td><td class="mono"><span class="rng">none — ints grow without limit</span></td></tr>
+              <tr><td><span class="ty">JavaScript</span></td><td>references only</td><td>garbage collected</td><td class="mono"><span class="rng">all numbers are 64-bit floats*</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>A few patterns are worth pulling out. <strong>Primitives versus references:</strong> most managed languages keep primitives as by-value boxes but make objects references, so the same <code class="tok">=</code> copies a number but aliases a list — the single biggest source of "why did both variables change?" confusion. <strong>Fixed versus arbitrary width:</strong> Python integers simply grow more bytes as needed, so they never overflow (at the cost of speed), while JavaScript has no integer type at all — every number is a <code class="tok">double</code>, which is why it loses precision past 2&#8309;&#8323;.</p>
+        <p>And the <strong>memory-safety</strong> story is the defining axis of modern language design. C trusts you completely. Garbage-collected languages remove manual freeing but keep aliasing and leaks. Rust's ownership system is the notable third path: it proves pointer safety at <em>compile time</em>, getting C-like control without a garbage collector — a direct response to decades of the lifetime traps from Module 08.</p>
+        <p class="ps" style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);margin-top:-8px">* JavaScript added <code class="tok">BigInt</code> for arbitrary-precision integers, but its default <code class="tok">number</code> is always a 64-bit float.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">High-level languages don't have any of these low-level concerns.</div><div class="truth">They <b>hide</b> them, they don't remove them. Aliasing bugs, float imprecision, and silent integer wrap (or surprise big-int slowdowns) all show up in Python and JavaScript too. The bits-in-a-box model still explains the surprises — it's just one layer down.</div></div>
+          <div class="mc"><div class="myth">A memory-safe language can't be fast.</div><div class="truth"><b>Rust</b> disproves it: ownership and borrowing are checked at compile time, so safety costs nothing at runtime. Safety and speed trade off against <i>convenience</i> (you do more up front), not necessarily against each other.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>Putting it together</h2></div>
+        <p>Every topic in this course collapses into one mental model: <strong>a value is a pattern of bits in a box, and a name, pointer, or reference is a way of getting to that box.</strong> Hold that picture and the bugs stop being mysterious. They become predictable consequences of three questions you can ask about any variable.</p>
+        <p><strong>How wide is the box?</strong> The width fixes the range, and the range is where overflow and float imprecision live. Multiplying two <code class="tok">int</code>s that each fit can still overflow; adding a small float to a huge one can do nothing. Pick widths that fit your real range, watch the edges of arithmetic, compare floats with a tolerance, and keep money in exact integer or decimal types — never a float.</p>
+        <p><strong>Is this a copy or a shared box?</strong> Value semantics give you an independent duplicate; references and pointers give you a shared box where a change through one name is seen through every other. Most "why did that other variable change?" bugs are an unexpected alias. When you hand data to a function or assign it, know whether you're passing the document or a photocopy.</p>
+        <p><strong>Who owns this box's lifetime?</strong> The moment you keep an address — a pointer, a reference, an index into something that can move — you've taken on a question about <em>when that box is valid</em>. Dangling pointers, use-after-free, and leaks are all lifetime disagreements. Garbage collectors, ownership systems, and plain discipline are just different answers to "when does this box die?"</p>
+        <div class="note key">
+          <div class="nh">The through-line</div>
+          <p>Width, copy-or-share, and lifetime aren't three topics — they're three views of the same box-of-bits. The reason this layer is worth understanding even in a language that hides it is that the hidden machinery still leaks through, as a wrong sum, a surprise mutation, or a value that vanished. Knowing what's underneath turns "spooky" into "oh, of course."</p>
+        </div>
+        <p>You began with a single bit — one switch, on or off — and built all the way up to the way entire languages manage memory and safety. The syntax of <code class="tok">int</code>, <code class="tok">*</code>, and <code class="tok">&amp;</code> was never the point; the model underneath was. Now when a number wraps, a float drifts, or two variables move in lockstep, you won't reach for superstition. You'll reach for the boxes.</p>
+
+        <div class="closing">
+          <h2>Now you can see the boxes</h2>
+          <p>Primitive types, pointers, references, and overflow are not four separate subjects — they're four faces of one idea: bits in boxes, and the names we use to reach them. You can read a memory dump, predict an overflow, explain an aliasing bug, and reason about a lifetime, because you know what's actually there.</p>
+          <p>The growth from here is in noticing. Every wrong-looking number, every shared-mutation surprise, every crash on a stray address is the model asking to be applied. Keep asking how wide, copy or share, and who owns the lifetime — and the machine stops being magic.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering Bits, Pointers &amp; Overflow — a companion to Big&nbsp;O Complexity, Data Structures, Design Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, and OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles. Built to be poked at.</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="js/mastering-bits-pointers-overflow.js"></script>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering ASP.NET Core · The Growth Lab</title>
+<meta name="description" content="An interactive course on ASP.NET Core — the middleware pipeline, routing, minimal APIs, model binding, dependency injection, and returning data. Build web APIs from the C# you know.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-aspnet-core.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 9 H16.5" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M14 6.5 L17.2 9 L14 11.5" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M20 15 H7.5" stroke="#56C7FF" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M10 12.5 L6.8 15 L10 17.5" stroke="#56C7FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>ASP.NET Core</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 9 H16.5" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M14 6.5 L17.2 9 L14 11.5" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M20 15 H7.5" stroke="#56C7FF" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M10 12.5 L6.8 15 L10 17.5" stroke="#56C7FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>ASP.NET Core</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>What is ASP.NET Core</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>HTTP &amp; request/response</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>The middleware pipeline</span></a>
+      <div class="nav-group-label">Routing &amp; Endpoints · Beginner → Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Routing</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Minimal APIs</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Controllers &amp; MVC</span></a>
+      <div class="nav-group-label">Data &amp; Input · Intermediate</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Model binding &amp; validation</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Dependency injection</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Returning data</span></a>
+      <div class="nav-group-label">Production · Intermediate</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Configuration &amp; options</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Errors, logging &amp; middleware</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Putting it together</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Intermediate</div>
+        <h1>A request goes in,<br><span class="grad">a response comes out.</span></h1>
+        <p class="lede">ASP.NET Core is the .NET framework for building web apps and APIs, and underneath the features it's beautifully simple: an HTTP <strong>request</strong> arrives, flows through a <strong>pipeline</strong> of middleware to an <strong>endpoint</strong>, and a <strong>response</strong> flows back out. Routing, model binding, and dependency injection all serve that one flow. This course builds directly on the C# you learned, and pairs with <strong>Entity Framework</strong> for the data layer — turning your language skills into real, running web services.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="An HTTP request flowing through a middleware pipeline to an endpoint, with the response flowing back out"></svg>
+          <div class="hero-cap">a <span style="color:var(--http)">request</span> flows through <span style="color:var(--mw)">middleware</span> to an <span style="color:var(--endpoint)">endpoint</span> · the <span style="color:var(--resp)">response</span> flows back out</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start the request →</a>
+          <a class="btn btn-ghost" href="#m2">Jump to the pipeline</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>What is ASP.NET Core</h2></div>
+        <p><strong>ASP.NET Core</strong> is the modern, cross-platform framework for building web applications and HTTP APIs on .NET. It's a complete rewrite of the old Windows-only ASP.NET — fast, open-source, and equally at home on Linux, macOS, and Windows, in containers and the cloud. Whatever you build with it — a JSON API, a server-rendered site, a real-time hub — rests on one simple cycle: a client sends an HTTP <strong>request</strong>, your app produces an HTTP <strong>response</strong>.</p>
+        <p>A web app is, quite literally, a function from request to response. The client (a browser, a mobile app, another service) sends a request naming a <strong>method</strong> and a <strong>URL</strong>; your server runs some code and sends back a <strong>status code</strong> and a <strong>body</strong>. Everything else in this course — routing, middleware, dependency injection — is machinery that helps you turn requests into responses cleanly.</p>
+        <p>Here's a complete ASP.NET Core API. The builder wires up the app and its services; <code class="tok">MapGet</code> registers an endpoint; <code class="tok">Run</code> starts listening:</p>
+        <pre><span class="tag">Program.cs</span><span class="kw2">var</span> builder = <span class="typ">WebApplication</span>.<span class="fn">CreateBuilder</span>(args);
+<span class="kw2">var</span> app = builder.<span class="fn">Build</span>();
+
+app.<span class="fn">MapGet</span>(<span class="str">"/"</span>, () => <span class="str">"Hello, web!"</span>);              <span class="cmt">// GET /  → "Hello, web!"</span>
+app.<span class="fn">MapGet</span>(<span class="str">"/products/{id}"</span>, (<span class="kw2">int</span> id) =>          <span class="cmt">// id is bound from the URL</span>
+    <span class="typ">Results</span>.<span class="fn">Ok</span>(<span class="kw">new</span> { Id = id, Name = <span class="str">"Desk"</span> }));   <span class="hlok">// returns 200 + JSON</span>
+
+app.<span class="fn">Run</span>();                                          <span class="cmt">// start the server (Kestrel)</span></pre>
+        <p>That's a real, running web service — no configuration files, no IIS, no ceremony. The built-in <strong>Kestrel</strong> server listens for requests and hands each one to your app. From here, the course is about everything that happens between "a request arrives" and "a response leaves."</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">ASP.NET Core is just a new version of the old ASP.NET.</div><div class="truth">It's a ground-up <b>rewrite</b> with a different runtime, a new request pipeline, and built-in dependency injection. It dropped the Windows/IIS dependency entirely. The name carries over; the framework underneath is new.</div></div>
+          <div class="mc"><div class="myth">You need IIS and a Windows server to run it.</div><div class="truth">ASP.NET Core ships its own cross-platform server, <b>Kestrel</b>, and runs anywhere .NET runs — Linux containers most commonly. IIS, Nginx, or a cloud load balancer can sit in front as a reverse proxy, but none is required.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--http);border-color:rgba(167,139,250,.4);background:var(--http-soft)">HTTP</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>HTTP &amp; the request/response model</h2></div>
+        <p>To build for the web you have to speak <strong>HTTP</strong>. A <span class="concept http">request</span> has four parts: a <strong>method</strong> (the verb — what you want to do), a <strong>URL</strong> (which resource), <strong>headers</strong> (metadata like content type and auth), and an optional <strong>body</strong> (data you're sending). The <span class="concept resp">response</span> mirrors it: a <strong>status code</strong> (how it went), headers, and a body (the data coming back).</p>
+        <p>The methods map cleanly onto operations on <strong>resources</strong> — the heart of REST-style APIs. <code class="tok"><span class="mb get">GET</span></code> reads, <code class="tok"><span class="mb post">POST</span></code> creates, <code class="tok"><span class="mb put">PUT</span></code> replaces, <code class="tok"><span class="mb delete">DELETE</span></code> removes. A well-designed API names resources with nouns (<code class="tok">/products</code>, <code class="tok">/products/42</code>) and uses the method to say what to do with them.</p>
+        <p>The <strong>status code</strong> is the response's headline, grouped into families by its first digit: <strong>2xx</strong> success, <strong>3xx</strong> redirection, <strong>4xx</strong> "you (the client) made a mistake," and <strong>5xx</strong> "I (the server) made a mistake." Picking the right one is part of an API's contract. Tap a scenario to see the code it should return:</p>
+        <div class="lab" id="statusLab">
+          <div class="lab-head"><div><div class="pt">Status codes</div><div class="ps">the response's one-glance verdict</div></div></div>
+          <div class="lab-body">
+            <div class="status-chips" id="statusChips"></div>
+            <div class="status-display" id="statusDisplay"></div>
+          </div>
+          <div class="lab-foot" id="statusFoot">Each scenario has a conventional status code — the first digit tells you the family at a glance.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">GET vs POST is about how much data you're sending.</div><div class="truth">It's about <b>semantics</b>, not size. <code class="tok">GET</code> reads and should be safe and repeatable (no side effects); <code class="tok">POST</code> creates or causes a change. Caches, browsers, and proxies treat them very differently based on that meaning.</div></div>
+          <div class="mc"><div class="myth">Status codes are cosmetic — returning 200 with an error message is fine.</div><div class="truth">The status code is a <b>contract</b> machines rely on. Clients, caches, and monitoring branch on it. Returning <code class="tok">200 OK</code> for a failure (or <code class="tok">404</code> for a server bug) misleads every automated consumer of your API.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--mw);border-color:rgba(86,199,255,.4);background:var(--mw-soft)">Pipeline</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 02</span></div><h2>The middleware pipeline</h2></div>
+        <p>Every request flows through a <strong>pipeline</strong> of <span class="concept mw">middleware</span> — small components chained in order, each one wrapping the next. A piece of middleware gets the request, can do work, and then either calls <code class="tok">next()</code> to pass control inward or <strong>short-circuits</strong> by producing a response itself. This is the central mechanism of ASP.NET Core: routing, authentication, logging, error handling — all are middleware.</p>
+        <p>The shape to hold in your head is an <strong>onion</strong>. The request travels <em>inward</em> through each layer to the endpoint at the center; the response then travels back <em>outward</em> through the same layers in reverse. So each middleware runs twice around a single <code class="tok">await next()</code> — once on the way in, once on the way out — which is how things like timing and exception handling wrap the entire downstream request.</p>
+        <pre><span class="tag">Program.cs</span>app.<span class="fn">UseExceptionHandler</span>(...);   <span class="cmt">// outermost — catches everything below it</span>
+app.<span class="fn">UseAuthentication</span>();        <span class="cmt">// who are you?</span>
+app.<span class="fn">UseAuthorization</span>();         <span class="cmt">// are you allowed?  (may short-circuit → 401/403)</span>
+app.<span class="fn">MapControllers</span>();           <span class="hlok">// innermost — the endpoint that makes the response</span></pre>
+        <p>Because each layer wraps the ones after it, <strong>order is everything</strong>. Put authentication after your endpoints and it never gets to protect them. Send a request below and watch it travel down the pipeline to the endpoint and back up — then send one without an auth token and watch authorization <strong>short-circuit</strong> it before it ever reaches the endpoint:</p>
+        <div class="lab" id="pipeLab">
+          <div class="lab-head"><div><div class="pt">The middleware pipeline</div><div class="ps">request flows in, response flows out — unless something short-circuits</div></div></div>
+          <div class="lab-body">
+            <div class="pipe-wrap">
+              <div class="pipe-flow">▼ request in</div>
+              <div class="pipe-stack" id="pipeStack"></div>
+              <div class="pipe-flow">▲ response out</div>
+            </div>
+            <div class="pipe-result" id="pipeResult"></div>
+            <div class="ds-controls" style="justify-content:center;margin-top:14px">
+              <button class="ds-btn primary" data-pt="yes">▸ Send with token</button>
+              <button class="ds-btn" data-pt="no">▸ Send without token</button>
+            </div>
+          </div>
+          <div class="lab-foot" id="pipeFoot">Each layer runs on the way in and again on the way out. Authorization can stop a request early.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The order you register middleware doesn't really matter.</div><div class="truth">Order is <b>critical</b>. Middleware wraps everything registered after it, so authentication must come before authorization, both before endpoints, and exception handling near the top. A misordered pipeline silently fails to protect or wrap what it should.</div></div>
+          <div class="mc"><div class="myth">Middleware only runs as the request comes in.</div><div class="truth">Each component runs code <b>before</b> <code class="tok">await next()</code> (inbound) and <b>after</b> it (outbound). That's how one middleware can start a timer on the way in and log the elapsed time on the way out, wrapping the entire rest of the pipeline.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--route);border-color:rgba(124,156,255,.4);background:var(--route-soft)">Routing</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 03</span></div><h2>Routing — URLs to endpoints</h2></div>
+        <p><strong>Routing</strong> is the matchmaker between an incoming URL and the code that should handle it. You register endpoints with <strong>route templates</strong> — patterns made of literal text and <span class="concept route">route parameters</span> in braces. <code class="tok">/products</code> matches exactly; <code class="tok">/products/{id}</code> matches <code class="tok">/products/42</code> and captures <code class="tok">id = "42"</code> for your handler to use.</p>
+        <pre><span class="tag">c#</span>app.<span class="fn">MapGet</span>(<span class="str">"/products"</span>, ...);                 <span class="cmt">// literal</span>
+app.<span class="fn">MapGet</span>(<span class="str">"/products/{id:int}"</span>, ...);          <span class="cmt">// {id} must be an int</span>
+app.<span class="fn">MapGet</span>(<span class="str">"/products/{id:int}/reviews"</span>, ...);  <span class="cmt">// nested resource</span>
+app.<span class="fn">MapGet</span>(<span class="str">"/categories/{name}"</span>, ...);         <span class="cmt">// string segment</span></pre>
+        <p>A <strong>route constraint</strong> like <code class="tok">{id:int}</code> restricts what matches — <code class="tok">/products/42</code> matches the <code class="tok">int</code> route, but <code class="tok">/products/abc</code> does not, so it falls through to be matched by something else or returns <code class="tok">404</code>. Note that the <strong>query string</strong> (<code class="tok">?q=desk</code>) is <em>not</em> part of the route — it's bound separately as a parameter. Pick a URL and watch which registered route claims it, and what values it pulls out:</p>
+        <div class="lab" id="routeLab">
+          <div class="lab-head"><div><div class="pt">The route matcher</div><div class="ps">which template wins, and what it captures</div></div></div>
+          <div class="lab-body">
+            <div class="route-list" id="routeList"></div>
+            <div class="ds-controls" style="justify-content:center;margin:4px 0 14px">
+              <button class="ds-btn primary route-url" data-url="/products">/products</button>
+              <button class="ds-btn route-url" data-url="/products/42">/products/42</button>
+              <button class="ds-btn route-url" data-url="/products/abc">/products/abc</button>
+              <button class="ds-btn route-url" data-url="/products/42/reviews">/products/42/reviews</button>
+              <button class="ds-btn route-url" data-url="/categories/tech">/categories/tech</button>
+            </div>
+            <div class="route-vals" id="routeVals"></div>
+          </div>
+          <div class="lab-foot" id="routeFoot">The most specific matching template wins; route parameters are pulled out by name.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The query string is part of the route.</div><div class="truth">It isn't. Routing matches the <b>path</b> (<code class="tok">/products/42</code>); the query string (<code class="tok">?sort=price</code>) is bound <b>separately</b> as a parameter. Two requests with the same path but different queries hit the <i>same</i> route.</div></div>
+          <div class="mc"><div class="myth">Routing is just plain string matching.</div><div class="truth">It's a small matching engine with <b>constraints</b> (<code class="tok">:int</code>, <code class="tok">:guid</code>), <b>defaults</b>, optional segments, and <b>precedence</b> — more specific templates beat catch-alls. It does real parsing and type-checking, not just <code class="tok">string.StartsWith</code>.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--endpoint);border-color:rgba(78,214,107,.4);background:var(--endpoint-soft)">Endpoints</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Minimal APIs</h2></div>
+        <p><strong>Minimal APIs</strong> are the lightest way to define endpoints: a method, a route, and a lambda handler. They keep small services and microservices concise, with no controller classes or boilerplate, while still supporting routing, model binding, dependency injection, and everything else you'll meet in this course.</p>
+        <pre><span class="tag">c#</span>app.<span class="fn">MapGet</span>(<span class="str">"/todos"</span>, () => store.All());            <span class="cmt">// list</span>
+app.<span class="fn">MapGet</span>(<span class="str">"/todos/{id:int}"</span>, (<span class="kw2">int</span> id) =>
+    store.<span class="fn">Find</span>(id) <span class="kw">is</span> {} t ? <span class="typ">Results</span>.<span class="fn">Ok</span>(t)        <span class="hlok">// 200 + the todo</span>
+                       : <span class="typ">Results</span>.<span class="fn">NotFound</span>());   <span class="cmt">// 404 if missing</span>
+app.<span class="fn">MapPost</span>(<span class="str">"/todos"</span>, (<span class="typ">Todo</span> todo) => {
+    store.<span class="fn">Add</span>(todo);
+    <span class="kw">return</span> <span class="typ">Results</span>.<span class="fn">Created</span>(<span class="str">$"/todos/{todo.Id}"</span>, todo);  <span class="cmt">// 201 + Location</span>
+});</pre>
+        <p>The handler's return value becomes the response. <code class="tok">Results</code> (and the strongly-typed <code class="tok">TypedResults</code>) is your toolbox for producing the right status code and body — <code class="tok">Ok</code>, <code class="tok">NotFound</code>, <code class="tok">Created</code>, <code class="tok">BadRequest</code>, <code class="tok">NoContent</code>, and more. Call the endpoints below against a live in-memory store and watch the data change and the responses come back:</p>
+        <div class="lab" id="apiLab">
+          <div class="lab-head"><div><div class="pt">A minimal API, live</div><div class="ps">call the endpoints — watch the data and the responses</div></div></div>
+          <div class="lab-body">
+            <div class="api-endpoints" id="apiEndpoints">
+              <div class="api-ep"><button class="ds-btn primary" id="apiGetAll" style="min-width:140px"><span class="mb get">GET</span> /todos</button><span class="ep-path">list all todos</span></div>
+              <div class="api-ep"><button class="ds-btn" id="apiGetOne" style="min-width:140px"><span class="mb get">GET</span> /todos/<input id="apiId" value="1" style="width:34px;background:var(--surface-3);border:1px solid var(--border);border-radius:5px;color:var(--ink);font-family:var(--font-mono);font-size:11px;padding:2px 4px;text-align:center"></button><span class="ep-path">fetch one (404 if missing)</span></div>
+              <div class="api-ep"><button class="ds-btn" id="apiPost" style="min-width:140px"><span class="mb post">POST</span> /todos</button><input id="apiTitle" value="Ship the API" placeholder="title" style="background:var(--surface-3);border:1px solid var(--border);border-radius:6px;color:var(--ink);font-family:var(--font-mono);font-size:12px;padding:5px 9px;flex:1;min-width:120px"></div>
+              <div class="api-ep"><button class="ds-btn" id="apiToggle" style="min-width:140px"><span class="mb put">PUT</span> /todos/{id}/done</button><span class="ep-path">toggle done (uses id above)</span></div>
+              <div class="api-ep"><button class="ds-btn" id="apiDelete" style="min-width:140px"><span class="mb delete">DEL</span> /todos/{id}</button><span class="ep-path">remove (uses id above)</span></div>
+            </div>
+            <div class="api-grid">
+              <div class="api-panel"><div class="apl-h">in-memory store</div><div id="apiData"></div></div>
+              <div class="api-panel"><div class="apl-h">last response</div><div id="apiResponse"></div></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="apiFoot">Each call returns a status code and a body. POST adds, PUT toggles, DELETE removes — just like a real API.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Minimal APIs are toys; real apps need controllers.</div><div class="truth">They're <b>fully featured</b> — DI, model binding, validation, filters, auth, and OpenAPI all work. They're a great fit for focused services. Controllers add structure that helps in <i>large</i> apps, but "minimal" isn't "limited."</div></div>
+          <div class="mc"><div class="myth">You can't organize minimal APIs, so they sprawl.</div><div class="truth"><b>Route groups</b> (<code class="tok">app.MapGroup("/todos")</code>) and putting handlers in separate methods/classes keep them tidy. You get organization without the ceremony of a controller per resource.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--endpoint);border-color:rgba(78,214,107,.4);background:var(--endpoint-soft)">Endpoints</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Controllers &amp; MVC</h2></div>
+        <p>The other way to define endpoints is with <strong>controllers</strong> — classes that group related actions, the backbone of the <strong>MVC</strong> (Model-View-Controller) pattern. For APIs, you mark a class <code class="tok">[ApiController]</code>, derive from <code class="tok">ControllerBase</code>, and write action methods that return results. Attribute routing on the class and methods builds the URLs.</p>
+        <pre><span class="tag">ProductsController.cs</span><span class="attr">[ApiController]</span>
+<span class="attr">[Route(<span class="str">"api/[controller]"</span>)]</span>                 <span class="cmt">// → /api/products</span>
+<span class="kw2">public class</span> <span class="typ">ProductsController</span> : <span class="typ">ControllerBase</span>
+{
+    <span class="attr">[HttpGet(<span class="str">"{id:int}"</span>)]</span>                    <span class="cmt">// GET /api/products/42</span>
+    <span class="kw2">public</span> <span class="typ">ActionResult&lt;Product&gt;</span> <span class="fn">Get</span>(<span class="kw2">int</span> id) =>
+        _store.<span class="fn">Find</span>(id) <span class="kw">is</span> {} p ? <span class="fn">Ok</span>(p) : <span class="fn">NotFound</span>();
+}</pre>
+        <p>The MVC pattern separates the <strong>Model</strong> (data), the <strong>View</strong> (presentation — for server-rendered HTML apps), and the <strong>Controller</strong> (request handling and coordination). For JSON APIs there's no view; the controller returns data that's serialized to the response. The <code class="tok">[ApiController]</code> attribute adds API-friendly behavior automatically — like returning <code class="tok">400</code> for invalid models before your code even runs.</p>
+        <div class="xref"><span class="xi">↳ OOP &amp; Design Patterns</span><div>A controller is just a <b>class</b> with methods, and MVC is a <b>separation-of-concerns</b> pattern from <i>OOP &amp; Coding Principles</i> and <i>Design Patterns</i> — each piece has one responsibility. ASP.NET creates and wires controllers for you through dependency injection (Module 07), so they stay focused and testable.</div></div>
+        <p>Which to choose? Both are first-class and can coexist in one app. Reach for <strong>minimal APIs</strong> for small, focused services where brevity wins. Reach for <strong>controllers</strong> in larger applications that benefit from convention, grouping, filters, and a familiar structure across a big team. The request/response model underneath is identical.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">MVC is outdated — everyone uses minimal APIs now.</div><div class="truth">Controllers and MVC are <b>actively supported and widespread</b>, especially in large codebases and server-rendered apps. Minimal APIs are newer and leaner, not a replacement. Many teams use both — controllers for the big surface, minimal for small endpoints.</div></div>
+          <div class="mc"><div class="myth">The View in MVC means every app needs HTML templates.</div><div class="truth">Only server-rendered apps use Views. A <b>JSON API</b> skips the View entirely — the controller returns objects that get serialized. MVC's value for APIs is the Model/Controller split, not the templating.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--bind);border-color:rgba(232,179,65,.4);background:var(--bind-soft)">Input</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>Model binding &amp; validation</h2></div>
+        <p><strong>Model binding</strong> is the bridge from the raw HTTP request to typed C# values. ASP.NET inspects your handler's parameters and pulls each one from the right place: route parameters from the URL, simple values from the query string, and complex objects from the JSON request body. You write a method that takes a <code class="tok">Product</code>; the framework deserializes the body into one for you.</p>
+        <pre><span class="tag">c#</span><span class="kw2">record</span> <span class="typ">Product</span>(
+    <span class="attr">[Required]</span> <span class="kw2">string</span> Name,                 <span class="cmt">// must be present &amp; non-empty</span>
+    <span class="attr">[Range(<span class="num">0.01</span>, <span class="num">10000</span>)]</span> <span class="kw2">decimal</span> Price,    <span class="cmt">// must be in range</span>
+    <span class="attr">[Range(<span class="num">0</span>, <span class="num">99999</span>)]</span> <span class="kw2">int</span> Stock);
+
+app.<span class="fn">MapPost</span>(<span class="str">"/products"</span>, (<span class="typ">Product</span> p) => ...);  <span class="cmt">// p is bound from the JSON body</span></pre>
+        <p>Binding pairs naturally with <strong>validation</strong>. Data-annotation attributes like <code class="tok">[Required]</code> and <code class="tok">[Range]</code> declare the rules; with <code class="tok">[ApiController]</code> (or an explicit check), ASP.NET validates the bound model and returns <code class="tok">400 Bad Request</code> with the errors <em>before your handler runs</em>. Edit the incoming request below and watch it bind to the object — and watch validation react:</p>
+        <div class="lab" id="bindLab">
+          <div class="lab-head"><div><div class="pt">Request → object → validation</div><div class="ps">edit the body; watch it bind and validate</div></div></div>
+          <div class="lab-body">
+            <div class="bind-flow">
+              <div class="bind-card"><div class="bc-h"><span class="mb post">POST</span> /products · JSON body</div>
+                <div class="bind-field"><label>name</label><input id="bindName" value="Desk"></div>
+                <div class="bind-field"><label>price</label><input id="bindPrice" value="120"></div>
+                <div class="bind-field"><label>stock</label><input id="bindStock" value="5"></div>
+              </div>
+              <div class="bind-arrow">→</div>
+              <div class="bind-card"><div class="bc-h">Product (bound)</div><div id="bindObject"></div></div>
+            </div>
+            <div class="bind-valid" id="bindValid"></div>
+          </div>
+          <div class="lab-foot" id="bindFoot">Empty the name or set a negative price to see validation fail and return 400.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Model binding is just JSON deserialization.</div><div class="truth">JSON-to-object is only the <i>body</i> case. Binding also pulls from the <b>route</b>, <b>query string</b>, <b>headers</b>, and <b>form</b> data, choosing a source per parameter (overridable with <code class="tok">[FromQuery]</code>, <code class="tok">[FromBody]</code>, etc.). It assembles your parameters from the whole request.</div></div>
+          <div class="mc"><div class="myth">Validation runs automatically on every endpoint.</div><div class="truth">You opt in. With <code class="tok">[ApiController]</code>, controllers auto-return <code class="tok">400</code> on invalid models; minimal APIs need validation wired up explicitly. And validation only checks the rules you <b>declare</b> with attributes — no attributes, no checks.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--di);border-color:rgba(91,214,194,.4);background:var(--di-soft)">DI</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 07</span></div><h2>Dependency injection</h2></div>
+        <p><strong>Dependency injection</strong> (DI) is built into the heart of ASP.NET Core. Instead of your classes creating the things they depend on, they <em>declare</em> them as constructor parameters, and the framework's container <strong>supplies</strong> them. You register services once at startup; everything that needs them just asks, and the container wires the graph together.</p>
+        <pre><span class="tag">Program.cs</span>builder.Services.<span class="fn">AddSingleton</span>&lt;<span class="typ">IClock</span>, <span class="typ">SystemClock</span>&gt;();   <span class="cmt">// one for the whole app</span>
+builder.Services.<span class="fn">AddScoped</span>&lt;<span class="typ">IRepository</span>, <span class="typ">SqlRepository</span>&gt;();  <span class="cmt">// one per request</span>
+builder.Services.<span class="fn">AddTransient</span>&lt;<span class="typ">IEmailSender</span>, <span class="typ">Smtp</span>&gt;();        <span class="cmt">// new every time</span>
+
+<span class="cmt">// the container injects IRepository wherever it's needed:</span>
+app.<span class="fn">MapGet</span>(<span class="str">"/products"</span>, (<span class="typ">IRepository</span> repo) => repo.All());</pre>
+        <div class="xref"><span class="xi">↳ OOP &amp; Design Patterns</span><div>This is the <b>Dependency Inversion Principle</b> from <i>OOP &amp; Coding Principles</i>, made the default. Endpoints depend on an <code class="tok">IRepository</code> <i>interface</i>, not a concrete database class — so you can swap implementations or inject a fake in tests. ASP.NET's container is the practical machine behind "depend on abstractions, not concretions."</div></div>
+        <p>The key decision is the <strong>lifetime</strong>: how long an instance lives and who shares it. <strong>Singleton</strong> — one instance for the whole application. <strong>Scoped</strong> — one per HTTP request (shared within that request, fresh for the next). <strong>Transient</strong> — a brand-new instance every time it's requested. Pick a lifetime and handle two requests to see exactly which instances get shared:</p>
+        <div class="lab" id="diLab">
+          <div class="lab-head"><div><div class="pt">Service lifetimes</div><div class="ps">who shares an instance, and for how long</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-dl="singleton">Singleton</button>
+              <button class="ds-btn" data-dl="scoped">Scoped</button>
+              <button class="ds-btn" data-dl="transient">Transient</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="di-stage" id="diStage"></div>
+            <div class="di-legend" id="diLegend"></div>
+            <div class="ds-controls" style="justify-content:center;margin-top:10px"><button class="ds-btn" id="diRun">▸ handle two requests</button></div>
+          </div>
+          <div class="lab-foot" id="diFoot">Each request resolves the service twice. Watch how many distinct instances appear.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Dependency injection is a third-party library you install.</div><div class="truth">In ASP.NET Core it's <b>built in</b> — the container ships with the framework and the whole stack uses it. DI is fundamentally a <b>pattern</b> (pass dependencies in), with the container as the tool that automates wiring. You can swap containers, but you rarely need to.</div></div>
+          <div class="mc"><div class="myth">Just make everything a singleton — it's the most efficient.</div><div class="truth">A <b>captive dependency</b> bug lurks there: inject a <i>scoped</i> service (like a DB context) into a <i>singleton</i> and it gets frozen for the app's lifetime, shared unsafely across requests. Match lifetimes to purpose — per-request state is <b>scoped</b>, not singleton.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--resp);border-color:rgba(237,110,158,.4);background:var(--resp-soft)">Output</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 08</span></div><h2>Returning data &amp; status codes</h2></div>
+        <p>The final step is the <span class="concept resp">response</span>. An endpoint returns a result, and ASP.NET turns it into an HTTP response: a status code, headers, and a body. Return a plain object and it's serialized to JSON with a <code class="tok">200</code>; return a <code class="tok">Results</code> value and you control the code, headers, and body precisely. The strongly-typed <code class="tok">TypedResults</code> variants also document exactly what an endpoint can return.</p>
+        <pre><span class="tag">c#</span><span class="kw">return</span> <span class="typ">Results</span>.<span class="fn">Ok</span>(product);                       <span class="cmt">// 200 + JSON body</span>
+<span class="kw">return</span> <span class="typ">Results</span>.<span class="fn">Created</span>(<span class="str">$"/products/{id}"</span>, product);   <span class="cmt">// 201 + Location header</span>
+<span class="kw">return</span> <span class="typ">Results</span>.<span class="fn">NotFound</span>();                        <span class="cmt">// 404, no body</span>
+<span class="kw">return</span> <span class="typ">Results</span>.<span class="fn">BadRequest</span>(<span class="kw">new</span> { error = <span class="str">"Invalid"</span> }); <span class="cmt">// 400 + JSON</span>
+<span class="kw">return</span> <span class="typ">Results</span>.<span class="fn">NoContent</span>();                       <span class="cmt">// 204, nothing to return</span></pre>
+        <p>Pick a result and see the exact HTTP response it produces — status line, headers, and body:</p>
+        <div class="lab" id="respLab">
+          <div class="lab-head"><div><div class="pt">The response builder</div><div class="ps">a Results value → an HTTP response</div></div></div>
+          <div class="lab-body">
+            <div class="resp-pick" id="respPick"></div>
+            <div id="respOutput"></div>
+          </div>
+          <div class="lab-foot" id="respFoot">Each Results helper sets the status code, the right headers, and serializes the body for you.</div>
+        </div>
+        <p>For errors, ASP.NET favors a standard shape called <strong>Problem Details</strong> (<code class="tok">Results.Problem(...)</code>) — a consistent JSON structure with a status, title, and detail that clients can parse uniformly, rather than every endpoint inventing its own error format. JSON serialization itself is handled by <code class="tok">System.Text.Json</code> and is fully configurable (naming, casing, converters).</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Just return 200 for everything and put the real status in the body.</div><div class="truth">The HTTP status code is the <b>machine-readable</b> result. A created resource is <code class="tok">201</code>, a missing one <code class="tok">404</code>, a bad input <code class="tok">400</code>. Clients, caches, and tooling depend on it — burying the truth in a <code class="tok">200</code> body breaks all of them.</div></div>
+          <div class="mc"><div class="myth">Returning an object and returning <code class="tok">Results.Ok(object)</code> are different things.</div><div class="truth">For the success case they're equivalent — both yield <code class="tok">200</code> + JSON. <code class="tok">Results</code>/<code class="tok">TypedResults</code> matter when you need a <b>different</b> status, headers, or to express multiple possible outcomes from one endpoint clearly.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--cross);border-color:rgba(242,151,60,.4);background:var(--cross-soft)">Production</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 09</span></div><h2>Configuration &amp; options</h2></div>
+        <p>Real apps need settings that differ between your laptop and production — connection strings, API keys, feature flags. ASP.NET Core's <strong>configuration</strong> system reads from many <strong>layered providers</strong> and merges them, with later sources overriding earlier ones: <code class="tok">appsettings.json</code>, then <code class="tok">appsettings.{Environment}.json</code>, then environment variables, then command-line args. Your code reads the merged result through <code class="tok">IConfiguration</code> without caring where each value came from.</p>
+        <pre><span class="tag">appsettings.json</span>{
+  <span class="str">"ConnectionStrings"</span>: { <span class="str">"Db"</span>: <span class="str">"Server=...;Database=shop"</span> },
+  <span class="str">"Cache"</span>: { <span class="str">"DurationSeconds"</span>: <span class="num">60</span> }
+}</pre>
+        <p>Rather than reading loose strings everywhere, the <strong>options pattern</strong> binds a configuration section to a strongly-typed class you can inject. It's configuration as a real C# object, validated and discoverable:</p>
+        <pre><span class="tag">c#</span><span class="kw2">public class</span> <span class="typ">CacheOptions</span> { <span class="kw2">public int</span> DurationSeconds { <span class="kw2">get</span>; <span class="kw2">set</span>; } }
+
+builder.Services.<span class="fn">Configure</span>&lt;<span class="typ">CacheOptions</span>&gt;(
+    builder.Configuration.<span class="fn">GetSection</span>(<span class="str">"Cache"</span>));        <span class="hlok">// bind the section</span>
+
+<span class="cmt">// inject it anywhere:</span>
+app.<span class="fn">MapGet</span>(<span class="str">"/x"</span>, (<span class="typ">IOptions&lt;CacheOptions&gt;</span> opt) => opt.Value.DurationSeconds);</pre>
+        <p>The active <strong>environment</strong> (Development, Staging, Production) is itself a setting that switches behavior — detailed error pages in Development, terse ones in Production. ASP.NET reads it from the <code class="tok">ASPNETCORE_ENVIRONMENT</code> variable, and you branch on <code class="tok">app.Environment.IsDevelopment()</code>.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Configuration means the <code class="tok">appsettings.json</code> file.</div><div class="truth">That file is one <b>provider</b> among many. Environment variables, command-line args, user secrets, and cloud key vaults all feed the same <code class="tok">IConfiguration</code>, layered so production can override file defaults without changing code.</div></div>
+          <div class="mc"><div class="myth">Secrets like passwords belong in <code class="tok">appsettings.json</code>.</div><div class="truth">Never commit secrets to source. Use <b>user secrets</b> in development and <b>environment variables</b> or a <b>key vault</b> in production. The layering exists precisely so secrets stay out of your repo while still reaching <code class="tok">IConfiguration</code>.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--cross);border-color:rgba(242,151,60,.4);background:var(--cross-soft)">Production</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 10</span></div><h2>Errors, logging &amp; custom middleware</h2></div>
+        <p>Things go wrong, and a production API must fail gracefully. Rather than wrapping every endpoint in <code class="tok">try/catch</code>, you handle exceptions <strong>once</strong>, at the top of the pipeline, with exception-handling middleware. It catches anything thrown downstream and turns it into a clean response — typically <strong>Problem Details</strong> — while hiding stack traces from clients in production.</p>
+        <pre><span class="tag">Program.cs</span><span class="kw">if</span> (app.Environment.<span class="fn">IsDevelopment</span>())
+    app.<span class="fn">UseDeveloperExceptionPage</span>();   <span class="cmt">// rich diagnostics — dev only</span>
+<span class="kw">else</span>
+    app.<span class="fn">UseExceptionHandler</span>();        <span class="hlok">// safe Problem Details — production</span></pre>
+        <p>For visibility, ASP.NET has built-in <strong>logging</strong>. Inject <code class="tok">ILogger&lt;T&gt;</code> and write structured log entries at appropriate <strong>levels</strong> (Trace, Debug, Information, Warning, Error, Critical). Logs flow to configurable providers — console, files, or cloud platforms — and structured logging keeps the data queryable, not just human-readable.</p>
+        <pre><span class="tag">c#</span>app.<span class="fn">MapGet</span>(<span class="str">"/orders/{id}"</span>, (<span class="kw2">int</span> id, <span class="typ">ILogger&lt;Program&gt;</span> log) => {
+    log.<span class="fn">LogInformation</span>(<span class="str">"Fetching order {OrderId}"</span>, id);  <span class="cmt">// structured</span>
+    ...
+});</pre>
+        <p>When you need your own cross-cutting behavior — request timing, custom headers, rate limiting — you write <strong>custom middleware</strong>: a component that receives the request and the <code class="tok">next</code> delegate, does work around the call, and slots into the pipeline. It's the same onion layer you visualized in Module 02, now authored by you.</p>
+        <pre><span class="tag">c#</span>app.<span class="fn">Use</span>(<span class="kw">async</span> (context, next) => {
+    <span class="kw2">var</span> sw = <span class="typ">Stopwatch</span>.<span class="fn">StartNew</span>();
+    <span class="kw">await</span> <span class="fn">next</span>(context);                 <span class="cmt">// run the rest of the pipeline</span>
+    log.<span class="fn">LogInformation</span>(<span class="str">"Took {Ms}ms"</span>, sw.ElapsedMilliseconds);  <span class="hlok">// runs on the way out</span>
+});</pre>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Wrap every endpoint in try/catch to handle errors.</div><div class="truth">Handle the unexpected <b>once</b>, with exception middleware at the top of the pipeline — it catches everything below. Reserve local <code class="tok">try/catch</code> for errors you can <i>specifically recover from</i> right there, not as a blanket net.</div></div>
+          <div class="mc"><div class="myth"><code class="tok">Console.WriteLine</code> is fine for logging.</div><div class="truth">Use <code class="tok">ILogger</code>. It gives you <b>levels</b>, <b>structured</b> data, and pluggable destinations (files, cloud, dashboards), and it can be filtered and turned down in production. <code class="tok">Console.WriteLine</code> has none of that and vanishes outside a console.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 11</span></div><h2>Putting it together</h2></div>
+        <p>Step back and trace one request through everything you've learned. A client sends <code class="tok"><span class="mb get">GET</span> /api/products/42</code>, and it flows through the whole machine you've now seen piece by piece:</p>
+        <div class="route-vals" style="line-height:2.1">
+          <div><span class="rv-k">1.</span> <span class="rv-v">Kestrel</span> accepts the request and hands it to the <span style="color:var(--mw)">pipeline</span></div>
+          <div><span class="rv-k">2.</span> <span style="color:var(--mw)">Middleware</span> runs inbound: exception handler, then auth — which may short-circuit</div>
+          <div><span class="rv-k">3.</span> <span style="color:var(--route)">Routing</span> matches <code class="tok">/api/products/{id:int}</code> and captures <code class="tok">id = 42</code></div>
+          <div><span class="rv-k">4.</span> <span style="color:var(--bind)">Model binding</span> turns <code class="tok">"42"</code> into an <code class="tok">int</code> parameter</div>
+          <div><span class="rv-k">5.</span> The <span style="color:var(--endpoint)">endpoint</span> runs, with an <code class="tok">IRepository</code> <span style="color:var(--di)">injected</span> by the container</div>
+          <div><span class="rv-k">6.</span> It returns <code class="tok">Results.Ok(product)</code> → a <span style="color:var(--resp)">200 response</span> with a JSON body</div>
+          <div><span class="rv-k">7.</span> The <span style="color:var(--resp)">response</span> flows back <em>out</em> through the middleware and to the client</div>
+        </div>
+        <p style="margin-top:22px">Every feature in this course is one station on that journey, and they compose into a clean architecture: thin <strong>endpoints</strong> that bind and validate input, <strong>services</strong> (registered with DI) that hold the real logic, <strong>models</strong> that carry data, and <strong>middleware</strong> for the concerns that cut across everything. Keep endpoints small, push logic into injected services, and let the pipeline handle the cross-cutting work.</p>
+        <div class="note key">
+          <div class="nh">Where Entity Framework fits</div>
+          <p>The one big piece still abstracted away above is <code class="tok">IRepository</code> — the <strong>data layer</strong>. That's exactly where <strong>Entity Framework Core</strong> comes in: it maps your C# <em>models</em> to database tables and lets you query them with the same <em>LINQ</em> from the C# course. You register a <code class="tok">DbContext</code> as a <strong>scoped</strong> service (one per request — now you know why), inject it into your endpoints, and your <code class="tok">.Where(...).Select(...)</code> queries become SQL. ASP.NET handles the request; EF handles the data.</p>
+        </div>
+        <p>You came in knowing C#; you can now turn that into a real, running web API — routed, validated, dependency-injected, and returning the right responses. The framework's job, and yours, was always the same simple contract: a request goes in, a response comes out.</p>
+
+        <div class="closing">
+          <h2>Request in, response out</h2>
+          <p>From your first <code class="tok">MapGet</code> to a full pipeline with routing, binding, dependency injection, and error handling, one idea carried all of it: ASP.NET Core is a machine for turning HTTP requests into HTTP responses, and every feature is a station along that path. Master the flow and the framework stops being a mystery box.</p>
+          <p>The last piece is data. Next in the track, Entity Framework Core connects these APIs to a real database — your models become tables, your LINQ becomes SQL, and the C# → ASP.NET → EF journey is complete.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering ASP.NET Core — part of the C# → ASP.NET → Entity Framework track, and a companion to Big&nbsp;O Complexity, Data Structures, Design Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, and C#&nbsp;Fundamentals. Built to be poked at.</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="js/mastering-aspnet-core.js"></script>
+</body>
+</html>

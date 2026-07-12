@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript · The Type System · The Growth Lab</title>
+<meta name="description" content="A deep dive into TypeScript's type system as a language in its own right — types as sets, structural typing and assignability, unions and control-flow narrowing, generics and constraints, inference and widening, conditional types with infer, mapped and template-literal types, keyof and indexed access, function variance, user-defined type guards, and the fact that all types are erased at runtime.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/typescript-type-system.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="4.5" width="18" height="15" rx="3.5" stroke="#3B82F6" stroke-width="1.5" opacity="0.5"/>
+        <path d="M10 9 L6.5 12 L10 15" stroke="#3B82F6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 9 L17.5 12 L14 15" stroke="#3B82F6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="1.15" fill="#3B82F6"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>TypeScript · Types</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="4.5" width="18" height="15" rx="3.5" stroke="#3B82F6" stroke-width="1.5" opacity="0.5"/>
+            <path d="M10 9 L6.5 12 L10 15" stroke="#3B82F6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 9 L17.5 12 L14 15" stroke="#3B82F6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="1.15" fill="#3B82F6"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>TypeScript · Types</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Structural Foundations · Advanced</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Types as sets</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Structural typing &amp; assignability</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Unions &amp; narrowing</span></a>
+      <div class="nav-group-label">Generics &amp; Inference · Advanced</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Generics &amp; constraints</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Type inference &amp; widening</span></a>
+      <div class="nav-group-label">Type-Level Programming · Expert</div>
+      <a class="module" href="#m5"><span class="num">05</span><span>Conditional types &amp; infer</span></a>
+      <a class="module" href="#m6"><span class="num">06</span><span>Mapped &amp; template types</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>keyof &amp; indexed access</span></a>
+      <div class="nav-group-label">The Checker &amp; Runtime · Expert</div>
+      <a class="module" href="#m8"><span class="num">08</span><span>Variance &amp; function types</span></a>
+      <a class="module" href="#m9"><span class="num">09</span><span>Type guards &amp; assertions</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Types are erased</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>The whole type system</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Advanced → Expert · The TypeScript type system</div>
+        <h1>Types all the way down.<br><span class="grad">A language that runs on types.</span></h1>
+        <p class="lede">Most people use TypeScript as annotations bolted onto JavaScript. But the type system is a <em>full programming language</em> in its own right — one that runs at compile time, computing new types from old ones. A type is a <strong>set of values</strong>; assignability is the subset relation; <code class="tok">never</code> is the empty set and <code class="tok">unknown</code> the universal one. From there it climbs: structural (not nominal) compatibility, control-flow <strong>narrowing</strong> of unions, generics with constraints, inference, and then genuine type-level programming — <strong>conditional types</strong> with <code class="tok">infer</code>, <strong>mapped types</strong>, <strong>template-literal types</strong> — that compute one type from another. And at the end, the twist that separates it from C#: none of it exists at runtime. <code class="tok">tsc</code> checks every type, then <strong>erases</strong> them all and emits plain JavaScript. Ten labs; the running project's client is Snip.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A type-level program: the User type flows through keyof to a union of its keys, through a template-literal type to on-prefixed names, and through a mapped type into a Handlers object type — all computed at compile time"></svg>
+          <div class="hero-cap">keyof → template literal → mapped type — <span style="color:var(--accent)">a program that runs on types</span></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Enter the type system →</a>
+          <a class="btn btn-ghost" href="#m6">Jump to mapped types</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 00</span></div><h2>Types as sets</h2></div>
+        <p>The single mental model that unlocks TypeScript: <strong>a type is a set of values</strong>. <code class="tok">string</code> is the set of all strings; <code class="tok">"click"</code> is a set with one element; <code class="tok">boolean</code> is <code class="tok">{ true, false }</code>. Once you see types as sets, the whole system follows. <strong>Assignability</strong> is the subset relation — a value of type A fits where B is expected exactly when A ⊆ B. A <strong>union</strong> <code class="tok">A | B</code> is set union; an <strong>intersection</strong> <code class="tok">A &amp; B</code> is set intersection. <code class="tok">never</code> is the empty set ∅ (no values), and <code class="tok">unknown</code> is the universal set (every value). Every rule in this course is a fact about sets.</p>
+        <p>Two more foundations. TypeScript is <strong>structural</strong>, not nominal: compatibility is decided by an object's <em>shape</em>, not the name you declared it with — if it has the required members, it fits. And the type system is a <strong>compile-time layer</strong> that computes with types and then vanishes: <code class="tok">tsc</code> checks everything and emits JavaScript with the types erased. So the type system is doing real work — a whole language of its own — that leaves no trace at runtime. That combination, sets plus structural plus erased, is what makes TypeScript both extraordinarily expressive and occasionally surprising.</p>
+        <span class="filetag">types-are-sets.ts</span>
+        <pre><span class="kw">type</span> <span class="typ">Kind</span> = <span class="str">"click"</span> | <span class="str">"scroll"</span>;   <span class="cmt">// the set { "click", "scroll" }</span>
+
+<span class="kw">const</span> k: <span class="typ">Kind</span> = <span class="str">"click"</span>;          <span class="hlok">// "click" ⊆ Kind — assignable</span>
+<span class="kw">const</span> s: <span class="typ">string</span> = k;              <span class="hlok">// Kind ⊆ string — assignable (widening)</span>
+<span class="kw">const</span> bad: <span class="typ">Kind</span> = someString;      <span class="hlbad">// string ⊄ Kind — NOT assignable</span>
+
+<span class="kw">type</span> <span class="typ">Never</span> = <span class="str">"click"</span> &amp; <span class="str">"scroll"</span>;  <span class="cmt">// ∅ — no value is both → never</span></pre>
+        <p>Every module builds on this. Narrowing shrinks a set as the compiler learns more; generics are functions over sets; conditional and mapped types compute new sets from old ones; and the checker's job is to verify subset relationships everywhere. Hold the model the whole way: <strong>a type is a set, assignability is ⊆, and the type system is a language that computes with those sets and then disappears</strong>.</p>
+        <div class="xref"><span class="xi">↳ OOP &amp; Coding Principles · Advanced C#</span><div>This is the opposite of C#'s <b>nominal</b> typing, where a class matches only its declared name and base types. TS's structural model is duck typing made static — and its erasure is the mirror image of C#'s reflection: C# keeps full type info at runtime, TypeScript keeps none.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Types are labels the compiler attaches to variables.</div><div class="truth">Types are <b>sets of values</b>, and the relationships between them (subset, union, intersection) are what the checker reasons about. Thinking in sets explains assignability, narrowing, and <code class="tok">never</code> far better than thinking in labels — it's the model the compiler actually uses.</div></div>
+          <div class="mc"><div class="myth">TypeScript is just JavaScript with types that stick around.</div><div class="truth">The types are <b>erased</b> — the emitted JavaScript has none of them. TypeScript is a compile-time verification layer plus a genuinely powerful type-level language, sitting on top of JS. At runtime, there's only JavaScript; the entire type system has done its work and left.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--struct);border-color:var(--accent-line);background:var(--struct-soft)">Structural</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 01</span></div><h2>Structural typing &amp; assignability</h2></div>
+        <p>TypeScript decides whether one type fits another by <strong>shape</strong>, never by name. An object is assignable to a target type if it has (at least) all the required members with compatible types — it doesn't matter what you called it or whether it declares anything extra. This is <em>structural</em> typing, and it's why two unrelated types with the same members are interchangeable. There's one wrinkle: <strong>excess-property checks</strong>. A fresh object <em>literal</em> assigned directly is checked more strictly — extra properties are flagged as likely typos — but the same object stored in a variable first passes freely, because structurally it still has everything required.</p>
+        <span class="filetag">assignability.ts</span>
+        <pre><span class="kw">type</span> <span class="typ">Point</span> = { x: <span class="typ">number</span>; y: <span class="typ">number</span> };
+
+<span class="kw">const</span> a: <span class="typ">Point</span> = { x: <span class="num">1</span>, y: <span class="num">2</span> };              <span class="hlok">// ✓ exact shape</span>
+<span class="kw">const</span> b: <span class="typ">Point</span> = { x: <span class="num">1</span> };                    <span class="hlbad">// ✗ Property 'y' is missing</span>
+<span class="kw">const</span> c: <span class="typ">Point</span> = { x: <span class="num">1</span>, y: <span class="num">2</span>, z: <span class="num">3</span> };       <span class="hlbad">// ✗ excess property 'z' (literal)</span>
+<span class="kw">const</span> raw = { x: <span class="num">1</span>, y: <span class="num">2</span>, z: <span class="num">3</span> }; <span class="kw">const</span> d: <span class="typ">Point</span> = raw;  <span class="hlok">// ✓ via a variable — z ignored</span></pre>
+        <p>Build an object by toggling which members it has, choose whether it's assigned as a literal or via a variable, and watch the checker decide assignability to <code class="tok">Point</code>:</p>
+        <div class="lab" id="structLab">
+          <div class="lab-head"><div><div class="pt">Does the shape fit?</div><div class="ps">structural match · excess-property check</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="saReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">target · type Point = &#123; x: number; y: number &#125;</div>
+            <div class="dp-h" style="margin-top:2px">source object — toggle members</div>
+            <div class="chips" id="saChips"><span class="chip-t on" id="saX">x: number</span><span class="chip-t on" id="saY">y: number</span><span class="chip-t" id="saZ">z: number (extra)</span></div>
+            <div style="margin-bottom:12px"><div class="dp-h">assigned as</div><div class="seg" id="saMode"><button class="seg-opt on" data-mode="literal">object literal</button><button class="seg-opt" data-mode="variable">via a variable</button></div></div>
+            <div class="sa-shape" id="saShape">const p: Point = { x, y }</div>
+            <div class="sa-verd ok" id="saVerd">✓ assignable</div>
+            <div class="wlog" id="saLog"></div>
+          </div>
+          <div class="lab-foot" id="saFoot">Missing a required member fails structurally. An extra member fails only on a fresh object literal (excess-property check) — route it through a variable and it's accepted, because the shape still contains everything Point needs.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ OOP &amp; Coding Principles</span><div>Structural typing is the "program to an interface" principle without the ceremony — any object of the right shape satisfies the contract, no <code class="tok">implements</code> declaration needed. It's duck typing, but fully checked at compile time.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Two types must share a name or base to be compatible.</div><div class="truth">Compatibility is <b>by shape</b>. A <code class="tok">{ x; y }</code> and a differently-named <code class="tok">Vector2</code> with the same members are freely interchangeable. TypeScript never checks the declared name — only whether the required members are present and compatible.</div></div>
+          <div class="mc"><div class="myth">Extra properties always cause an error.</div><div class="truth">Only <b>fresh object literals</b> are checked for excess properties, as a typo-catching heuristic. The identical object assigned through a variable passes, because structurally it has everything required. Same values, different check — and knowing which is which explains a lot of confusing errors.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--union);border-color:rgba(45,212,191,.4);background:var(--union-soft)">Unions</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 02</span></div><h2>Unions &amp; narrowing</h2></div>
+        <p>A union type <code class="tok">A | B | C</code> is a value that could be any one of several types — and the checker's superpower is <strong>narrowing</strong>: as control flow proves which one it is, the type shrinks. A <code class="tok">typeof</code> check, an <code class="tok">in</code> check, or best of all a <strong>discriminated union</strong> (a shared literal <code class="tok">kind</code> field) lets a <code class="tok">switch</code> narrow the value to exactly one member in each branch, unlocking that member's specific properties. And <code class="tok">never</code> makes it <em>exhaustive</em>: in the default branch, if you've handled every case, the value has narrowed to <code class="tok">never</code> — so a leftover case becomes a compile error. This is the same flow analysis as C#'s nullable narrowing, generalized to any union.</p>
+        <span class="filetag">narrowing.ts</span>
+        <pre><span class="kw">type</span> <span class="typ">Ev</span> =
+  | { kind: <span class="str">"click"</span>;  url: <span class="typ">string</span> }
+  | { kind: <span class="str">"scroll"</span>; depth: <span class="typ">number</span> }
+  | { kind: <span class="str">"error"</span>;  message: <span class="typ">string</span> };
+
+<span class="kw">switch</span> (ev.kind) {
+  <span class="kw">case</span> <span class="str">"click"</span>:  ev.url;      <span class="hlok">// narrowed to the click member</span>
+  <span class="kw">case</span> <span class="str">"scroll"</span>: ev.depth;    <span class="cmt">// narrowed to the scroll member</span>
+  <span class="kw">default</span>: <span class="kw">const</span> _: <span class="typ">never</span> = ev;  <span class="hl">// exhaustive — leftover cases won't compile</span>
+}</pre>
+        <p>Pick which event you're holding and watch the <code class="tok">switch</code> narrow the union to a single member — exposing only that member's property. Then drop the <code class="tok">error</code> case and see the exhaustiveness check fail:</p>
+        <div class="lab" id="narrowLab">
+          <div class="lab-head"><div><div class="pt">The union shrinks to one</div><div class="ps">discriminated union · exhaustive with never</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="nrClick">ev = click</button>
+              <button class="ds-btn" id="nrScroll">ev = scroll</button>
+              <button class="ds-btn" id="nrError">ev = error</button>
+              <button class="ds-btn primary" id="nrExhaust">error case: on</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">ev : Ev &nbsp;—&nbsp; narrowed type in the matched branch</div>
+            <div class="type-box" id="nrType">ev: Ev  <span class="tl">// pick an event to narrow</span></div>
+            <div class="nr-arms" id="nrArms">
+              <div class="nr-arm" id="nrArmClick"><span><span class="na-k">case "click"</span> → ev.url</span><span class="na-t">{ kind: "click"; url: string }</span></div>
+              <div class="nr-arm" id="nrArmScroll"><span><span class="na-k">case "scroll"</span> → ev.depth</span><span class="na-t">{ kind: "scroll"; depth: number }</span></div>
+              <div class="nr-arm" id="nrArmError"><span><span class="na-k">case "error"</span> → ev.message</span><span class="na-t">{ kind: "error"; message: string }</span></div>
+            </div>
+            <div class="nr-check ok" id="nrCheck">✓ exhaustive — in default, ev narrows to never</div>
+            <div class="stateline" id="nrStatus">pick an event to see the union narrow to a single member</div>
+            <div class="wlog" id="nrLog"></div>
+          </div>
+          <div class="lab-foot" id="nrFoot">The shared kind field discriminates the union: each case narrows ev to exactly one member, exposing its property. With every case handled, the default sees never — drop one and that assignment fails, so the compiler catches the missing case.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. II (nullable) · Vol. I (pattern matching)</span><div>This is the C# null-flow lab generalized: there, the compiler narrowed <code class="tok">string?</code> from maybe-null to not-null through a guard; here it narrows any union through control flow. And the <code class="tok">never</code>-based exhaustiveness is exactly C#'s <code class="tok">switch</code> exhaustiveness (CS8509) — the empty set standing in for "no cases left."</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">To use a union you have to cast it to the type you want.</div><div class="truth">You <b>narrow</b> it instead — a <code class="tok">typeof</code>, <code class="tok">in</code>, or discriminant check proves which member it is, and the compiler updates the type automatically. Casting throws away safety; narrowing keeps it, and the checker rewards you with exactly the right member's properties.</div></div>
+          <div class="mc"><div class="myth">A default case is just defensive boilerplate.</div><div class="truth">Assigning the value to <code class="tok">never</code> in the default turns it into an <b>exhaustiveness check</b>. If every case is handled, the value is <code class="tok">never</code> there and it compiles; add a new union member and forget a case, and the assignment fails — the compiler points you straight at the gap.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--generic);border-color:rgba(232,179,65,.4);background:var(--generic-soft)">Generics</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 03</span></div><h2>Generics &amp; constraints</h2></div>
+        <p>Generics are <strong>functions at the type level</strong>: a type parameter <code class="tok">T</code> is an input the compiler fills in. The magic is <em>inference</em> — you rarely write the type argument, because TypeScript deduces <code class="tok">T</code> from the value you pass. A <strong>constraint</strong> (<code class="tok">T extends { id: number }</code>) restricts the input to types that have a certain shape, and — crucially — preserves the specific type rather than collapsing it to the constraint. So a well-constrained generic accepts exactly the right values, infers their precise type, and rejects everything else, all before your code runs.</p>
+        <span class="filetag">generics.ts</span>
+        <pre><span class="kw">function</span> <span class="fn">save</span>&lt;<span class="typ">T</span> <span class="kw">extends</span> { id: <span class="typ">number</span> }&gt;(x: <span class="typ">T</span>): <span class="typ">T</span> { <span class="kw">return</span> x; }
+
+<span class="fn">save</span>({ id: <span class="num">1</span>, name: <span class="str">"Snip"</span> });   <span class="hlok">// T inferred as { id: number; name: string }</span>
+<span class="fn">save</span>({ name: <span class="str">"Snip"</span> });          <span class="hlbad">// ✗ Property 'id' is missing (constraint)</span>
+<span class="fn">save</span>(<span class="num">42</span>);                     <span class="hlbad">// ✗ number does not satisfy { id: number }</span></pre>
+        <p>Call the constrained generic <code class="tok">save&lt;T extends { id: number }&gt;</code> with different arguments and watch <code class="tok">T</code> get inferred — or the constraint reject a value that doesn't fit:</p>
+        <div class="lab" id="genericLab">
+          <div class="lab-head"><div><div class="pt">T is inferred, the constraint is enforced</div><div class="ps">extends · inference</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="geObj">save(&#123; id, name &#125;)</button>
+              <button class="ds-btn" id="geNoId">save(&#123; name &#125;)</button>
+              <button class="ds-btn" id="geNum">save(42)</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">inferred T</div>
+            <div class="type-box" id="geInferred">T = <span class="tl">// call save() to infer T</span></div>
+            <div class="sa-verd" id="geVerd">call the generic with an argument</div>
+            <div class="wlog" id="geLog"></div>
+          </div>
+          <div class="lab-foot" id="geFoot">A value with id infers T as its full, precise shape and passes. A value missing id fails the constraint; a number isn't even an object with id. The constraint gates the input while inference keeps the exact type.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Data Structures · Advanced C# (generics)</span><div>Same idea as C# generics with a <code class="tok">where</code> constraint — but with a twist that matters at runtime: C# <b>specializes</b> generics into real machine code per type, while TypeScript generics are pure compile-time checks that <b>erase</b> entirely. One produces code; the other produces only guarantees.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">You have to write the type argument, like save&lt;User&gt;(...).</div><div class="truth">Almost never — TypeScript <b>infers</b> it from the argument. Explicit type arguments are for the rare cases where inference can't (or shouldn't) figure it out. Good generic APIs are designed so the caller writes no type arguments at all.</div></div>
+          <div class="mc"><div class="myth">A constraint T extends X makes T behave like X.</div><div class="truth">The constraint <b>gates</b> what's allowed in, but <code class="tok">T</code> stays the caller's <i>specific</i> type — so <code class="tok">save</code> returns the exact shape passed, not a widened <code class="tok">{ id: number }</code>. That preservation of the precise type is what makes generics compose instead of losing information.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--infer);border-color:rgba(86,199,255,.4);background:var(--infer-soft)">Inference</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 04</span></div><h2>Type inference &amp; widening</h2></div>
+        <p>TypeScript infers a type for almost everything you don't annotate — and the rules around <strong>widening</strong> trip up even experienced developers. A <code class="tok">let</code> binding of <code class="tok">"click"</code> is inferred as <code class="tok">string</code> (widened, because a <code class="tok">let</code> can be reassigned), while a <code class="tok">const</code> of a primitive keeps the literal type <code class="tok">"click"</code>. But <code class="tok">const</code> on an <em>object</em> does <strong>not</strong> deep-narrow its members — they still widen. To freeze everything to its narrowest literal, readonly form, you need <code class="tok">as const</code>. Knowing exactly what gets inferred is the difference between a type that's precise and one that's uselessly broad.</p>
+        <span class="filetag">widening.ts</span>
+        <pre><span class="kw">let</span>   a = <span class="str">"click"</span>;                 <span class="cmt">// a: string  (widened — let is mutable)</span>
+<span class="kw">const</span> b = <span class="str">"click"</span>;                 <span class="hlok">// b: "click" (literal kept)</span>
+
+<span class="kw">const</span> o = { kind: <span class="str">"click"</span>, depth: <span class="num">3</span> };            <span class="cmt">// { kind: string; depth: number }</span>
+<span class="kw">const</span> p = { kind: <span class="str">"click"</span>, depth: <span class="num">3</span> } <span class="kw">as const</span>;   <span class="hlok">// { readonly kind: "click"; readonly depth: 3 }</span></pre>
+        <p>Take the object <code class="tok">{ kind: "click", depth: 3 }</code> and see how it's inferred under each declaration. Note that <code class="tok">const</code> alone still widens the members — only <code class="tok">as const</code> pins them to literals:</p>
+        <div class="lab" id="inferLab">
+          <div class="lab-head"><div><div class="pt">What does TypeScript infer?</div><div class="ps">widening · literal types · as const</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="irReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">declaration of &nbsp;&#123; kind: "click", depth: 3 &#125;</div><div class="seg" id="irMode"><button class="seg-opt on" data-mode="let">let o = …</button><button class="seg-opt" data-mode="const">const o = …</button><button class="seg-opt" data-mode="asconst">const o = … as const</button></div></div>
+            <div class="dp-h">inferred type</div>
+            <div class="type-box" id="irType"></div>
+            <div class="stateline" id="irStatus">switch the declaration to see how inference changes</div>
+            <div class="wlog" id="irLog"></div>
+          </div>
+          <div class="lab-foot" id="irFoot">let widens to the general type; const keeps a primitive's literal but still widens object members; as const freezes every member to its readonly literal type. The narrower the inference, the more the type system can prove.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">const always gives me a literal type.</div><div class="truth">Only for <b>primitives</b>. <code class="tok">const s = "click"</code> is <code class="tok">"click"</code>, but <code class="tok">const o = { k: "click" }</code> infers <code class="tok">{ k: string }</code> — the members widen because the object is still mutable. Reach for <code class="tok">as const</code> when you need the members frozen to literals too.</div></div>
+          <div class="mc"><div class="myth">Widening is a bug I should always fight.</div><div class="truth">It's usually what you want — a <code class="tok">let</code> counter should be <code class="tok">number</code>, not <code class="tok">0</code>. Widening only bites when you <i>need</i> the literal (discriminants, tuple shapes, config objects), and <code class="tok">as const</code> is the precise tool for exactly those cases. Understand it and you stop over-annotating.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--cond);border-color:rgba(78,214,107,.4);background:var(--cond-soft)">Type-level</span><span class="lvl expert">Expert</span><span class="mod-num">Module 05</span></div><h2>Conditional types &amp; infer</h2></div>
+        <p>Here the type system becomes a real programming language. A <strong>conditional type</strong> — <code class="tok">T extends U ? X : Y</code> — branches on a type, computing one type or another. And <code class="tok">infer</code> is pattern-matching for types: inside the <code class="tok">extends</code> clause, <code class="tok">infer E</code> introduces a new type variable that TypeScript <em>solves for</em> by matching structure. That's how the built-in <code class="tok">ReturnType&lt;T&gt;</code> extracts a function's return type, and how you pull the element type out of an array or the value out of a <code class="tok">Promise</code>. Conditionals plus <code class="tok">infer</code> plus recursion make the type system Turing-complete — you're writing programs whose values are types.</p>
+        <span class="filetag">conditional.ts</span>
+        <pre><span class="kw">type</span> <span class="typ">Unpack</span>&lt;<span class="typ">T</span>&gt; =
+    <span class="typ">T</span> <span class="kw">extends</span> <span class="typ">Array</span>&lt;<span class="kw">infer</span> <span class="typ">E</span>&gt;   ? <span class="typ">E</span> :   <span class="cmt">// if T is an array, extract its element type</span>
+    <span class="typ">T</span> <span class="kw">extends</span> <span class="typ">Promise</span>&lt;<span class="kw">infer</span> <span class="typ">E</span>&gt; ? <span class="typ">E</span> :   <span class="cmt">// else if a Promise, extract its value type</span>
+    <span class="typ">T</span>;                             <span class="hl">// else pass T through unchanged</span>
+
+<span class="kw">type</span> <span class="typ">A</span> = <span class="typ">Unpack</span>&lt;<span class="typ">string</span>[]&gt;;      <span class="hlok">// string</span></pre>
+        <p>Feed the conditional type <code class="tok">Unpack&lt;T&gt;</code> different inputs and watch <code class="tok">infer</code> match the structure and extract the inner type — or fall through when nothing matches:</p>
+        <div class="lab" id="condLab">
+          <div class="lab-head"><div><div class="pt">Match the structure, extract the type</div><div class="ps">T extends … ? … : … · infer</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="cdArr">Unpack&lt;string[]&gt;</button>
+              <button class="ds-btn" id="cdProm">Unpack&lt;Promise&lt;number&gt;&gt;</button>
+              <button class="ds-btn" id="cdPrim">Unpack&lt;boolean&gt;</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">evaluation</div>
+            <div class="type-box" id="cdResult">Unpack&lt;T&gt; = <span class="tl">// pick an input type</span></div>
+            <div class="stateline" id="cdStatus">choose an input and watch infer extract the inner type</div>
+            <div class="wlog" id="cdLog"></div>
+          </div>
+          <div class="lab-foot" id="cdFoot">string[] matches Array&lt;infer E&gt; with E = string. Promise&lt;number&gt; matches the second branch with E = number. boolean matches neither and falls through to T. infer solves the variable by structural matching.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (expression trees)</span><div>Conditional types are metaprogramming, like C#'s expression trees — but they run in the <b>type checker</b>, computing types instead of values. <code class="tok">infer</code> is the type-level equivalent of destructuring a tree to pull out a node: pattern-matching over structure to extract a piece.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Conditional types are just ternaries for picking between two known types.</div><div class="truth">With <code class="tok">infer</code> and recursion they're a full <b>computation</b> — extracting, transforming, and building types. <code class="tok">ReturnType</code>, <code class="tok">Awaited</code>, and most of the utility types are conditional types doing real work, and you can write your own that compute arbitrarily complex results.</div></div>
+          <div class="mc"><div class="myth">infer is an obscure keyword I'll never need.</div><div class="truth">It's how you <b>reach inside</b> a type to grab a part — the element of an array, the resolved value of a promise, the parameters of a function. Any time you've wished you could say "the type of the thing inside this type," <code class="tok">infer</code> in a conditional is the answer.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--mapped);border-color:rgba(251,113,133,.4);background:var(--mapped-soft)">Type-level</span><span class="lvl expert">Expert</span><span class="mod-num">Module 06</span></div><h2>Mapped &amp; template types</h2></div>
+        <p>This is the peak of type-level programming, and the program from the hero. A <strong>mapped type</strong> — <code class="tok">{ [K in keyof T]: … }</code> — iterates over the keys of a type and builds a new object type, transforming each member. Combine it with <strong>key remapping</strong> (<code class="tok">as</code>) and <strong>template-literal types</strong> (types built from string interpolation, like <code class="tok">`on${Capitalize&lt;K&gt;}`</code>) and you can compute an entirely new shape from an old one. The classic example: derive a <code class="tok">Handlers&lt;T&gt;</code> type whose keys are <code class="tok">onId</code>, <code class="tok">onName</code>, … and whose values are typed callbacks — generated automatically from the original object's keys and value types.</p>
+        <span class="filetag">mapped.ts</span>
+        <pre><span class="kw">type</span> <span class="typ">User</span> = { id: <span class="typ">number</span>; name: <span class="typ">string</span> };
+
+<span class="kw">type</span> <span class="typ">Handlers</span>&lt;<span class="typ">T</span>&gt; = {
+  [<span class="typ">K</span> <span class="kw">in keyof</span> <span class="typ">T</span> <span class="kw">as</span> <span class="str">`on${Capitalize&lt;string &amp; K&gt;}`</span>]: (v: <span class="typ">T</span>[<span class="typ">K</span>]) =&gt; <span class="kw">void</span>;
+};   <span class="hl">// { onId: (v: number) =&gt; void; onName: (v: string) =&gt; void }</span></pre>
+        <p>Build <code class="tok">Handlers&lt;User&gt;</code> one step at a time: extract the keys with <code class="tok">keyof</code>, transform them through the template literal, then map into the final object type with correctly-typed callbacks:</p>
+        <div class="lab" id="mappedLab">
+          <div class="lab-head"><div><div class="pt">Compute a new shape from an old one</div><div class="ps">keyof → template literal → mapped type</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="mtKeyof">keyof User</button>
+              <button class="ds-btn" id="mtTemplate">on${Capitalize&lt;K&gt;}</button>
+              <button class="ds-btn primary" id="mtMapped">full Handlers&lt;User&gt;</button>
+              <button class="ds-btn" id="mtReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">source</div>
+            <div class="type-box" id="mtSource" style="border-left-color:var(--accent)">type User = &#123; id: number; name: string &#125;</div>
+            <div class="dp-h">computed</div>
+            <div class="type-box" id="mtResult">Handlers&lt;User&gt; = <span class="tl">// step through the transformation</span></div>
+            <div class="wlog" id="mtLog"></div>
+          </div>
+          <div class="lab-foot" id="mtFoot">keyof gives the union "id" | "name"; the template literal rewrites each to "onId" | "onName"; the mapped type builds an object whose callbacks are typed by each original member — T[K]. A whole type, computed from another.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Front-End Engineering · Mastering Angular</span><div>Mapped types power the typed APIs you relied on in the front-end courses — form values derived from a schema, event maps, prop types generated from a component's shape. When a library "just knows" the exact types of your keys and handlers, a mapped type is doing this computation behind the scenes.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Utility types like Partial and Readonly are compiler built-ins.</div><div class="truth">They're ordinary <b>mapped types</b> you could write yourself: <code class="tok">Partial&lt;T&gt;</code> is <code class="tok">{ [K in keyof T]?: T[K] }</code>. The whole utility-type library is mapped and conditional types — which means you can build your own transformations exactly the same way.</div></div>
+          <div class="mc"><div class="myth">Template-literal types are just for pretty string unions.</div><div class="truth">They're a computation over strings <i>in the type system</i> — combined with mapped types and <code class="tok">infer</code>, they parse and build type-safe strings: route params, CSS units, event names, SQL fragments. Real libraries use them to type <code class="tok">`/users/${id}`</code>-style APIs with full checking.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--infer);border-color:rgba(86,199,255,.4);background:var(--infer-soft)">Type-level</span><span class="lvl expert">Expert</span><span class="mod-num">Module 07</span></div><h2>keyof &amp; indexed access</h2></div>
+        <p>The operators that let types <em>derive from</em> other types and from values. <code class="tok">keyof T</code> produces the union of a type's keys. <strong>Indexed access</strong> <code class="tok">T[K]</code> looks up the type of a property — and because <code class="tok">K</code> can be a union, <code class="tok">T[keyof T]</code> gives the union of all value types. And <code class="tok">typeof value</code> crosses from the value world into the type world, capturing the inferred type of a runtime value. Together they're how you keep types in sync with data automatically: derive types from a config object, index into a shape, and never hand-write a type that could drift from its source.</p>
+        <span class="filetag">keyof.ts</span>
+        <pre><span class="kw">const</span> config = { host: <span class="str">"localhost"</span>, port: <span class="num">8080</span>, tls: <span class="kw">true</span> };
+
+<span class="kw">type</span> <span class="typ">Config</span> = <span class="kw">typeof</span> config;          <span class="cmt">// { host: string; port: number; tls: boolean }</span>
+<span class="kw">type</span> <span class="typ">Keys</span>   = <span class="kw">keyof</span> <span class="typ">Config</span>;           <span class="hlok">// "host" | "port" | "tls"</span>
+<span class="kw">type</span> <span class="typ">Port</span>   = <span class="typ">Config</span>[<span class="str">"port"</span>];          <span class="hlok">// number</span></pre>
+        <p>Start from a runtime <code class="tok">config</code> value and derive types from it: capture its type with <code class="tok">typeof</code>, list its keys with <code class="tok">keyof</code>, and index into it with <code class="tok">[K]</code>:</p>
+        <div class="lab" id="keyofLab">
+          <div class="lab-head"><div><div class="pt">Derive types from values and keys</div><div class="ps">typeof · keyof · T[K]</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="koTypeof">typeof config</button>
+              <button class="ds-btn primary" id="koKeyof">keyof typeof config</button>
+              <button class="ds-btn" id="koIndex">(typeof config)["port"]</button>
+              <button class="ds-btn" id="koReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">value · const config = &#123; host: "localhost", port: 8080, tls: true &#125;</div>
+            <div class="dp-h" style="margin-top:2px">derived type</div>
+            <div class="type-box" id="koResult">— <span class="tl">// derive a type from the value</span></div>
+            <div class="stateline" id="koStatus">derive a type from the config value</div>
+            <div class="wlog" id="koLog"></div>
+          </div>
+          <div class="lab-foot" id="koFoot">typeof lifts the value into a type; keyof lists its keys as a union; indexed access looks up a member's type. Derive types from your data and they can never fall out of sync with it.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">typeof in a type means the same as typeof at runtime.</div><div class="truth">They're different operators in different worlds. Runtime <code class="tok">typeof</code> returns a string like <code class="tok">"object"</code>; <b>type-level</b> <code class="tok">typeof</code> captures the full inferred type of a value. TypeScript overloads the keyword across the value and type spaces — same spelling, entirely different job.</div></div>
+          <div class="mc"><div class="myth">You should declare a type, then build the object to match it.</div><div class="truth">Often it's better to write the object and <b>derive the type</b> with <code class="tok">typeof</code> and <code class="tok">keyof</code> — one source of truth, no drift. Especially for config, enums-as-objects, and lookup tables, deriving the type from the data beats maintaining two parallel declarations.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--varc);border-color:rgba(242,151,60,.4);background:var(--varc-soft)">The checker</span><span class="lvl expert">Expert</span><span class="mod-num">Module 08</span></div><h2>Variance &amp; function types</h2></div>
+        <p>Function-type compatibility is where variance gets subtle. Under <code class="tok">strictFunctionTypes</code>, function <strong>return types are covariant</strong> — a function returning <code class="tok">Dog</code> is assignable where one returning <code class="tok">Animal</code> is expected, because every <code class="tok">Dog</code> is an <code class="tok">Animal</code>. But function <strong>parameters are contravariant</strong> — a handler that accepts <em>any</em> <code class="tok">Animal</code> can stand in where a <code class="tok">Dog</code> handler is expected (it can certainly handle a <code class="tok">Dog</code>), but not the reverse: a <code class="tok">Dog</code>-only handler can't be used where arbitrary <code class="tok">Animal</code>s will be passed. It feels backwards until you think about who calls whom — and it's the same variance rule as C#'s <code class="tok">in</code>/<code class="tok">out</code>, applied structurally to functions.</p>
+        <span class="filetag">fn-variance.ts</span>
+        <pre><span class="kw">class</span> <span class="typ">Animal</span> {} <span class="kw">class</span> <span class="typ">Dog</span> <span class="kw">extends</span> <span class="typ">Animal</span> {}
+
+<span class="kw">let</span> getAnimal: () =&gt; <span class="typ">Animal</span>;
+getAnimal = () =&gt; <span class="kw">new</span> <span class="typ">Dog</span>();      <span class="hlok">// ✓ return covariance (Dog ⊆ Animal)</span>
+
+<span class="kw">let</span> onDog: (d: <span class="typ">Dog</span>) =&gt; <span class="kw">void</span>;
+onDog = (a: <span class="typ">Animal</span>) =&gt; {};        <span class="hlok">// ✓ param contravariance (handles any Animal)</span>
+onDog = (d: <span class="typ">Dog</span>) =&gt; {}; getDog = getAnimal;  <span class="hlbad">// ✗ can't narrow the other way</span></pre>
+        <p>Each row assigns one function type to another. Click to test it against the variance rules — and see why parameters flip the direction that return types keep:</p>
+        <div class="lab" id="varianceLab">
+          <div class="lab-head"><div><div class="pt">Returns covary, parameters contravary</div><div class="ps">strictFunctionTypes</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="vfReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="vf-rows">
+              <div class="vf-row" id="vfR1"><span><span class="vf-ann">return</span> &nbsp; assign <code class="tok">() =&gt; Dog</code> to <code class="tok">() =&gt; Animal</code></span><span class="vf-vd">test →</span></div>
+              <div class="vf-row" id="vfR2"><span><span class="vf-ann">return</span> &nbsp; assign <code class="tok">() =&gt; Animal</code> to <code class="tok">() =&gt; Dog</code></span><span class="vf-vd">test →</span></div>
+              <div class="vf-row" id="vfR3"><span><span class="vf-ann">param</span> &nbsp; assign <code class="tok">(a: Animal) =&gt; void</code> to <code class="tok">(d: Dog) =&gt; void</code></span><span class="vf-vd">test →</span></div>
+              <div class="vf-row" id="vfR4"><span><span class="vf-ann">param</span> &nbsp; assign <code class="tok">(d: Dog) =&gt; void</code> to <code class="tok">(a: Animal) =&gt; void</code></span><span class="vf-vd">test →</span></div>
+            </div>
+            <div class="stateline" id="vfStatus">click an assignment to test it against strictFunctionTypes</div>
+            <div class="wlog" id="vfLog"></div>
+          </div>
+          <div class="lab-foot" id="vfFoot">Returns keep the subtype direction (Dog fits where Animal is wanted). Parameters reverse it: a handler of any Animal fits where a Dog handler is needed, but a Dog-only handler can't take arbitrary Animals. Who calls whom sets the direction.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. II (variance)</span><div>Identical rule to C#'s <code class="tok">in</code>/<code class="tok">out</code> from Vol. II — producers (returns) covary, consumers (parameters) contravary — but TypeScript infers it <b>structurally</b> for every function type rather than requiring you to annotate the variance. The theory is the same; the ergonomics differ.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A function taking a more specific parameter is a safe drop-in.</div><div class="truth">It's the <b>opposite</b>. A callback typed <code class="tok">(d: Dog) =&gt; void</code> can't stand in where the caller will pass any <code class="tok">Animal</code> — it might get a <code class="tok">Cat</code>. The safe substitution is a handler that accepts the <i>wider</i> type. Parameter contravariance is unintuitive precisely because it inverts the usual subtype direction.</div></div>
+          <div class="mc"><div class="myth">Method parameters follow the same strict rule.</div><div class="truth">For historical, ergonomic reasons, <b>method</b> parameters (and event handlers via <code class="tok">EventListener</code>) are checked <i>bivariantly</i> — a deliberate unsoundness. <code class="tok">strictFunctionTypes</code> enforces contravariance for function-typed properties but exempts method syntax, which is why the same-looking code can check differently.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--guard);border-color:rgba(167,139,250,.4);background:var(--guard-soft)">The checker</span><span class="lvl expert">Expert</span><span class="mod-num">Module 09</span></div><h2>Type guards &amp; assertions</h2></div>
+        <p>Narrowing has built-in triggers (<code class="tok">typeof</code>, <code class="tok">in</code>, discriminants), but you can teach the checker your own. A <strong>user-defined type guard</strong> is a function whose return type is a <em>type predicate</em> — <code class="tok">x is Link</code> — and when it returns true, TypeScript narrows the argument to that type in the branch. An <strong>assertion function</strong> — <code class="tok">asserts x is Link</code> — narrows for the <em>rest of the scope</em> instead of a branch, throwing if the claim is false (the pattern behind runtime validators). These are the bridge between runtime checks and compile-time types: your validation logic teaches the type system what you've proven.</p>
+        <span class="filetag">guards.ts</span>
+        <pre><span class="kw">function</span> <span class="fn">isLink</span>(x: <span class="typ">Link</span> | <span class="typ">ApiError</span>): x <span class="kw">is</span> <span class="typ">Link</span> {
+    <span class="kw">return</span> <span class="str">"code"</span> <span class="kw">in</span> x;                 <span class="cmt">// runtime check → type predicate</span>
+}
+<span class="kw">if</span> (<span class="fn">isLink</span>(x)) x.code;           <span class="hlok">// x narrowed to Link in this branch</span>
+<span class="kw">else</span>          x.message;        <span class="cmt">// x narrowed to ApiError in the other</span>
+
+<span class="kw">function</span> <span class="fn">assertLink</span>(x: <span class="kw">unknown</span>): <span class="kw">asserts</span> x <span class="kw">is</span> <span class="typ">Link</span> { <span class="cmt">/* throw if not */</span> }</pre>
+        <p>You're holding <code class="tok">x: Link | ApiError</code>. Apply a custom guard and watch <code class="tok">x</code> narrow to a single type — exposing that type's members — in each branch, or for the rest of the scope via an assertion:</p>
+        <div class="lab" id="guardLab">
+          <div class="lab-head"><div><div class="pt">Teach the checker what you've proven</div><div class="ps">x is Link · asserts x is Link</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="gdGuard">if (isLink(x))</button>
+              <button class="ds-btn" id="gdElse">else branch</button>
+              <button class="ds-btn" id="gdAssert">assertLink(x)</button>
+              <button class="ds-btn" id="gdReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">x — narrowed type</div>
+            <div class="type-box" id="gdType">x: Link | ApiError <span class="tl">// apply a guard to narrow</span></div>
+            <div class="stat-row"><div class="stat-box">accessible members<b id="gdAccess">only shared members</b></div></div>
+            <div class="stateline" id="gdStatus">apply the guard to narrow the union</div>
+            <div class="wlog" id="gdLog"></div>
+          </div>
+          <div class="lab-foot" id="gdFoot">The type predicate narrows x to Link inside the if and to ApiError in the else, each exposing its own members. An assertion function narrows for the whole rest of the scope — the pattern every runtime validator uses to hand results back to the type system.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Mastering ASP.NET Core · SDLC</span><div>Type guards are where runtime and compile time meet: at a trust boundary — a parsed request body, an API response — you validate at runtime and a guard <b>hands the proof to the type checker</b>. It's the typed edge of the input-validation discipline the API and lifecycle courses insisted on.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Returning a boolean from a check narrows the type.</div><div class="truth">Only if you annotate the return as a <b>type predicate</b> (<code class="tok">x is Link</code>). A plain <code class="tok">: boolean</code> return does the runtime check but tells the compiler nothing — <code class="tok">x</code> stays the union. The predicate is what connects your logic to the narrowing.</div></div>
+          <div class="mc"><div class="myth">A guard makes x safe everywhere after you call it.</div><div class="truth">A type <i>guard</i> narrows only inside the branch that tested it; an <b>assertion function</b> (<code class="tok">asserts x is …</code>) is what narrows for the rest of the scope — and it must actually throw when false. Using the wrong one gives you either too little narrowing or a false guarantee.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--erase);border-color:rgba(124,156,255,.4);background:var(--erase-soft)">Runtime</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Types are erased</h2></div>
+        <p>The fact that changes how you architect everything: <strong>types have no runtime existence</strong>. <code class="tok">tsc</code> type-checks your program and then <em>erases</em> every type — interfaces, annotations, generics, the lot — emitting plain JavaScript. There is no reflection, no <code class="tok">typeof x === "User"</code>, no way to ask at runtime what type something was, because the answer was deleted. This is the exact opposite of C#, which keeps full type metadata and lets you inspect it at runtime. The consequence: any decision that must happen at runtime — validating an API payload, dispatching on a shape — needs a <em>value-level</em> discriminant (a <code class="tok">kind</code> field, a validator), because the types you'd want to consult are gone.</p>
+        <span class="filetag">erasure.ts → erasure.js</span>
+        <pre><span class="cmt">// TypeScript in:</span>
+<span class="kw">interface</span> <span class="typ">User</span> { id: <span class="typ">number</span>; name: <span class="typ">string</span>; }
+<span class="kw">function</span> <span class="fn">greet</span>(u: <span class="typ">User</span>): <span class="typ">string</span> { <span class="kw">return</span> <span class="str">`hi ${u.name}`</span>; }
+
+<span class="cmt">// JavaScript out — every type erased:</span>
+<span class="kw">function</span> <span class="fn">greet</span>(u) { <span class="kw">return</span> <span class="str">`hi ${u.name}`</span>; }   <span class="hl">// no interface, no annotations</span></pre>
+        <p>Compile the TypeScript above and watch <code class="tok">tsc</code> strip every type away, leaving runnable JavaScript. Then try to check a type at runtime and see that there's simply nothing left to check:</p>
+        <div class="lab" id="eraseLab">
+          <div class="lab-head"><div><div class="pt">Checked, then deleted</div><div class="ps">tsc emits JS · no runtime type info</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="erCompile">compile with tsc ▸</button>
+              <button class="ds-btn" id="erCheck">check a type at runtime</button>
+              <button class="ds-btn" id="erReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">emitted output</div>
+            <div class="er-out" id="erOutput"><span class="es">— press compile to run tsc —</span></div>
+            <div class="stat-row">
+              <div class="stat-box">types checked<b id="erWhen">—</b></div>
+              <div class="stat-box">runtime type info<b id="erInfo">—</b></div>
+            </div>
+            <div class="wlog" id="erLog"></div>
+          </div>
+          <div class="lab-foot" id="erFoot">The interface and every annotation vanish; the JS is what actually runs. There's no way to ask an object "are you a User?" at runtime — the type is gone. Runtime decisions need a value you can inspect, not a type you can't.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (generics · reflection) · Bits</span><div>The starkest contrast in the whole library: C# generics <b>specialize</b> and its types are <b>reflectable</b> at runtime; TypeScript's erase completely. What's actually in memory at runtime — the <i>Bits</i> question — is plain JavaScript objects with no type tags at all. Same word "type," opposite runtime reality.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">I can check at runtime whether a value matches an interface.</div><div class="truth">You can't — the interface doesn't exist at runtime. You check <b>values</b>: a discriminant field, the presence of a property, or a validator library (Zod, io-ts) that carries a runtime schema alongside the type. The type itself is unavailable because it was erased.</div></div>
+          <div class="mc"><div class="myth">Since types vanish, they don't affect the running program.</div><div class="truth">They shape it profoundly <i>before</i> it runs — every bug the checker caught is one that never shipped. Types are a compile-time proof system: enormous influence on correctness, zero runtime footprint. That's the trade TypeScript makes, and it's the opposite of C#'s reflective, type-carrying runtime.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>The whole type system</h2></div>
+        <p>Step back and it's one coherent language. Types are <strong>sets</strong>; assignability is <strong>⊆</strong>; the checker <strong>narrows</strong> sets as it learns; generics are <strong>functions</strong> over sets; conditional, mapped, and template types <strong>compute</strong> new sets from old ones; and the whole apparatus runs at compile time and then <strong>erases</strong>. Every feature in the course is a move in that single system:</p>
+        <span class="filetag">the type system, in one view</span>
+        <pre>  a type            = a set of values                 <span class="cmt">// m00</span>
+  A ⊆ B             = assignable · structural          <span class="cmt">// m01</span>
+  A | B  + narrowing = union, shrunk by control flow    <span class="cmt">// m02</span>
+  &lt;T extends C&gt;      = a function over types             <span class="cmt">// m03–04</span>
+  T extends U ? … : … / infer / keyof / mapped          <span class="cmt">// m05–07 · compute types</span>
+  variance · guards  = the checker's finer rules         <span class="cmt">// m08–09</span>
+  tsc → .js          = checked, then erased              <span class="cmt">// m10</span></pre>
+        <p>And here is Snip's client, fully typed — a discriminated event union, a <strong>derived</strong> handler map, a guarded API boundary, and the reminder that all of it compiles away:</p>
+        <span class="filetag">snip-client.ts</span>
+        <pre><span class="kw">type</span> <span class="typ">Ev</span> =                                          <span class="cmt">// m02 · discriminated union</span>
+  | { kind: <span class="str">"click"</span>; url: <span class="typ">string</span> } | { kind: <span class="str">"scroll"</span>; depth: <span class="typ">number</span> };
+
+<span class="kw">type</span> <span class="typ">Handlers</span> = { [<span class="typ">K</span> <span class="kw">in</span> <span class="typ">Ev</span>[<span class="str">"kind"</span>] <span class="kw">as</span> <span class="str">`on${Capitalize&lt;K&gt;}`</span>]: (e: <span class="typ">Ev</span>) =&gt; <span class="kw">void</span> };  <span class="cmt">// m06 · mapped + template</span>
+
+<span class="kw">function</span> <span class="fn">handle</span>&lt;<span class="typ">T</span> <span class="kw">extends</span> <span class="typ">Ev</span>&gt;(e: <span class="typ">T</span>): <span class="typ">T</span>[<span class="str">"kind"</span>] {   <span class="cmt">// m03/m07 · generic + indexed access</span>
+  <span class="kw">switch</span> (e.kind) {
+    <span class="kw">case</span> <span class="str">"click"</span>:  fetch(e.url); <span class="kw">return</span> e.kind;   <span class="hlok">// narrowed to the click member</span>
+    <span class="kw">case</span> <span class="str">"scroll"</span>: log(e.depth); <span class="kw">return</span> e.kind;   <span class="cmt">// narrowed to scroll</span>
+  }
+}
+<span class="kw">function</span> <span class="fn">isEv</span>(x: <span class="kw">unknown</span>): x <span class="kw">is</span> <span class="typ">Ev</span> { <span class="kw">return</span> !!x &amp;&amp; <span class="str">"kind"</span> <span class="kw">in</span> (x <span class="kw">as</span> any); }  <span class="cmt">// m09 · guard at the boundary</span>
+<span class="cmt">// ...and tsc erases every type above, emitting plain JavaScript (m10)</span></pre>
+        <div class="note key">
+          <div class="nh">The type system, entire</div>
+          <p>The event union narrows through the <code class="tok">switch</code> so each case sees exactly its member (m02). <code class="tok">Handlers</code> is <em>computed</em> from the union's <code class="tok">kind</code> values via a mapped type over a template literal (m06). <code class="tok">handle</code> is a generic constrained to <code class="tok">Ev</code>, returning an indexed-access type (m03, m07). <code class="tok">isEv</code> is a type guard turning a runtime check into a compile-time proof (m09). And every type here is a set, related by ⊆, that the checker verifies and then <strong>deletes</strong> (m00, m10). <strong>The annotations you write are the visible surface of a compile-time language — one that reasons about your whole program and then vanishes without a trace.</strong></p>
+        </div>
+        <div class="xref"><span class="xi">↳ Front-End Engineering · Mastering Angular · Advanced C#</span><div>This is the type layer under the front-end courses, now fully understood — and the sharpest mirror of the C# volumes: same concepts (generics, variance, narrowing, metaprogramming), opposite runtime (specialized and reflectable vs. computed and erased). Two philosophies of "type," seen side by side.</div></div>
+        <div class="closing">
+          <h2>The type system, mastered.</h2>
+          <p>You started with one idea — a type is a set of values — and watched the whole system unfold from it: structural assignability as subset, narrowing as the set shrinking under evidence, generics as functions over sets, and conditional, mapped, and template types as a genuine language that computes new types from old. Then the twist that defines TypeScript: it does all of this at compile time and erases every trace, leaving plain JavaScript to run.</p>
+          <p>That's the expert's view of TypeScript — not annotations, but a compile-time proof system powerful enough to encode real invariants about your program, that costs nothing at runtime because it isn't there anymore. You can read the type-level programs the libraries you use are written in, and write your own. Go make illegal states unrepresentable — and know exactly what survives to runtime and what doesn't.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · TypeScript · The Type System — the type layer beneath the front-end track, across the whole curriculum: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, Advanced&nbsp;SQL&nbsp;&amp;&nbsp;PostgreSQL, Front-End&nbsp;Engineering, Mastering&nbsp;Angular, Angular&nbsp;Internals, Advanced&nbsp;C#&nbsp;(Vol.&nbsp;I &amp; II), and the Capstone that built Snip. A language inside the language — reasoning about your code, then erasing itself.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/typescript-type-system.js"></script>
+</body>
+</html>

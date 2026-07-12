@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering Front-End Engineering · The Growth Lab</title>
+<meta name="description" content="An interactive course on front-end engineering — how the browser turns markup into pixels, the DOM, events and propagation, reactivity (UI = f(state)), components, reconciliation and keys, one-way data flow, server state, routing, performance, and accessibility. Building Snip's dashboard UI, in the medium itself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-front-end-engineering.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="4.5" width="18" height="15" rx="2.5" stroke="#2DD4BF" stroke-width="1.6"/>
+        <line x1="3" y1="9" x2="21" y2="9" stroke="#2DD4BF" stroke-width="1.6"/>
+        <circle cx="6.2" cy="6.8" r="0.9" fill="#2DD4BF"/><circle cx="9" cy="6.8" r="0.9" fill="#2DD4BF"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Front End</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="4.5" width="18" height="15" rx="2.5" stroke="#2DD4BF" stroke-width="1.6"/>
+            <line x1="3" y1="9" x2="21" y2="9" stroke="#2DD4BF" stroke-width="1.6"/>
+            <circle cx="6.2" cy="6.8" r="0.9" fill="#2DD4BF"/><circle cx="9" cy="6.8" r="0.9" fill="#2DD4BF"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Front End</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">The Platform · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>The front end's job</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>From markup to pixels</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>The DOM is a tree</span></a>
+      <div class="nav-group-label">How It Reacts · Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Events &amp; propagation</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>UI = f(state)</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Components</span></a>
+      <a class="module" href="#m6"><span class="num">06</span><span>Reconciliation &amp; keys</span></a>
+      <div class="nav-group-label">Architecture · Intermediate → Advanced</div>
+      <a class="module" href="#m7"><span class="num">07</span><span>One-way data flow</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Server state</span></a>
+      <a class="module" href="#m9"><span class="num">09</span><span>Routing &amp; app shape</span></a>
+      <div class="nav-group-label">The Craft · Advanced → Expert</div>
+      <a class="module" href="#m10"><span class="num">10</span><span>Performance</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>A11y &amp; the dashboard</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert</div>
+        <h1>The screen is a function.<br><span class="grad">UI&nbsp;=&nbsp;f(state).</span></h1>
+        <p class="lede">Everything the user ever touches is the front end — and under every button, feed, and dashboard sits one loop: <strong>state renders the view, events update the state, and the view renders again</strong>. This course teaches that loop and the architecture around it: how the browser turns markup into <strong>pixels</strong>, the living <strong>DOM</strong>, <strong>events</strong> and how they travel, <strong>reactivity</strong>, <strong>components</strong>, <strong>reconciliation</strong>, <strong>one-way data flow</strong>, <strong>server state</strong>, <strong>routing</strong>, and <strong>performance</strong>. The running project is the dashboard UI for <strong>Snip</strong> — and there's a twist: this course is written in its own subject. Every lab below <em>is</em> front-end code, reacting in your browser right now.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The reactive loop: state renders the view, the user fires events, events update state, and the loop continues"></svg>
+          <div class="hero-cap">state → render → view → event → setState → <span style="color:var(--accent)">repeat</span> · the loop is the app</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start at the pixels →</a>
+          <a class="btn btn-ghost" href="#m4">Jump to UI = f(state)</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>The front end's job</h2></div>
+        <p>Every course so far has lived on the server side of an HTTP line: the API, the database, the tests, the pipeline. The <strong>front end</strong> is everything on the other side — the code that runs in the <em>user's</em> browser, on hardware you don't control, over a network you can't trust, in front of a human who will click things in an order you never imagined. Its job: turn data into an interface, and interaction back into data.</p>
+        <p>The browser is a runtime with three languages sharing the work: <strong>HTML</strong> declares structure, <strong>CSS</strong> declares appearance, and <strong>JavaScript</strong> provides behavior. Our project is the missing piece of Snip — a <strong>dashboard UI</strong> over the API you built in ASP.NET and the analytics query you wrote in Advanced SQL:</p>
+        <span class="filetag">index.html</span>
+        <pre><span class="tg">&lt;!DOCTYPE html&gt;</span>
+<span class="tg">&lt;html&gt;</span>
+  <span class="tg">&lt;head&gt;</span><span class="tg">&lt;link</span> <span class="at">rel</span>=<span class="str">"stylesheet"</span> <span class="at">href</span>=<span class="str">"app.css"</span><span class="tg">&gt;</span><span class="tg">&lt;/head&gt;</span>
+  <span class="tg">&lt;body&gt;</span>
+    <span class="tg">&lt;main</span> <span class="at">id</span>=<span class="str">"dashboard"</span><span class="tg">&gt;&lt;/main&gt;</span>   <span class="cmt">&lt;!-- the UI grows here --&gt;</span>
+    <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="str">"app.js"</span><span class="tg">&gt;&lt;/script&gt;</span>  <span class="cmt">&lt;!-- fetches GET /stats, renders --&gt;</span>
+  <span class="tg">&lt;/body&gt;</span>
+<span class="tg">&lt;/html&gt;</span></pre>
+        <p>One warning before we start: the front end looks simple from a distance — "just make the button do the thing" — and that's exactly why so much of it ends up as tangled, untestable glue. The whole discipline of this course is a single idea applied relentlessly: <strong>the screen is a function of state</strong>. Hold onto that; every module sharpens it.</p>
+        <div class="xref"><span class="xi">↳ ASP.NET Core · The Capstone</span><div>The front end is the <b>other end</b> of every request from <i>Mastering ASP.NET Core</i>: your dashboard calls <code class="tok">GET /stats</code>, Snip's API answers with JSON, and everything in this course happens between that response and the user's eyes.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Front end is the easy part — it's just making things look nice.</div><div class="truth">It's a <b>distributed-systems problem in disguise</b>: untrusted network, wildly varied devices, a concurrent human generating events, and state that must stay consistent across all of it. Styling is the visible 10%; the other 90% is exactly what this course covers.</div></div>
+          <div class="mc"><div class="myth">HTML and CSS aren't real programming.</div><div class="truth">They're <b>declarative languages</b> the browser executes with sophisticated engines — a constraint solver for layout, a cascade resolver for style. Declaring <i>what</i> and letting an engine compute <i>how</i> is the same idea that made SQL powerful — and it's the shape reactivity will take in Module 04.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fcss);border-color:rgba(86,199,255,.4);background:var(--fcss-soft)">Rendering</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>From markup to pixels</h2></div>
+        <p>Before anything reacts, something must <em>render</em>. The browser runs a pipeline: it parses HTML into the <strong>DOM</strong> (a tree of elements) and CSS into the <strong>CSSOM</strong> (the resolved style rules), combines them into a <strong>render tree</strong> (only what's visible — <code class="tok">display:&nbsp;none</code> never makes the cut), then computes <strong>layout</strong> (every box gets a geometry — this is where the box model, flexbox, and grid do their work), <strong>paints</strong> pixels into layers, and <strong>composites</strong> the layers on the GPU.</p>
+        <p>Walk Snip's dashboard header through the pipeline, one stage at a time:</p>
+        <div class="lab" id="pipelineLab">
+          <div class="lab-head"><div><div class="pt">The rendering pipeline</div><div class="ps">parse → style → layout → paint → composite</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="pipeStep">▸ next stage</button>
+              <button class="ds-btn" id="pipeReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="p2" id="pipeStages"></div>
+            <div class="pipe-view" id="pipeView"></div>
+            <div class="stateline" id="pipeStatus"></div>
+          </div>
+          <div class="lab-foot" id="pipeFoot">Every visual change re-enters this pipeline somewhere. Changing geometry re-runs layout; changing only color skips straight to paint; transform and opacity can ride the compositor alone.</div>
+        </div>
+        <p>This is also why <strong>responsive design</strong> is a pipeline concept, not a styling trick: resize the viewport (or rotate a phone) and layout simply <em>re-runs</em> with new constraints — media queries and flexible units are instructions to that stage. And it's why performance advice keeps saying "animate <code class="tok">transform</code>, not <code class="tok">top</code>": one rides the cheap compositor, the other drags layout and paint back into every frame.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The browser repaints the whole page on every change.</div><div class="truth">Engines are aggressively lazy: they <b>invalidate only what changed</b> and re-run only the necessary stages on the affected region. Your job is to avoid forcing the expensive stages — geometry changes cost layout; color changes cost only paint.</div></div>
+          <div class="mc"><div class="myth">CSS is decoration applied after the real work.</div><div class="truth">CSS <i>is</i> the layout engine's input — a declarative geometry program. Flexbox and grid are constraint systems computing every box's position each frame. Treating that as an afterthought is how interfaces end up fighting their own foundation.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fhtml);border-color:rgba(242,151,60,.4);background:var(--fhtml-soft)">The DOM</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>The DOM is a tree</h2></div>
+        <p>The DOM isn't your HTML file — it's the <strong>live tree</strong> the browser built from it, and JavaScript's window into the page. Every element is a node with a parent, children, attributes, and text; the API lets you find nodes (<code class="tok">querySelector</code>), make them (<code class="tok">createElement</code>), move them (<code class="tok">append</code>), and change them — and the pipeline from Module 01 reacts to every mutation.</p>
+        <span class="filetag">dom.js</span>
+        <pre><span class="kw">const</span> list = document.<span class="fn">querySelector</span>(<span class="str">'#links'</span>);   <span class="cmt">// find</span>
+<span class="kw">const</span> li = document.<span class="fn">createElement</span>(<span class="str">'li'</span>);          <span class="cmt">// make</span>
+li.textContent = <span class="str">'snip.ly/promo'</span>;
+list.<span class="fn">append</span>(li);                                    <span class="cmt">// attach → pipeline runs</span>
+card.classList.<span class="fn">toggle</span>(<span class="str">'dark'</span>);                     <span class="cmt">// restyle → style/paint</span></pre>
+        <p>Run those exact operations against a mini dashboard card — the tree on the left is the truth, the render on the right is its shadow:</p>
+        <div class="lab" id="domLab">
+          <div class="lab-head"><div><div class="pt">One tree, two views</div><div class="ps">mutate the DOM · watch the page follow</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="domAdd">append(li)</button>
+              <button class="ds-btn" id="domText">set h2 text</button>
+              <button class="ds-btn" id="domClass">toggle .dark</button>
+              <button class="ds-btn" id="domReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dom-grid">
+              <div class="dom-pane"><div class="dp-h">the DOM tree (truth)</div><div class="dom-tree" id="domTree"></div></div>
+              <div class="dom-pane"><div class="dp-h">the rendered page (shadow)</div><div id="domStage"></div></div>
+            </div>
+            <div class="stateline" id="domStatus"></div>
+          </div>
+          <div class="lab-foot" id="domFoot">Every button is one real DOM API call. The page never changes on its own — something always mutated the tree first.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Data Structures</span><div>This is the tree from <i>Mastering Data Structures</i>, running your interface. Traversal, parent/child pointers, subtree insertion — <code class="tok">querySelector</code> is a tree search and <code class="tok">append</code> is a subtree graft. The whole front end stands on one data structure.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The DOM is my HTML source file.</div><div class="truth">The DOM is the <b>parsed, live object model</b> — scripts mutate it constantly, so it drifts from the source the moment JavaScript runs. "View source" shows what arrived; the DevTools inspector shows what <i>is</i>. Front-end debugging lives in the second one.</div></div>
+          <div class="mc"><div class="myth">Touching the DOM is slow — avoid it entirely.</div><div class="truth">Single mutations are fast. The real costs are <b>churn</b> (hundreds of scattered writes, each triggering pipeline work) and <b>layout thrashing</b> (alternating reads and writes, forcing synchronous re-layout). The cure is batching writes — which is precisely the service frameworks sell in Module 06.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fevent);border-color:rgba(251,113,133,.4);background:var(--fevent-soft)">Events</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 03</span></div><h2>Events &amp; propagation</h2></div>
+        <p>Nothing reacts until something happens. <strong>Events</strong> are the browser's report of the world — clicks, keys, scrolls, submits — and <code class="tok">addEventListener</code> is how code subscribes. The subtle part is that an event doesn't fire on one element: it <strong>travels</strong>. First the <em>capture</em> phase walks down from the document to the target, then the <em>bubble</em> phase walks back up — and any ancestor can listen at either leg.</p>
+        <p>Bubbling powers the front end's favorite trick, <strong>delegation</strong> — one listener on the list handles clicks from every row, including rows that don't exist yet:</p>
+        <span class="filetag">events.js</span>
+        <pre>list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, (e) =&gt; {
+  <span class="kw">const</span> row = e.target.<span class="fn">closest</span>(<span class="str">'[data-code]'</span>);   <span class="cmt">// which row bubbled?</span>
+  <span class="kw">if</span> (row) <span class="fn">select</span>(row.dataset.code);              <span class="cmt">// one listener, every row</span>
+});</pre>
+        <p>Click the button below and read the journey — then cut the return trip with <code class="tok">stopPropagation()</code>:</p>
+        <div class="lab" id="eventLab">
+          <div class="lab-head"><div><div class="pt">The event's journey</div><div class="ps">capture ↓ · target · bubble ↑</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="evStopBtn">stopPropagation: off</button>
+              <button class="ds-btn" id="evReset">clear log</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ev-wrap">
+              <div class="ev-box" id="evOuter"><span class="ev-tag">document · listens ↓↑</span>
+                <div class="ev-box" id="evMiddle" style="cursor:pointer"><span class="ev-tag">section#links · listens ↓↑</span>
+                  <div id="evInner">▸ snip.ly/4C92 — click me</div>
+                </div>
+              </div>
+              <div class="wlog" id="evLog"></div>
+            </div>
+            <div class="stateline" id="evStatus"></div>
+          </div>
+          <div class="lab-foot" id="evFoot">Five stops per click: down through the ancestors, the target itself, then back up. Delegation is just listening on the way up.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">An event fires only on the element you clicked.</div><div class="truth">It visits <b>every ancestor twice</b> — capture down, bubble up. That's not trivia: it's why a listener on <code class="tok">document</code> can see every click on the page, why modals close on outside-click, and why delegation scales to lists of ten thousand rows.</div></div>
+          <div class="mc"><div class="myth">Attach a listener to each item in the list.</div><div class="truth">A thousand rows don't need a thousand listeners — they need <b>one</b>, on the container, reading <code class="tok">e.target</code>. Less memory, and rows added later are handled automatically because bubbling doesn't care when the row was born.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)">Reactivity</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>UI = f(state)</h2></div>
+        <p>Here is the module the whole course orbits. The naive way to build UI is <strong>imperative</strong>: an event happens, so you reach into the DOM and adjust things — update this list, also that counter, oh and the empty-state message. Every feature multiplies the places you must remember to touch, and the day you forget one, the screen <em>lies</em>: it shows something the data no longer says.</p>
+        <p>The reactive way inverts it. Keep all facts in one <strong>state</strong> object. Events don't touch the DOM at all — they update <em>state</em>, then one render function redraws the view <em>from</em> state. The view can't drift, because it's never edited — only recomputed:</p>
+        <span class="filetag">reactive.js</span>
+        <pre><span class="kw">let</span> state = { links: [...], draft: <span class="str">''</span> };
+
+<span class="kw">function</span> <span class="fn">render</span>(state) {              <span class="cmt">// the whole view, from state alone</span>
+  view.innerHTML = state.links.<span class="fn">map</span>(LinkRow).<span class="fn">join</span>(<span class="str">''</span>);
+  count.textContent = state.links.length;
+}
+<span class="kw">function</span> <span class="fn">dispatch</span>(action) {           <span class="cmt">// events change state, never the DOM</span>
+  state = <span class="fn">update</span>(state, action);
+  <span class="fn">render</span>(state);                      <span class="hl">// UI = f(state)</span>
+}</pre>
+        <p>Below, Snip's link manager runs this loop for real. Watch the pattern — every interaction logs as <em>event → new state → render</em>. Then switch to <strong>manual mode</strong>, where handlers patch the DOM directly, and watch the view quietly fall out of sync with the truth:</p>
+        <div class="lab" id="stateLab">
+          <div class="lab-head"><div><div class="pt">The reactive loop, live</div><div class="ps">state on the left · its rendered shadow on the right</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="stModeBtn">mode: declarative</button>
+              <button class="ds-btn" id="stReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="st-grid">
+              <div class="st-pane"><div class="dp-h"><span>state (the truth)</span><span style="color:var(--accent)">UI = f(state)</span></div><div class="st-json" id="stJson"></div></div>
+              <div class="st-pane"><div class="dp-h"><span>view (rendered from state)</span></div>
+                <div class="st-viewcard">
+                  <div class="sv-head"><span class="sv-title">Snip · your links</span><span class="st-count" id="stCount"></span></div>
+                  <div id="stList"></div>
+                  <div class="st-form"><input id="stInput" placeholder="new code, e.g. promo" autocomplete="off"><button class="ds-btn primary" id="stAddBtn" style="margin:0">add</button></div>
+                  <div class="st-desync" id="stDesync"></div>
+                </div>
+              </div>
+            </div>
+            <div class="wlog" id="stLog"></div>
+          </div>
+          <div class="lab-foot" id="stFoot">In declarative mode the view is recomputed from state after every event — it cannot disagree with the data. That guarantee is what every modern framework is selling.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Reactivity is a framework feature you install.</div><div class="truth">It's a <b>discipline</b> — twelve lines of vanilla JS above, no library. React, Vue, and friends add efficiency (Module 06) and ergonomics, but the contract is the one you just watched: events → state → render. Learn the loop and every framework becomes syntax.</div></div>
+          <div class="mc"><div class="myth">Updating the DOM directly is simpler for small apps.</div><div class="truth">It's simpler for the <i>first</i> feature. By the fifth, every event must remember every DOM spot that displays the data — the combinatorial trap the manual mode just demonstrated. One render function is the only version of the UI you ever have to get right.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fcomp);border-color:rgba(167,139,250,.4);background:var(--fcomp-soft)">Components</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Components</h2></div>
+        <p>One render function for a whole app would be a monster — so we split the UI into <strong>components</strong>: small render functions, each owning one piece of screen, composed into a tree that mirrors the interface. A component receives <strong>props</strong> (data flowing <em>down</em> from its parent) and reports back by emitting <strong>events</strong> (flowing <em>up</em>). Data down, events up — the contract that keeps a hundred components comprehensible.</p>
+        <span class="filetag">components.pseudo.jsx</span>
+        <pre><span class="cmt">// framework-flavored pseudocode — the shape, not the syntax</span>
+<span class="kw">function</span> <span class="fn">LinkRow</span>({ link, selected, onSelect }) {
+  <span class="kw">return</span> <span class="tg">&lt;li</span> <span class="at">class</span>={selected ? <span class="str">'sel'</span> : <span class="str">''</span>}
+             <span class="at">onClick</span>={() =&gt; <span class="fn">onSelect</span>(link.code)}<span class="tg">&gt;</span>   <span class="cmt">// event ↑</span>
+           {link.code} · {link.clicks}
+         <span class="tg">&lt;/li&gt;</span>;
+}
+<span class="fn">Dashboard</span> → <span class="fn">Header</span>(selected)  <span class="fn">LinkList</span>(links) → <span class="fn">LinkRow</span> × n   <span class="cmt">// props ↓</span></pre>
+        <p>Click a row in Snip's component tree and trace the round trip — the event climbs to the owner of the state, the new prop flows back down:</p>
+        <div class="lab" id="componentLab">
+          <div class="lab-head"><div><div class="pt">Data down, events up</div><div class="ps">click a row · watch the round trip</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="cmpReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="cmp-tree" id="cmpTree"></div>
+            <div class="wlog" id="cmpLog"></div>
+          </div>
+          <div class="lab-foot" id="cmpFoot">The row doesn't change its own color — it reports upward, the owner updates state, and the highlight arrives back as a prop. Even selection obeys UI = f(state).</div>
+        </div>
+        <div class="xref"><span class="xi">↳ OOP &amp; Coding Principles</span><div>Components are <b>encapsulation and composition</b> from <i>OOP</i>, wearing a UI costume: each one hides its internals behind a small interface (props in, events out) and complex screens are composed from simple parts rather than inherited from god-widgets.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Components are about reusing visual widgets.</div><div class="truth">Reuse is the bonus; the real product is <b>isolation</b>. A component you can reason about alone — these props in, this markup out — is a component you can test, refactor, and delete. Most components are used once and are still worth it.</div></div>
+          <div class="mc"><div class="myth">A child should just update the parent's data directly.</div><div class="truth">Then the parent's state has <b>many writers</b> and no owner, and debugging becomes archaeology. Emitting an event keeps one writer per piece of state — the whole reason the tree stays comprehensible at 3 a.m.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fcss);border-color:rgba(86,199,255,.4);background:var(--fcss-soft)">Reconciliation</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>Reconciliation &amp; keys</h2></div>
+        <p>Module 04 left a question hanging: if the view is recomputed after every event, isn't rebuilding the DOM each time wasteful? It would be — so frameworks don't. Your render function produces a cheap <em>description</em> of the UI (a virtual tree); the framework <strong>diffs</strong> it against the previous description and applies only the minimal DOM operations. You write "the whole view, from state"; the browser receives "change this one text node."</p>
+        <p>Diffing lists has a famous trap. Compared <em>by position</em>, moving one item makes every row look changed. A <strong>key</strong> — a stable identity like <code class="tok">link.code</code> — lets the differ recognize the same item at a new position and just move it:</p>
+        <span class="filetag">keys.pseudo.jsx</span>
+        <pre>{state.links.<span class="fn">map</span>(l =&gt;
+  <span class="tg">&lt;LinkRow</span> <span class="at">key</span>={l.code} <span class="at">link</span>={l} <span class="tg">/&gt;</span>   <span class="cmt">// identity, not position</span>
+)}</pre>
+        <div class="lab" id="diffLab">
+          <div class="lab-head"><div><div class="pt">The differ at work</div><div class="ps">old tree vs new tree → the patch</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="diffShuffle">move first → last</button>
+              <button class="ds-btn" id="diffAdd">add a row</button>
+              <button class="ds-btn" id="diffKeys">keys: off</button>
+              <button class="ds-btn" id="diffReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="diff-grid">
+              <div class="diff-col"><div class="dp-h">previous render</div><div id="diffOld"></div></div>
+              <div class="diff-col"><div class="dp-h">next render</div><div id="diffNew"></div></div>
+            </div>
+            <div class="dp-h" style="font-family:var(--font-mono);font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px">computed DOM patch</div>
+            <div class="ops" id="diffOps"></div>
+            <div class="stateline" id="diffStatus"></div>
+          </div>
+          <div class="lab-foot" id="diffFoot">Without keys, one move reads as "every row changed." With keys, it's one MOVE — and the rows keep their real DOM nodes, focus, and animation state.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Big O</span><div>Tree diffing in general is expensive; framework reconciliation is the <i>Big&nbsp;O</i> mindset applied — compare level-by-level with keyed identity and it's <b>O(n)</b> per render instead of combinatorial. That trade is what makes "re-render everything" affordable.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The virtual DOM is fast because it's faster than the DOM.</div><div class="truth">A description in memory does <b>less work</b>, not faster work — the win is skipping real DOM operations that would trigger the Module 01 pipeline. The virtual tree is a planning step; the savings are the layouts and paints that never happen.</div></div>
+          <div class="mc"><div class="myth">key={index} satisfies the framework, so it's fine.</div><div class="truth">An index <i>is</i> the position — exactly the identity that breaks when lists reorder. Rows swap contents while keeping their nodes: inputs keep the wrong text, animations play on the wrong item. Keys must survive reordering: use the <b>domain identity</b>, like <code class="tok">link.code</code>.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fcomp);border-color:rgba(167,139,250,.4);background:var(--fcomp-soft)">Architecture</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 07</span></div><h2>One-way data flow</h2></div>
+        <p>Components solved the small scale. The app scale has a different problem: some state is <em>shared</em> — the link list matters to the header, the list, and the stats bar at once. First answer: <strong>lift state up</strong> to the closest common ancestor and pass it down. When lifting means threading props through five layers, the next answer is a <strong>store</strong>: one owner of shared state, outside the tree, that components subscribe to.</p>
+        <p>What keeps a store sane is the rule around it — <strong>one-way flow</strong>: views dispatch <em>actions</em>, a <em>reducer</em> computes the next state (immutably: a new object, not an edit), the store notifies subscribers, views re-render. Every change has one entrance and an audit trail:</p>
+        <span class="filetag">store.js</span>
+        <pre><span class="kw">function</span> <span class="fn">reduce</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">'ADD_LINK'</span>:   <span class="kw">return</span> { ...state, links: [...state.links, action.link] };
+    <span class="kw">case</span> <span class="str">'SET_FILTER'</span>: <span class="kw">return</span> { ...state, filter: action.filter };
+    <span class="kw">default</span>:           <span class="kw">return</span> state;      <span class="cmt">// unknown actions change nothing</span>
+  }
+}</pre>
+        <div class="lab" id="flowLab">
+          <div class="lab-head"><div><div class="pt">Action → store → everyone</div><div class="ps">one writer, many readers</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="flAdd">dispatch ADD_LINK</button>
+              <button class="ds-btn" id="flFilter">dispatch SET_FILTER</button>
+              <button class="ds-btn" id="flReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="fl-wrap">
+              <div class="fl-side">
+                <div class="fl-comp" id="flCompA"><span class="fc-n">StatsBar</span>links: <b id="flCountA">3</b></div>
+                <div class="fl-comp" id="flCompB"><span class="fc-n">FilterBar</span>filter: <b id="flFilterB">all</b></div>
+              </div>
+              <div class="fl-arrow">⇄</div>
+              <div class="fl-store"><div class="dp-h">the store (one writer)</div><div class="fl-json" id="flStore"></div></div>
+            </div>
+            <div class="wlog" id="flLog"></div>
+          </div>
+          <div class="lab-foot" id="flFoot">Both components update from the same dispatch — neither talked to the other, and neither touched the store directly. The reducer is the only writer in the whole app.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Design Patterns</span><div>A store is the <b>Observer pattern</b> from <i>Design Patterns</i> at architectural scale — subject (store), subscribers (components), notifications (re-renders) — with the Command pattern's shape in every action object. Old patterns, new stage.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Put all state in a global store — that's the "proper" architecture.</div><div class="truth">Global-by-default turns every keystroke into ceremony. The working rule: <b>state lives as close as possible</b> to where it's used, and is lifted only when genuinely shared. An input's draft belongs to the input; the link list belongs to the store.</div></div>
+          <div class="mc"><div class="myth">Immutability is wasteful — just mutate the object.</div><div class="truth">A new object per change is what makes change <b>detectable</b> (compare references, not deep values), time-travel debuggable, and race-free. The differ from Module 06 leans on it too. Modern engines make the copies cheap; the guarantees are the point.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fnet);border-color:rgba(78,214,107,.4);background:var(--fnet-soft)">Server state</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 08</span></div><h2>Server state</h2></div>
+        <p>Everything so far lived in memory. Real data lives across a network — Snip's links come from <code class="tok">GET /stats</code>, and the network is slow, flaky, and asynchronous. The front-end move is to treat all of that as <em>state like any other</em>: a request isn't a moment, it's a <strong>lifecycle</strong> — <code class="tok">loading → success | error</code> — and the view renders each phase honestly. No blank screens, no silent failures.</p>
+        <span class="filetag">api.js</span>
+        <pre><span class="kw">async function</span> <span class="fn">loadLinks</span>() {
+  <span class="fn">dispatch</span>({ type: <span class="str">'LOAD_START'</span> });                 <span class="cmt">// → spinner renders</span>
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/stats'</span>);
+    <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(res.status);
+    <span class="fn">dispatch</span>({ type: <span class="str">'LOAD_OK'</span>, links: <span class="kw">await</span> res.<span class="fn">json</span>() });
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">dispatch</span>({ type: <span class="str">'LOAD_FAIL'</span>, err });            <span class="cmt">// → retry UI renders</span>
+  }
+}</pre>
+        <p>Load Snip's links below — then break the server and load again. Finally, try an <strong>optimistic</strong> add: the UI trusts the request, shows the row instantly, and rolls back if the server says no:</p>
+        <div class="lab" id="fetchLab">
+          <div class="lab-head"><div><div class="pt">The request as state</div><div class="ps">loading · success · error · optimistic</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="ftLoad">GET /stats</button>
+              <button class="ds-btn" id="ftAdd">POST new link</button>
+              <button class="ds-btn" id="ftFail">server: healthy</button>
+              <button class="ds-btn" id="ftOpt">optimistic: on</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ft-bar"><span class="ft-pill idle" id="ftPill">IDLE</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint)" id="ftHint">the request lifecycle, rendered</span></div>
+            <div class="ft-list" id="ftList"><div class="ft-empty">nothing loaded yet — the view says so, honestly</div></div>
+            <div class="wlog" id="ftLog"></div>
+          </div>
+          <div class="lab-foot" id="ftFoot">Loading, success, and error are all states with renders of their own. The network is unreliable; the UI's account of it never is.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ ASP.NET Core · Advanced SQL</span><div>The endpoint on the other end is the one you built: ASP.NET's <code class="tok">GET /stats</code> running the <i>Advanced SQL</i> dashboard query — CTE, FILTER pivot, window rank — and returning JSON. This module is that JSON's last mile to a human.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Await the fetch, then render — that's the whole story.</div><div class="truth">That story has no chapter for the 800&nbsp;ms in between or the request that never lands. Users live in those chapters. <b>Loading and error are first-class states</b>; render them or the interface goes silent exactly when the user needs it to speak.</div></div>
+          <div class="mc"><div class="myth">Optimistic updates are lying to the user.</div><div class="truth">They're a <b>bet with a receipt</b>: show the expected result instantly, keep enough information to roll back, and reconcile with the server's answer. For high-success actions it's the difference between an app that feels instant and one that feels dial-up.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--froute);border-color:rgba(124,156,255,.4);background:var(--froute-soft)">Routing</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>Routing &amp; the app's shape</h2></div>
+        <p>Zoom out to the whole app. The classic web is a <strong>multi-page app</strong>: every navigation asks the server for a fresh document. A <strong>single-page app</strong> loads once and navigates in JavaScript — instant transitions, state that survives navigation — while <strong>server-side rendering</strong> hybrids send real HTML first and <em>hydrate</em> it into an app for fast first paint <em>and</em> rich interaction. Different shapes, one shared insight: <strong>the URL is state</strong>. It should drive the view like any other state — and update like any other state, so back, refresh, and share-this-link keep working.</p>
+        <span class="filetag">router.js</span>
+        <pre><span class="kw">function</span> <span class="fn">navigate</span>(path) {
+  history.<span class="fn">pushState</span>({}, <span class="str">''</span>, path);   <span class="cmt">// change the URL — no reload</span>
+  <span class="fn">render</span>(<span class="fn">routeFor</span>(path));             <span class="cmt">// URL is just more state</span>
+}
+window.<span class="fn">addEventListener</span>(<span class="str">'popstate'</span>,   <span class="cmt">// back button = state change too</span>
+  () =&gt; <span class="fn">render</span>(<span class="fn">routeFor</span>(location.pathname)));</pre>
+        <div class="lab" id="routeLab">
+          <div class="lab-head"><div><div class="pt">A router in miniature</div><div class="ps">URL as state · no reloads</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="rtBack">← back</button>
+              <button class="ds-btn" id="rtReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="rt-chrome">
+              <div class="rt-top"><span class="rt-dots"><span></span><span></span><span></span></span><span class="rt-url" id="rtUrl"></span></div>
+              <div class="rt-body">
+                <nav class="rt-nav" id="rtNav"></nav>
+                <div class="rt-view" id="rtView"></div>
+              </div>
+            </div>
+            <div class="wlog" id="rtLog"></div>
+          </div>
+          <div class="lab-foot" id="rtFoot">Each click is pushState plus a render — the document never reloads, yet the URL, the view, and the back button all agree, because they all read the same state.</div>
+        </div>
+        <p>The other whole-app concern is the <strong>build</strong>: modern front ends are compiled — bundled into few files, minified, tree-shaken of dead code, and <em>code-split</em> so the settings page's JavaScript doesn't tax the dashboard's first load. The artifact you deploy is static files on a CDN; the app-ness happens in the browser.</p>
+        <div class="xref"><span class="xi">↳ The Capstone</span><div>Snip now has two routers: the server one from the capstone answering <code class="tok">GET /{code}</code> with a 301, and this client one swapping dashboard views without a reload. Same concept — a path chooses what runs — on opposite ends of the wire.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">SPAs are simply better — make everything one.</div><div class="truth">SPAs buy fluid interaction with a real bill: bigger first load, client-side complexity, SEO and accessibility work the browser used to do free. Content sites often want MPA or SSR; dashboards like Snip's earn the SPA. <b>Shape follows use</b>, not fashion.</div></div>
+          <div class="mc"><div class="myth">The back button breaking is just how web apps are.</div><div class="truth">It breaks only when the URL stops being state. Route with <code class="tok">pushState</code>, render from the location, handle <code class="tok">popstate</code> — and back, refresh, and shared links all work, because they're all just reads of the same value.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fperf);border-color:rgba(237,110,158,.4);background:var(--fperf-soft)">Performance</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 10</span></div><h2>Performance &amp; the main thread</h2></div>
+        <p>Front-end performance is two promises: <strong>load fast</strong> (small bundles, lazy loading, caching — mostly Module 09's build doing its job) and <strong>stay responsive</strong>. The second one has a hard constraint: JavaScript, style, layout, and paint largely share <strong>one main thread</strong>, drained by the <strong>event loop</strong> one task at a time. At 60&nbsp;fps a frame gets ~16&nbsp;ms; any task longer than that and scrolling stutters, clicks queue, the page <em>janks</em>. The user can feel your <code class="tok">for</code> loop.</p>
+        <p>The classic offender is an event that fires far faster than its work deserves — <code class="tok">input</code>, <code class="tok">scroll</code>, <code class="tok">resize</code>. The fixes are rate-limiters: <strong>debounce</strong> (act after the burst goes quiet — right for search-as-you-type) and <strong>throttle</strong> (act at most every N&nbsp;ms — right for scroll effects):</p>
+        <span class="filetag">debounce.js</span>
+        <pre><span class="kw">function</span> <span class="fn">debounce</span>(fn, ms) {
+  <span class="kw">let</span> t;
+  <span class="kw">return</span> (...args) =&gt; {
+    <span class="fn">clearTimeout</span>(t);                    <span class="cmt">// the burst resets the clock</span>
+    t = <span class="fn">setTimeout</span>(() =&gt; <span class="fn">fn</span>(...args), ms);
+  };
+}
+search.<span class="fn">addEventListener</span>(<span class="str">'input'</span>, <span class="fn">debounce</span>(runSearch, <span class="num">250</span>));</pre>
+        <p>Type a Snip search below — every keystroke is an event, but watch how few of them become <em>work</em>:</p>
+        <div class="lab" id="perfLab">
+          <div class="lab-head"><div><div class="pt">Taming an event storm</div><div class="ps">raw vs debounced vs throttled</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="pfReset">reset counters</button></div>
+          </div>
+          <div class="lab-body">
+            <input class="pf-input" id="pfInput" placeholder="type to search links… each keystroke fires an input event" autocomplete="off">
+            <div class="pf-grid">
+              <div class="pf-cell"><b id="pfRaw" style="color:var(--fevent)">0</b><span>events fired</span></div>
+              <div class="pf-cell"><b id="pfDeb" style="color:var(--accent)">0</b><span>debounced runs</span></div>
+              <div class="pf-cell"><b id="pfThr" style="color:var(--froute)">0</b><span>throttled runs</span></div>
+            </div>
+            <div class="stateline" id="pfStatus">type something — then stop, and watch the debounce fire once</div>
+          </div>
+          <div class="lab-foot" id="pfFoot">Fifteen keystrokes, one search. The event loop only has 16 ms per frame — spend them on work the user can see.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">JavaScript is async, so it's basically multithreaded.</div><div class="truth">Async means <b>interleaved on one thread</b>, not parallel: awaiting a fetch frees the loop, but your handler still runs alone and unpreemptable. A 200&nbsp;ms computation freezes every animation on screen — that's what Web Workers exist to take elsewhere.</div></div>
+          <div class="mc"><div class="myth">Optimize when users complain — premature optimization, etc.</div><div class="truth">Load weight and main-thread budgets aren't micro-optimizations; they're <b>architecture</b>, nearly unfixable after the fact. Wisdom is measuring before optimizing details — but budgets (bundle size, frame time) belong in the design from day one.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>Accessibility &amp; the dashboard</h2></div>
+        <p>One promise remains: the interface must work for <em>everyone</em> — keyboard users, screen-reader users, low vision, motor constraints, the person on a train with one bar of signal. <strong>Accessibility</strong> is mostly won by using the platform honestly: a real <code class="tok">&lt;button&gt;</code> is focusable, keyboard-operable, and announced correctly for free; a clickable <code class="tok">&lt;div&gt;</code> is none of those until you rebuild what you threw away. Semantic HTML first, visible focus, sufficient contrast, labels on inputs, and ARIA only to fill genuine gaps. Respect <code class="tok">prefers-reduced-motion</code> — this very page does.</p>
+        <p>And now the assembly. Everything this course taught, in one component — Snip's dashboard:</p>
+        <span class="filetag">Dashboard.pseudo.jsx</span>
+        <pre><span class="kw">function</span> <span class="fn">Dashboard</span>() {
+  <span class="kw">const</span> { links, status, filter } = <span class="fn">useStore</span>();      <span class="cmt">// m07 · one-way flow</span>
+  <span class="fn">useEffect</span>(loadLinks, []);                           <span class="cmt">// m08 · server state</span>
+  <span class="kw">const</span> route = <span class="fn">useRoute</span>();                           <span class="cmt">// m09 · URL is state</span>
+
+  <span class="kw">if</span> (status === <span class="str">'loading'</span>) <span class="kw">return</span> <span class="tg">&lt;Spinner /&gt;</span>;      <span class="cmt">// m08 · honest phases</span>
+  <span class="kw">if</span> (status === <span class="str">'error'</span>)   <span class="kw">return</span> <span class="tg">&lt;Retry /&gt;</span>;
+
+  <span class="kw">return</span> (                                            <span class="cmt">// m04 · UI = f(state)</span>
+    <span class="tg">&lt;main&gt;</span>                                            <span class="cmt">// m11 · semantic, focusable</span>
+      <span class="tg">&lt;StatsBar</span> <span class="at">links</span>={links} <span class="tg">/&gt;</span>                     <span class="cmt">// m05 · props down</span>
+      {links.<span class="fn">map</span>(l =&gt; <span class="tg">&lt;LinkRow</span> <span class="at">key</span>={l.code}        <span class="cmt">// m06 · keyed identity</span>
+                        <span class="at">onSelect</span>={select} <span class="tg">/&gt;</span>)}     <span class="cmt">// m03/m05 · events up</span>
+    <span class="tg">&lt;/main&gt;</span>
+  );
+}</pre>
+        <div class="note key">
+          <div class="nh">The loop is the app</div>
+          <p>Strip the acronyms away and the front end is one loop wearing many coats: the browser renders state into pixels (Modules 01–02), the user fires events (03), events become new state (04), components split the render (05), the differ keeps it cheap (06), the store scales it (07), the server feeds it (08), the URL joins it (09), the budget disciplines it (10), and accessibility makes it everyone's (11). <strong>UI&nbsp;=&nbsp;f(state)</strong> — learn the formula once and every framework is just an accent.</p>
+        </div>
+        <div class="xref"><span class="xi">↳ The Lifecycle</span><div>Snip is now a full product — API, database, analytics, and a face. What's left is the loop <i>around</i> this one: review it, run it through CI, ship it behind a canary, and watch it in production. That's <i>Mastering the Software Development Lifecycle</i> — the outer loop to this course's inner one.</div></div>
+        <div class="closing">
+          <h2>The screen is a function.</h2>
+          <p>You met the front end at the pixel and leave it at the architecture: a pipeline that renders, a tree that lives, events that travel, and above all a discipline — facts in state, view from state, always. The labs you clicked through weren't illustrations of the material; they <em>were</em> the material, reacting in your browser exactly as described. That's the quiet superpower of this layer of the stack: it teaches in the same medium it ships.</p>
+          <p>So build the interface. Somewhere behind it sit your tables, your API, your tests, your pipeline — and now, in front of all of it, a screen that tells the truth about the state it was given. That's the whole job, and you know how to do it.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering Front-End Engineering — the interface layer over the whole curriculum: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, Advanced&nbsp;SQL&nbsp;&amp;&nbsp;PostgreSQL, and the Capstone that built Snip. They built the system; this course gave it a screen that tells the truth.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/mastering-front-end-engineering.js"></script>
+</body>
+</html>

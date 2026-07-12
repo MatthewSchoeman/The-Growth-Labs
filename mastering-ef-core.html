@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering Entity Framework Core · The Growth Lab</title>
+<meta name="description" content="An interactive course on EF Core — the .NET ORM. Map C# classes to tables, turn LINQ into SQL, track changes, save with one call, model relationships, and run migrations. The data layer that completes the C# → ASP.NET → EF track.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-ef-core.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="8" cy="5.4" rx="5" ry="2.1" stroke="#A78BFA" stroke-width="1.5"/>
+        <path d="M3 5.4 V11 C3 12.2 5.2 13.1 8 13.1 C10.8 13.1 13 12.2 13 11 V5.4" stroke="#A78BFA" stroke-width="1.5" fill="none"/>
+        <path d="M13.5 18.5 L20 18.5 M20 18.5 L17.4 15.9 M20 18.5 L17.4 21.1" stroke="#56C7FF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>EF Core</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="8" cy="5.4" rx="5" ry="2.1" stroke="#A78BFA" stroke-width="1.5"/>
+            <path d="M3 5.4 V11 C3 12.2 5.2 13.1 8 13.1 C10.8 13.1 13 12.2 13 11 V5.4" stroke="#A78BFA" stroke-width="1.5" fill="none"/>
+            <path d="M13.5 18.5 L20 18.5 M20 18.5 L17.4 15.9 M20 18.5 L17.4 21.1" stroke="#56C7FF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>EF Core</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>What is EF Core</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Your model &amp; DbContext</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Mapping classes to tables</span></a>
+      <div class="nav-group-label">Querying · Beginner → Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Querying with LINQ</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Translation &amp; projection</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Relationships &amp; loading</span></a>
+      <div class="nav-group-label">Changing Data · Intermediate</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>The change tracker</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Saving changes</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Migrations</span></a>
+      <div class="nav-group-label">Production · Intermediate</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Performance &amp; pitfalls</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>EF in ASP.NET Core</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Putting it together</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Intermediate</div>
+        <h1>You work in objects.<br><span class="grad">EF speaks SQL.</span></h1>
+        <p class="lede">Entity Framework Core is the <strong>object-relational mapper</strong> for .NET. You define plain C# classes, query and change them as ordinary objects, and EF does the database conversation for you — mapping <strong>classes to tables</strong>, translating your <strong>LINQ into SQL</strong>, <strong>tracking</strong> every change you make, and working out the exact <code class="tok">INSERT</code>/<code class="tok">UPDATE</code>/<code class="tok">DELETE</code> to save them. This course is the data layer that completes the track: the C# you learned, served over the web with ASP.NET, now backed by a real database.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A LINQ query on the left flows through EF Core and becomes a SQL statement that runs against a database; rows return and become C# objects"></svg>
+          <div class="hero-cap"><span style="color:var(--query)">LINQ → SQL</span> · <span style="color:var(--track)">change tracking</span> · <span style="color:var(--rel)">relationships</span> · <span style="color:var(--migrate)">migrations</span> · one model, your database</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start with the model →</a>
+          <a class="btn btn-ghost" href="#m3">Jump to LINQ → SQL</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>What is EF Core</h2></div>
+        <p>There's a fundamental mismatch at the heart of most applications. Your code thinks in <strong>objects</strong> — classes with properties, references between them, whole graphs in memory. Your database thinks in <strong>tables</strong> — flat rows, columns, and foreign keys. Bridging that gap by hand means writing endless SQL strings, mapping result columns back into objects, and tracking what changed. An <strong>object-relational mapper</strong> (ORM) automates the bridge, and <strong>EF Core</strong> is the ORM for .NET.</p>
+        <p>With EF Core you define plain C# classes, and it handles the rest: it generates the <code class="tok">SELECT</code> from your LINQ, materializes rows into objects, watches those objects for changes, and produces the <code class="tok">INSERT</code>/<code class="tok">UPDATE</code>/<code class="tok">DELETE</code> to persist them. It's <strong>provider-based</strong> — the same code runs against SQL Server, PostgreSQL, SQLite, and more by swapping one package. You trade a measure of low-level control for an enormous reduction in boilerplate.</p>
+        <div class="xref"><span class="xi">↳ SQL course</span><div>EF Core doesn't replace what you learned in <i>SQL &amp; PostgreSQL</i> — it sits on top of it. Everything EF generates is SQL hitting tables, indexes, and joins. Understanding the SQL underneath is exactly what separates someone who uses EF well from someone who fights it.</div></div>
+        <p>So the mental model for this whole course is the thesis: <strong>you work in objects, and EF speaks SQL on your behalf.</strong> You rarely write a query string. You write LINQ and manipulate objects; EF translates. The skill is knowing what that translation does — which is what every widget here makes visible.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">An ORM means I never have to learn SQL.</div><div class="truth">The opposite, in practice. EF writes the SQL, but you have to <b>read</b> it to spot a missing index, an accidental table scan, or an N+1 storm. EF is a productivity multiplier on top of SQL knowledge, not a replacement for it.</div></div>
+          <div class="mc"><div class="myth">EF Core is just slow — real apps use raw SQL.</div><div class="truth">Well-used EF is fast enough for the vast majority of work, and you can always drop to raw SQL for the hot 1%. Most "EF is slow" stories are really "this query was written carelessly" — fetching whole entities to read one column, or triggering hundreds of round-trips (Module 09).</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--entity);border-color:rgba(167,139,250,.4);background:var(--entity-soft)">Model</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Your model &amp; DbContext</h2></div>
+        <p>An EF model is just <strong>plain C# classes</strong> — your <em>entities</em> — plus a <strong>DbContext</strong> that ties them to a database. The context exposes a <code class="tok">DbSet&lt;T&gt;</code> for each entity type, and each <code class="tok">DbSet</code> is your query gateway and your handle for adding and removing rows. The <code class="tok">DbContext</code> is three things at once: a <strong>query gateway</strong>, a <strong>change tracker</strong>, and a <strong>unit of work</strong> that batches everything into one <code class="tok">SaveChanges</code>.</p>
+        <pre><span class="tag">c#</span><span class="kw2">public class</span> <span class="typ">Blog</span>                       <span class="cmt">// an entity — a POCO</span>
+{
+    <span class="kw2">public int</span> Id { <span class="kw2">get</span>; <span class="kw2">set</span>; }         <span class="cmt">// convention: Id is the primary key</span>
+    <span class="kw2">public string</span> Title { <span class="kw2">get</span>; <span class="kw2">set</span>; } = <span class="str">""</span>;
+}
+
+<span class="kw2">public class</span> <span class="typ">BloggingContext</span> : <span class="typ">DbContext</span>
+{
+    <span class="kw2">public</span> <span class="typ">DbSet&lt;Blog&gt;</span> Blogs => <span class="fn">Set</span>&lt;<span class="typ">Blog</span>&gt;();   <span class="cmt">// maps to the Blogs table</span>
+    <span class="kw2">protected override void</span> <span class="fn">OnConfiguring</span>(<span class="typ">DbContextOptionsBuilder</span> o)
+        => o.<span class="fn">UseSqlite</span>(<span class="str">"Data Source=blog.db"</span>);     <span class="cmt">// pick a provider</span>
+}</pre>
+        <p>Using it is ordinary C#. You add an object, save, and query — no SQL in sight:</p>
+        <pre><span class="tag">c#</span><span class="kw">using var</span> db = <span class="kw">new</span> <span class="typ">BloggingContext</span>();
+db.Blogs.<span class="fn">Add</span>(<span class="kw">new</span> <span class="typ">Blog</span> { Title = <span class="str">"Hello EF"</span> });   <span class="cmt">// staged as Added</span>
+db.<span class="fn">SaveChanges</span>();                              <span class="hlok">// INSERT runs here</span>
+
+<span class="kw2">var</span> blogs = db.Blogs.<span class="fn">Where</span>(b => b.Title.<span class="fn">Contains</span>(<span class="str">"EF"</span>)).<span class="fn">ToList</span>();</pre>
+        <div class="xref"><span class="xi">↳ ASP.NET course</span><div>Remember service lifetimes? In ASP.NET Core the <code class="tok">DbContext</code> is registered as a <b>scoped</b> service — one per request — precisely because it's a short-lived unit of work that isn't thread-safe. The "2 instances, one per request" behavior from the DI widget is the <code class="tok">DbContext</code>'s natural home (Module 10).</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A <code class="tok">DbContext</code> is meant to live a long time and be shared.</div><div class="truth">It's deliberately <b>short-lived and single-threaded</b> — create one, do a unit of work, dispose it. Its change tracker accumulates state, so a long-lived shared context leaks memory, returns stale data, and breaks under concurrent use.</div></div>
+          <div class="mc"><div class="myth">A <code class="tok">DbSet</code> holds the table's data in memory.</div><div class="truth">A <code class="tok">DbSet</code> is a <b>query gateway</b>, not a collection. Touching <code class="tok">db.Blogs</code> loads nothing; only when you enumerate a query (or call <code class="tok">ToList</code>) does EF run SQL and fetch just the rows that query asked for.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--map);border-color:rgba(86,199,255,.4);background:var(--map-soft)">Mapping</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Mapping classes to tables</h2></div>
+        <p>EF figures out most of your schema by <strong>convention</strong>, so a clean class needs almost no configuration. A class becomes a table; each property becomes a column; a property named <code class="tok">Id</code> (or <code class="tok">BlogId</code>) becomes the <strong>primary key</strong>; C# types map to sensible SQL types; and a non-nullable reference becomes a <code class="tok">NOT NULL</code> column. When conventions aren't enough, you override them with <strong>data annotations</strong> on the property or the <strong>Fluent API</strong> in <code class="tok">OnModelCreating</code>.</p>
+        <pre><span class="tag">c#</span><span class="kw2">public class</span> <span class="typ">Product</span>
+{
+    <span class="kw2">public int</span> Id { <span class="kw2">get</span>; <span class="kw2">set</span>; }
+    [<span class="typ">MaxLength</span>(<span class="num">200</span>)] <span class="kw2">public string</span> Title { <span class="kw2">get</span>; <span class="kw2">set</span>; } = <span class="str">""</span>;
+    [<span class="typ">Column</span>(<span class="str">"Cost"</span>)]   <span class="kw2">public decimal</span> Price { <span class="kw2">get</span>; <span class="kw2">set</span>; }
+    [<span class="typ">NotMapped</span>]      <span class="kw2">public string</span> Slug { <span class="kw2">get</span>; <span class="kw2">set</span>; } = <span class="str">""</span>;  <span class="cmt">// no column</span>
+}</pre>
+        <p>Toggle annotations on the class below and watch the generated table change — the column type, its nullability, its name, or whether it exists at all:</p>
+        <div class="lab" id="mapLab">
+          <div class="lab-head"><div><div class="pt">Class ⇄ table</div><div class="ps">conventions, overridden by configuration</div></div></div>
+          <div class="lab-body">
+            <div class="map-grid">
+              <div class="map-side cls"><div class="ms-h"><span>class Product</span><span style="color:var(--ink-faint)">C#</span></div><div id="mapClass"></div></div>
+              <div class="map-arrow">→</div>
+              <div class="map-side tbl"><div class="ms-h"><span>Products</span><span style="color:var(--ink-faint)">table</span></div><div id="mapTable"></div></div>
+            </div>
+            <div class="map-toggles" id="mapToggles"></div>
+          </div>
+          <div class="lab-foot" id="mapFoot">Conventions map the clean class on the left to the table on the right. Toggle a rule to override them.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ SQL course</span><div>The right-hand side is exactly the <code class="tok">CREATE TABLE</code> world from <i>SQL &amp; PostgreSQL</i> — column types, <code class="tok">NULL</code>/<code class="tok">NOT NULL</code>, primary keys. EF is deciding that DDL for you from your C#, which is why knowing what good schema looks like still matters.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">You have to configure every property explicitly.</div><div class="truth">Conventions cover the large majority — keys, column names, types, nullability. You only reach for annotations or the Fluent API for the <b>exceptions</b>: a length limit, a renamed column, a composite key, a relationship EF can't infer.</div></div>
+          <div class="mc"><div class="myth">EF needs a database that already exists.</div><div class="truth">In the common <b>code-first</b> flow, your classes are the source of truth and EF <i>creates</i> the schema (via migrations, Module 08). There's also a database-first flow that scaffolds classes from an existing schema — EF supports both directions.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--query);border-color:rgba(78,214,107,.4);background:var(--query-soft)">Query</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 03</span></div><h2>Querying with LINQ</h2></div>
+        <p>This is where EF earns its keep. You query your tables with the <strong>exact same LINQ</strong> you learned in the C# course — <code class="tok">Where</code>, <code class="tok">OrderBy</code>, <code class="tok">Select</code> — but instead of running over an in-memory list, EF <strong>translates the whole chain into one SQL statement</strong> and runs it on the database server. The rows that come back are materialized straight into your entity objects.</p>
+        <div class="xref"><span class="xi">↳ C# course → SQL course</span><div>The LINQ builder from <i>Mastering C#</i> ran over a <code class="tok">List</code> in memory. The widget below is its EF sibling: the same clauses, but now you also see the <b>SQL EF generates</b> — the bridge between the two earlier courses made literal. LINQ in, SQL out.</div></div>
+        <p>Compose a query and watch both sides update: the C# you write, and the SQL EF sends to the database, with the rows it returns:</p>
+        <div class="lab" id="queryLab">
+          <div class="lab-head"><div><div class="pt">LINQ in, SQL out</div><div class="ps">the same query, translated to the database</div></div></div>
+          <div class="lab-body">
+            <div class="linq-clauses" id="linqClauses"></div>
+            <div class="q-codes">
+              <div class="q-pane csharp"><div class="qp-h">C# — what you write</div><div class="q-code" id="qLinq"></div></div>
+              <div class="q-pane sql"><div class="qp-h">SQL — what EF runs</div><div class="q-code" id="qSql"></div></div>
+            </div>
+            <div class="linq-results-h"><span>rows returned</span><span id="linqCount"></span></div>
+            <div class="tbl-wrap" style="margin-bottom:0"><table id="linqTable"><thead id="linqHead"></thead><tbody id="linqBody"></tbody></table></div>
+          </div>
+          <div class="lab-foot" id="linqFoot">Each clause becomes part of one SQL statement. EF runs it once and turns the rows into objects.</div>
+        </div>
+        <p>Because LINQ is <strong>deferred</strong>, none of this runs until you enumerate the query — with <code class="tok">ToList()</code>, <code class="tok">foreach</code>, <code class="tok">First()</code>, and so on. That deferral is exactly what lets EF fold every clause into a single round-trip rather than fetching early and filtering in memory.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth"><code class="tok">db.Products.Where(...)</code> fetches rows, then filters them in C#.</div><div class="truth">The <code class="tok">Where</code> becomes a SQL <code class="tok">WHERE</code> — the filtering happens <b>on the database</b>, and only matching rows ever travel back. Fetching-then-filtering in memory is the anti-pattern EF is built to avoid.</div></div>
+          <div class="mc"><div class="myth">Writing the query executes it.</div><div class="truth">Defining a query builds an <b>expression tree</b>; nothing hits the database yet. Execution happens on enumeration. You can keep composing — add another <code class="tok">Where</code>, an <code class="tok">OrderBy</code> — and it all collapses into one statement when you finally read the results.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--query);border-color:rgba(78,214,107,.4);background:var(--query-soft)">Query</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Translation &amp; projection</h2></div>
+        <p>EF can only run what it can translate. Operators and expressions it understands — comparisons, string functions like <code class="tok">Contains</code>, aggregates — become SQL and run on the <strong>server</strong>. But call a method EF can't turn into SQL inside a query, and modern EF <strong>throws</strong> rather than silently fetching everything and running your code in memory. That refusal is a feature: it stops an accidental full-table download.</p>
+        <pre><span class="tag">c#</span><span class="cmt">// ✓ translates — runs as SQL WHERE</span>
+db.Products.<span class="fn">Where</span>(p => p.Title.<span class="fn">StartsWith</span>(<span class="str">"K"</span>) &amp;&amp; p.Price &lt; <span class="num">50</span>);
+
+<span class="cmt">// ✗ MyCustomCheck() can't become SQL → throws (not a silent client scan)</span>
+db.Products.<span class="fn">Where</span>(p => <span class="fn">MyCustomCheck</span>(p));</pre>
+        <p>The other half of writing efficient queries is <strong>projection</strong>. Selecting whole entities pulls every column; projecting with <code class="tok">Select</code> into a small shape tells EF to fetch <em>only those columns</em>. For read-only screens this is one of the biggest, cheapest wins available:</p>
+        <pre><span class="tag">c#</span><span class="cmt">// pulls every column of every product</span>
+<span class="kw2">var</span> all = db.Products.<span class="fn">ToList</span>();
+
+<span class="cmt">// SELECT p.Id, p.Title only — less data over the wire</span>
+<span class="kw2">var</span> slim = db.Products
+    .<span class="fn">Select</span>(p => <span class="kw">new</span> { p.Id, p.Title })   <span class="hlok">// projection</span>
+    .<span class="fn">ToList</span>();
+
+<span class="kw2">var</span> page = db.Products.<span class="fn">OrderBy</span>(p => p.Id)
+    .<span class="fn">Skip</span>(<span class="num">20</span>).<span class="fn">Take</span>(<span class="num">10</span>).<span class="fn">ToList</span>();    <span class="cmt">// OFFSET 20 FETCH 10</span></pre>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Any C# I write inside a LINQ query will just work.</div><div class="truth">Only <b>translatable</b> expressions work; arbitrary C# methods can't become SQL. EF throwing on an untranslatable query is protecting you from quietly pulling the whole table into memory to run that code client-side.</div></div>
+          <div class="mc"><div class="myth">Projecting with <code class="tok">Select</code> doesn't really matter.</div><div class="truth">It changes the actual <code class="tok">SELECT</code> column list. Loading a 30-column entity to display two fields wastes bandwidth and memory; <code class="tok">Select new { ... }</code> fetches just what the screen needs — and projected results aren't tracked, which is lighter still (Module 09).</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--rel);border-color:rgba(237,110,158,.4);background:var(--rel-soft)">Relationships</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Relationships &amp; loading</h2></div>
+        <p>Real models have relationships. A <code class="tok">Blog</code> has many <code class="tok">Post</code>s; each <code class="tok">Post</code> belongs to one <code class="tok">Blog</code>. You express that with <strong>navigation properties</strong> (<code class="tok">blog.Posts</code>, <code class="tok">post.Blog</code>) and a <strong>foreign key</strong> (<code class="tok">post.BlogId</code>). EF infers the relationship and the join from these by convention.</p>
+        <pre><span class="tag">c#</span><span class="kw2">public class</span> <span class="typ">Blog</span> { <span class="kw2">public int</span> Id; <span class="kw2">public</span> <span class="typ">List&lt;Post&gt;</span> Posts = <span class="kw">new</span>(); }
+<span class="kw2">public class</span> <span class="typ">Post</span> { <span class="kw2">public int</span> Id; <span class="kw2">public int</span> BlogId; <span class="kw2">public</span> <span class="typ">Blog</span>? Blog; }</pre>
+        <p>By default, loading a blog does <strong>not</strong> load its posts — EF won't silently fan out queries behind your back. You ask for related data explicitly. The most common way is <strong>eager loading</strong> with <code class="tok">Include</code>, which adds a <code class="tok">JOIN</code> so the posts come back in the same round-trip. Toggle it below and watch both the loaded data and the SQL change:</p>
+        <div class="lab" id="relLab">
+          <div class="lab-head"><div><div class="pt">Loading related data</div><div class="ps">navigations don't load until you ask</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-rl="blogsonly">Blogs only</button>
+              <button class="ds-btn" data-rl="include">.Include(Posts)</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="rel-stage">
+              <div class="rel-table blogs"><div class="rt-h">Blogs</div><div id="relBlogs"></div></div>
+              <div class="rel-table posts"><div class="rt-h">Posts</div><div id="relPosts"></div></div>
+            </div>
+            <div class="rel-nav" id="relNav"></div>
+            <div class="sql-code" id="relSql"></div>
+          </div>
+          <div class="lab-foot" id="relFoot">Blogs-only loads no posts; Include adds a JOIN so posts arrive in one query.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ SQL course</span><div><code class="tok">Include</code> is EF writing a <code class="tok">JOIN</code> for you — the same join from <i>SQL &amp; PostgreSQL</i>. And just like a hand-written join, it can multiply rows, so EF sometimes splits it into separate queries instead. Knowing joins tells you what <code class="tok">Include</code> will cost.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Navigation properties load automatically when I touch them.</div><div class="truth">Only if you've opted into <b>lazy loading</b> (proxies) — and that convenience hides round-trips. By default a navigation is empty until you <code class="tok">Include</code> it, project it, or explicitly <code class="tok">Load</code> it. EF makes related-data fetching a deliberate choice.</div></div>
+          <div class="mc"><div class="myth"><code class="tok">Include</code> everything — more data loaded up front is safer.</div><div class="truth">Each <code class="tok">Include</code> is a join that widens the result and can duplicate parent rows. Pull only the relationships a screen actually uses; over-including is a common source of bloated, slow queries.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--track);border-color:rgba(232,179,65,.4);background:var(--track-soft)">Tracking</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>The change tracker</h2></div>
+        <p>Here's the piece that makes EF feel like magic. When you load entities, the context keeps a private <strong>snapshot</strong> of each one and assigns it a state. As you change those objects with ordinary C# — set a property, add a new one, remove another — EF records the new <strong>EntityState</strong>: <code class="tok">Unchanged</code>, <code class="tok">Modified</code>, <code class="tok">Added</code>, or <code class="tok">Deleted</code>. It does <em>not</em> touch the database yet. It's just remembering what you did.</p>
+        <div class="xref"><span class="xi">↳ Design Patterns</span><div>The change tracker is the <b>Unit of Work</b> and <b>Identity Map</b> patterns from <i>Design Patterns</i>, built in. Unit of Work batches all your changes into one commit; Identity Map guarantees that two queries returning the same row hand you the <i>same</i> object instance, so your edits stay consistent.</div></div>
+        <p>Change the entities below as plain objects and watch their state shift. Nothing is saved — EF is simply tracking what <code class="tok">SaveChanges</code> will need to do:</p>
+        <div class="lab" id="trackLab">
+          <div class="lab-head"><div><div class="pt">Watching your objects</div><div class="ps">every change updates an EntityState</div></div></div>
+          <div class="lab-body">
+            <div class="track-list" id="trackList"></div>
+            <div class="track-summary" id="trackSummary"></div>
+            <div class="ds-controls" style="justify-content:center;margin-top:14px">
+              <button class="ds-btn" id="trackEdit">edit a title</button>
+              <button class="ds-btn primary" id="trackAdd">add a blog</button>
+              <button class="ds-btn" id="trackDelete">remove a blog</button>
+              <button class="ds-btn" id="trackReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-foot" id="trackFoot">Each action changes an entity's state in the tracker — but the database is untouched until you save.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Setting a property writes to the database right away.</div><div class="truth">It only updates the <b>in-memory</b> object and its tracked state. The database changes <i>nothing</i> until <code class="tok">SaveChanges</code>. That gap is the whole point — it lets EF batch many edits into one atomic commit.</div></div>
+          <div class="mc"><div class="myth">Change tracking is free, so always query with it on.</div><div class="truth">Tracking costs memory and a snapshot comparison. For read-only queries that won't be saved, <code class="tok">AsNoTracking()</code> skips all of it and is meaningfully faster (Module 09). Track when you intend to write; don't when you only intend to read.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--save);border-color:rgba(91,214,194,.4);background:var(--save-soft)">Save</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 07</span></div><h2>Saving changes</h2></div>
+        <p>Calling <code class="tok">SaveChanges</code> commits the unit of work. EF walks every tracked entity and generates the right statement for its state: an <code class="tok">INSERT</code> for each <code class="tok">Added</code>, an <code class="tok">UPDATE</code> for each <code class="tok">Modified</code> (touching <strong>only the columns that actually changed</strong>), and a <code class="tok">DELETE</code> for each <code class="tok">Deleted</code>. It sends them as a <strong>batch inside a transaction</strong> — all succeed or all roll back — then flips every entity back to <code class="tok">Unchanged</code> and flows database-generated keys back into your objects.</p>
+        <p>Below is a context with three pending changes. Press <strong>SaveChanges</strong> and watch the exact SQL EF emits — wrapped in one transaction:</p>
+        <div class="lab" id="saveLab">
+          <div class="lab-head"><div><div class="pt">SaveChanges() → SQL</div><div class="ps">tracked states become statements, in one transaction</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="saveBtn">▸ SaveChanges()</button>
+              <button class="ds-btn" id="saveReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="track-list" id="savePending"></div>
+            <div class="save-wrap-line" id="saveBegin" style="opacity:0">BEGIN TRANSACTION</div>
+            <div class="save-sql" id="saveSql"></div>
+            <div class="save-wrap-line" id="saveCommit" style="opacity:0">COMMIT</div>
+          </div>
+          <div class="lab-foot" id="saveFoot">Three tracked changes become three statements in one atomic transaction — then states reset to Unchanged.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Design Patterns + SQL</span><div>One <code class="tok">SaveChanges</code> = one <b>Unit of Work</b> commit. The <code class="tok">UPDATE</code> sets only changed columns because the tracker knows the before-snapshot; the whole batch runs in a <b>transaction</b> — the same atomicity guarantee from the SQL course.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">An <code class="tok">UPDATE</code> rewrites the entire row.</div><div class="truth">EF compares against the snapshot and writes <b>only the columns you changed</b>. Edit one field of a wide entity and the <code class="tok">UPDATE SET</code> lists exactly that one column — smaller, faster, and less likely to clobber a concurrent edit.</div></div>
+          <div class="mc"><div class="myth">Ten changes mean ten separate database calls.</div><div class="truth">EF <b>batches</b> them and wraps the batch in one transaction. Ten edits across entities become a small number of round-trips that all commit together — or, if anything fails, all roll back, leaving the database consistent.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--migrate);border-color:rgba(242,151,60,.4);background:var(--migrate-soft)">Migrations</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 08</span></div><h2>Migrations</h2></div>
+        <p>Your model is going to change — new properties, new tables, new indexes. <strong>Migrations</strong> are how EF evolves the database schema to match your classes, safely and in version control. You change the model, run <code class="tok">dotnet ef migrations add &lt;Name&gt;</code>, and EF diffs the model against its snapshot to generate a migration with an <code class="tok">Up</code> method (apply the change) and a <code class="tok">Down</code> method (reverse it). <code class="tok">dotnet ef database update</code> then runs the pending migrations.</p>
+        <p>Pick a change to the <code class="tok">Product</code> model and see the migration EF generates, then apply it to the schema:</p>
+        <div class="lab" id="migLab">
+          <div class="lab-head"><div><div class="pt">Model change → migration → schema</div><div class="ps">evolve the database in version control</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-mig="addcol">+ Stock property</button>
+              <button class="ds-btn" data-mig="addidx">+ index on Title</button>
+              <button class="ds-btn" data-mig="addtable">+ Category table</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-muted);margin-bottom:7px">generated migration</div>
+            <div class="mig-code" id="migCode"></div>
+            <div class="ds-controls" style="justify-content:center;margin:14px 0 4px"><button class="ds-btn" id="migApply">▸ database update</button></div>
+            <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-muted);text-align:center;margin-bottom:4px">Products schema</div>
+            <div class="schema-mini" id="migSchema"></div>
+          </div>
+          <div class="lab-foot" id="migFoot">A model change generates an Up/Down migration; applying it alters the real schema.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth"><code class="tok">EnsureCreated()</code> is a fine way to set up the database.</div><div class="truth">It's for <b>prototypes and tests</b> — it creates the schema once and can't evolve it. Production needs <b>migrations</b>, which apply incremental, reversible, version-controlled changes. The two don't mix; pick migrations for anything real.</div></div>
+          <div class="mc"><div class="myth">Adding a migration changes the database.</div><div class="truth">Two separate steps. <code class="tok">migrations add</code> only <b>generates the code</b>; the database changes when you run <code class="tok">database update</code> (or apply migrations at startup). That separation lets you review and edit the migration before it ever touches a database.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--migrate);border-color:rgba(242,151,60,.4);background:var(--migrate-soft)">Performance</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 09</span></div><h2>Performance &amp; pitfalls</h2></div>
+        <p>The single most common EF performance bug has a name: the <strong>N+1 query problem</strong>. You run one query to load a list of parents, then loop over them touching a navigation property — and each access quietly fires <em>another</em> query. Load 1 list of blogs and read each blog's posts in a loop, and you've issued <strong>1 + N</strong> round-trips instead of one. It's invisible in the C# and devastating at scale.</p>
+        <div class="xref"><span class="xi">↳ Big O course</span><div>N+1 is a complexity problem from <i>Big O Complexity</i>, hiding in your data layer: the number of <b>database round-trips grows linearly</b> with the rows you loaded — O(n) trips where O(1) would do. The fix collapses n+1 trips into a single query, the same instinct as picking the better-scaling algorithm.</div></div>
+        <p>Run both versions against the same three blogs and watch the query counter:</p>
+        <div class="lab" id="n1Lab">
+          <div class="lab-head"><div><div class="pt">The N+1 problem</div><div class="ps">round-trips that grow with your data</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-n1="naive">loop (naive)</button>
+              <button class="ds-btn" data-n1="include">.Include / project</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="n1-top">
+              <div class="n1-counter"><div class="n1-k">queries sent</div><div class="n1-v" id="n1Count">0</div></div>
+              <button class="ds-btn" id="n1Run">▸ load 3 blogs + their posts</button>
+            </div>
+            <div class="query-log" id="n1Log"></div>
+          </div>
+          <div class="lab-foot" id="n1Foot">The naive loop fires one query per blog; Include fetches everything in a single round-trip.</div>
+        </div>
+        <p>The other everyday wins: use <code class="tok">AsNoTracking()</code> for read-only queries to skip the change tracker's overhead; <strong>project</strong> with <code class="tok">Select</code> so you fetch only needed columns; lean on <strong>database indexes</strong> for the columns you filter and sort on; and watch out for multiple <code class="tok">Include</code>s producing a row-multiplying cartesian join (EF can split those into separate queries).</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">N+1 is a rare edge case I'll probably never hit.</div><div class="truth">It's the <b>most common</b> EF performance problem, and it usually looks completely innocent — a <code class="tok">foreach</code> over results that reads a related property. It stays quiet in development with three rows and falls over in production with three thousand.</div></div>
+          <div class="mc"><div class="myth"><code class="tok">AsNoTracking</code> is a risky micro-optimization.</div><div class="truth">For queries whose results you only read and never save, it's the <b>right default</b> — it skips snapshotting and identity management entirely. Reserve tracking for entities you actually intend to modify and persist.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--context);border-color:rgba(124,156,255,.4);background:var(--context-soft)">Integration</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 10</span></div><h2>EF in ASP.NET Core</h2></div>
+        <p>This is where the whole track converges. In an ASP.NET Core app you don't <code class="tok">new</code> up a context — you register it once with <code class="tok">AddDbContext</code> and let dependency injection hand a fresh one to each request. Because the <code class="tok">DbContext</code> is registered <strong>scoped</strong>, every request gets its own unit of work, created and disposed around that request automatically.</p>
+        <pre><span class="tag">Program.cs</span>builder.Services.<span class="fn">AddDbContext</span>&lt;<span class="typ">BloggingContext</span>&gt;(o =>
+    o.<span class="fn">UseSqlite</span>(connectionString));        <span class="hlok">// registered as a SCOPED service</span>
+
+app.<span class="fn">MapGet</span>(<span class="str">"/blogs"</span>, <span class="kw">async</span> (<span class="typ">BloggingContext</span> db) =>   <span class="cmt">// injected per request</span>
+    <span class="kw">await</span> db.Blogs
+        .<span class="fn">AsNoTracking</span>()
+        .<span class="fn">Select</span>(b => <span class="kw">new</span> { b.Id, b.Title })
+        .<span class="fn">ToListAsync</span>());                       <span class="hlok">// async all the way down</span></pre>
+        <div class="xref"><span class="xi">↳ ASP.NET course</span><div>Two ideas from <i>Mastering ASP.NET Core</i> land here exactly. The <b>scoped</b> lifetime from the DI widget is why a <code class="tok">DbContext</code> is one-per-request. And <b>async all the way</b> from the async module is why every EF call in a web app is <code class="tok">ToListAsync</code>/<code class="tok">SaveChangesAsync</code> — never block a request thread on the database.</div></div>
+        <p>You'll hear debates about wrapping EF in a <strong>repository</strong> layer. It's worth knowing that the <code class="tok">DbContext</code> already <em>is</em> a unit of work and its <code class="tok">DbSet</code>s already <em>are</em> repositories, so an extra layer is optional — add one for testing seams or to hide EF from the rest of the app, skip it when it's just ceremony.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">I should create a <code class="tok">DbContext</code> with <code class="tok">new</code> inside my controller.</div><div class="truth"><b>Inject</b> it instead. <code class="tok">AddDbContext</code> wires it as scoped, so the framework gives each request its own context and disposes it for you. Manual construction means manual lifetime management and loses the request-scoped guarantee.</div></div>
+          <div class="mc"><div class="myth">Synchronous EF calls are fine on a web server.</div><div class="truth">Blocking a request thread on database I/O throttles throughput under load — the exact lesson from the ASP.NET async module. Use the <code class="tok">...Async</code> methods and <code class="tok">await</code> them, all the way up the call chain.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 11</span></div><h2>Putting it together</h2></div>
+        <p>You can now see the full loop. You define a <strong>model</strong> of plain classes; a <strong>DbContext</strong> maps them to tables and serves as your gateway; you <strong>query</strong> with LINQ that EF translates to SQL; the <strong>change tracker</strong> watches the objects you edit; <strong>SaveChanges</strong> commits them as a batched transaction; and <strong>migrations</strong> evolve the schema as the model grows. Every step kept you in C# while EF handled the SQL.</p>
+        <p>The habits that make EF pleasant are small and consistent: keep the context <strong>short-lived</strong> (one per request), go <strong>async</strong> for every database call, use <strong>AsNoTracking</strong> and <strong>projection</strong> for read-only screens, load relationships <strong>deliberately</strong> to dodge N+1, and keep your <strong>migrations in source control</strong>. None of it is exotic — it's just respecting what the SQL underneath is doing.</p>
+        <div class="note key">
+          <div class="nh">The track is complete — C# → ASP.NET → EF Core</div>
+          <p>Step back and the three courses form one stack. <strong>C#</strong> gave you the language: types, classes, generics, LINQ, async. <strong>ASP.NET Core</strong> turned it into a web server: a request flows through middleware to an endpoint and a response flows back. <strong>EF Core</strong> gave that server a memory: the endpoint runs C#, queries and saves through EF, and your LINQ becomes SQL against a real database. A request comes in, your code runs, the database answers, a response goes out — and it's all the same language, end to end.</p>
+        </div>
+        <p>From here, depth comes from building. Watch the SQL EF generates, profile the queries that matter, and reach for raw SQL on the rare hot path that needs it. You have the whole picture now — language, web, and data — and the judgment to use each part well.</p>
+
+        <div class="closing">
+          <h2>You work in objects. EF speaks SQL.</h2>
+          <p>From your first <code class="tok">DbSet</code> to change tracking, transactions, and migrations, one idea carried through: you manipulate plain C# objects and write LINQ, and EF Core conducts the entire database conversation — generating the SQL, tracking the diffs, and saving them safely. The skill was never avoiding SQL; it was knowing what EF does with it.</p>
+          <p>That closes the loop the C# track set out to draw. The language you learned, served over the web, backed by a database — one coherent stack, written in C# from the request all the way down to the row.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering Entity Framework Core — the finale of the C# → ASP.NET → Entity Framework track, and a companion to Big&nbsp;O Complexity, Data Structures, Design Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, and Mastering&nbsp;ASP.NET&nbsp;Core. Built to be poked at.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/mastering-ef-core.js"></script>
+</body>
+</html>

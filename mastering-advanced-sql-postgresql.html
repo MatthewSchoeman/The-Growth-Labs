@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering Advanced SQL &amp; PostgreSQL · The Growth Lab</title>
+<meta name="description" content="An interactive course on advanced SQL and PostgreSQL — joins as questions, aggregation, subqueries, CTEs and recursion, window functions, set operations, JSONB, full-text search, EXPLAIN and query plans, transactions and isolation, views and materialized views. Interrogating Snip's analytics data, one real question at a time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-advanced-sql-postgresql.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="12" cy="5.6" rx="7" ry="2.8" stroke="#7C9CFF" stroke-width="1.6"/>
+        <path d="M5 5.6v12.8c0 1.55 3.13 2.8 7 2.8s7-1.25 7-2.8V5.6" stroke="#7C9CFF" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M5 12c0 1.55 3.13 2.8 7 2.8s7-1.25 7-2.8" stroke="#7C9CFF" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Advanced SQL</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="12" cy="5.6" rx="7" ry="2.8" stroke="#7C9CFF" stroke-width="1.6"/>
+            <path d="M5 5.6v12.8c0 1.55 3.13 2.8 7 2.8s7-1.25 7-2.8V5.6" stroke="#7C9CFF" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M5 12c0 1.55 3.13 2.8 7 2.8s7-1.25 7-2.8" stroke="#7C9CFF" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Advanced SQL</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Result Sets · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Thinking in questions</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Joins as questions</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Aggregate &amp; group</span></a>
+      <div class="nav-group-label">Composing Queries · Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Subqueries</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>CTEs &amp; recursion</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Window functions</span></a>
+      <div class="nav-group-label">Postgres Superpowers · Advanced</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Set ops &amp; pivots</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>JSONB &amp; arrays</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Searching text</span></a>
+      <div class="nav-group-label">Performance &amp; Production · Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>EXPLAIN &amp; plans</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Transactions &amp; isolation</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Views &amp; the dashboard</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert</div>
+        <h1>Beyond SELECT&nbsp;*.<br><span class="grad">Ask harder questions.</span></h1>
+        <p class="lede">The first SQL course taught you the language — tables, keys, WHERE, the index. This one teaches you to <strong>interrogate data</strong>. Real products live and die on questions their tables can answer: which links are winning, who came back this week, what changed since yesterday, why is this query slow. Here you'll compose <strong>joins</strong>, <strong>aggregation</strong>, <strong>subqueries</strong>, <strong>CTEs</strong>, and <strong>window functions</strong> into those answers, then reach for PostgreSQL's superpowers — <strong>JSONB</strong>, <strong>full-text search</strong>, <strong>EXPLAIN</strong>, <strong>transactions</strong>, <strong>materialized views</strong>. The dataset throughout is one you already own: <strong>Snip's analytics</strong> — 48,112 links, 1.2&nbsp;million clicks, and every question a product manager would actually ask.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A query pipeline: raw click rows flow through join, filter, group by, and window stages and emerge as a ranked answer"></svg>
+          <div class="hero-cap">raw rows → join → filter → group → window → answer · <span style="color:var(--accent)">the query is the question</span></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start asking →</a>
+          <a class="btn btn-ghost" href="#m5">Jump to window functions</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>Thinking in questions</h2></div>
+        <p>There's a moment in every developer's life when SQL stops being "the thing that fetches rows for the app" and becomes an instrument. It happens the first time someone asks a real question — <em>which links are actually winning? did last week's campaign work?</em> — and you realize the answer is already sitting in your tables, waiting for a query precise enough to extract it. This course is about that shift: from <strong>fetching</strong> to <strong>asking</strong>.</p>
+        <p>Our dataset is one you built. Snip, the URL shortener from the capstone, has grown up: it now records every click as an event. Three tables carry everything this course does:</p>
+        <span class="filetag">schema.sql</span>
+        <pre><span class="cmt">-- Snip's analytics schema (the capstone app, grown up)</span>
+<span class="kw">CREATE TABLE</span> links (
+  id         bigserial <span class="kw">PRIMARY KEY</span>,
+  code       text <span class="kw">UNIQUE NOT NULL</span>,      <span class="cmt">-- '4C92', 'launch', …</span>
+  url        text <span class="kw">NOT NULL</span>,
+  user_id    bigint <span class="kw">REFERENCES</span> users(id),
+  meta       jsonb <span class="kw">DEFAULT</span> <span class="str">'{}'</span>,          <span class="cmt">-- Module 07</span>
+  created_at timestamptz <span class="kw">DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="kw">CREATE TABLE</span> clicks (
+  id         bigserial <span class="kw">PRIMARY KEY</span>,
+  link_id    bigint <span class="kw">REFERENCES</span> links(id),
+  clicked_at timestamptz <span class="kw">NOT NULL</span>,
+  country    text, device text, referrer text
+);   <span class="cmt">-- 48,112 links · 1,204,392 clicks and counting</span></pre>
+        <p>Every module poses a question a product person would genuinely ask of this data, then builds the query that answers it. The techniques stack: by Module 11 you'll write one query that joins, filters, pivots, and ranks in a single pass — the analytics dashboard for your own app.</p>
+        <div class="xref"><span class="xi">↳ SQL &amp; PostgreSQL · The Capstone</span><div>The prequel taught the mechanics — <b>SELECT, WHERE, keys, the B-tree index</b> — and the capstone gave Snip its <code class="tok">links</code> table. This course assumes both and builds upward: same database, harder questions.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Advanced SQL means memorizing obscure syntax.</div><div class="truth">It means <b>composing simple pieces</b> — join, filter, group, window — into precise questions. Every query in this course is built from parts you can already read; the skill is arranging them to say exactly what you mean.</div></div>
+          <div class="mc"><div class="myth">Pull the rows into application code and compute there.</div><div class="truth">The database is a query engine sitting next to the data, with indexes, statistics, and forty years of set-processing optimizations. Shipping a million rows to C# to count them in a loop is paying network and memory for work Postgres does in one indexed pass. <b>Push computation down.</b></div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qjoin);border-color:rgba(86,199,255,.4);background:var(--qjoin-soft)">Joins</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Joins as questions</h2></div>
+        <p>You've written <code class="tok">JOIN</code> before. The upgrade is realizing that each join <em>type</em> answers a different question. <strong>INNER</strong> asks "which clicks have a link?" — only matches survive. <strong>LEFT</strong> asks "tell me about <em>every</em> link, clicked or not" — unmatched links survive with NULLs on the click side. <strong>RIGHT</strong> flips it, and <strong>FULL</strong> keeps the unmatched from <em>both</em> sides — the reconciliation join.</p>
+        <p>Those NULLs aren't noise; they're often the entire point. The classic <strong>anti-join</strong> — "which links have <em>never</em> been clicked?" — is a LEFT JOIN that keeps only the rows where the match failed:</p>
+        <span class="filetag">unclicked.sql</span>
+        <pre><span class="cmt">-- every link with its click count — even the unclicked ones</span>
+<span class="kw">SELECT</span> l.code, <span class="fn">COUNT</span>(c.id) <span class="kw">AS</span> clicks
+<span class="kw">FROM</span> links l
+<span class="kw">LEFT JOIN</span> clicks c <span class="kw">ON</span> c.link_id = l.id
+<span class="kw">GROUP BY</span> l.code;
+
+<span class="cmt">-- the anti-join: links NEVER clicked</span>
+<span class="kw">SELECT</span> l.code <span class="kw">FROM</span> links l
+<span class="kw">LEFT JOIN</span> clicks c <span class="kw">ON</span> c.link_id = l.id
+<span class="kw">WHERE</span> c.id <span class="kw">IS NULL</span>;</pre>
+        <p>Try each join on a miniature of Snip's data — four links (one never clicked) and five clicks (one pointing at a deleted link):</p>
+        <div class="lab" id="joinLab">
+          <div class="lab-head"><div><div class="pt">Four joins, four questions</div><div class="ps">watch which rows survive</div></div></div>
+          <div class="lab-body">
+            <div class="jn-grid">
+              <div class="mtab-wrap"><div class="mtab-cap">links</div><div id="joinLeftT"></div></div>
+              <div class="mtab-wrap"><div class="mtab-cap">clicks</div><div id="joinRightT"></div></div>
+            </div>
+            <div class="qtabs" id="joinTabs">
+              <span class="qtab on" data-join="inner">INNER</span>
+              <span class="qtab" data-join="left">LEFT</span>
+              <span class="qtab" data-join="right">RIGHT</span>
+              <span class="qtab" data-join="full">FULL</span>
+            </div>
+            <div class="sqlbox" id="joinSql"></div>
+            <div class="mtab-wrap"><div class="mtab-cap">result</div><div id="joinOut"></div></div>
+            <div class="rescount" id="joinCount"></div>
+          </div>
+          <div class="lab-foot" id="joinFoot">INNER keeps only matches. The unmatched rows the other joins preserve — with NULLs — are where the interesting questions live.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Prefer INNER JOIN — the outer joins are slower.</div><div class="truth">Choose the join by the <b>question</b>, not superstition. The planner executes them with the same machinery, and an outer join it can prove unnecessary gets simplified away. A fast query that drops the rows you needed is just a wrong answer, quickly.</div></div>
+          <div class="mc"><div class="myth">NULLs in a join result mean something went wrong.</div><div class="truth">They mean "<b>no match</b>" — which is frequently the answer itself. Unclicked links, users without orders, orphaned events: the anti-join pattern (<code class="tok">WHERE … IS NULL</code>) turns the gap into the result set.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qagg);border-color:rgba(78,214,107,.4);background:var(--qagg-soft)">Aggregation</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Aggregate &amp; group</h2></div>
+        <p>Analytics is mostly counting — but counting <em>into buckets</em>. <code class="tok">GROUP BY</code> folds rows that share a value into one group per value; aggregates like <code class="tok">COUNT</code>, <code class="tok">SUM</code>, <code class="tok">AVG</code>, <code class="tok">MIN</code>, <code class="tok">MAX</code> then compute one number per group. The subtlety everyone trips on is <em>when</em> filters apply: <strong>WHERE</strong> prunes rows <em>before</em> grouping; <strong>HAVING</strong> prunes whole groups <em>after</em> the aggregates exist.</p>
+        <span class="filetag">by_country.sql</span>
+        <pre><span class="kw">SELECT</span> country, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> clicks
+<span class="kw">FROM</span> clicks
+<span class="kw">WHERE</span> clicked_at >= <span class="fn">now</span>() - <span class="kw">interval</span> <span class="str">'7 days'</span>   <span class="cmt">-- rows, before grouping</span>
+<span class="kw">GROUP BY</span> country
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) >= <span class="num">100</span>                            <span class="cmt">-- groups, after counting</span>
+<span class="kw">ORDER BY</span> clicks <span class="kw">DESC</span>;</pre>
+        <p>Group the same twelve clicks by different dimensions, then raise the HAVING bar and watch small buckets get cut:</p>
+        <div class="lab" id="groupLab">
+          <div class="lab-head"><div><div class="pt">Buckets from rows</div><div class="ps">GROUP BY a dimension · HAVING a threshold</div></div></div>
+          <div class="lab-body">
+            <div class="qtabs" id="grpTabs">
+              <span class="qtab on" data-dim="country">country</span>
+              <span class="qtab" data-dim="device">device</span>
+              <span class="qtab" data-dim="link">link</span>
+            </div>
+            <div class="grp-controls"><span>HAVING COUNT(*) ≥</span><input type="range" id="grpHaving" min="1" max="4" step="1" value="1"><b id="grpHavingVal" style="color:var(--accent)">1</b><span style="color:var(--ink-faint)">(12 clicks total)</span></div>
+            <div class="sqlbox" id="grpSql"></div>
+            <div id="grpBars"></div>
+            <div class="rescount" id="grpCount"></div>
+          </div>
+          <div class="lab-foot" id="grpFoot">GROUP BY folds 12 rows into a handful of buckets; HAVING keeps only the buckets that clear the bar.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Big O</span><div>Under the hood this is a <b>hash aggregate</b>: one pass over the rows, bucketing by hash key — O(n), just like the frequency-counting patterns from <i>Big O</i> and <i>Data Structures</i>. The database is running the same algorithms you learned, at scale.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">HAVING is just another way to spell WHERE.</div><div class="truth">They run at <b>different stages</b>. WHERE filters rows before grouping (and can use indexes); HAVING filters after aggregation, so it's the only place a condition like <code class="tok">COUNT(*) >= 100</code> can live. Put row conditions in WHERE — filtering early is cheaper.</div></div>
+          <div class="mc"><div class="myth">COUNT(*), COUNT(col), COUNT(DISTINCT col) — same thing.</div><div class="truth"><code class="tok">COUNT(*)</code> counts rows; <code class="tok">COUNT(col)</code> skips NULLs in that column; <code class="tok">COUNT(DISTINCT col)</code> counts unique values. In Module 01's LEFT JOIN, <code class="tok">COUNT(c.id)</code> correctly gives unclicked links a 0 — <code class="tok">COUNT(*)</code> would have said 1.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qsub);border-color:rgba(167,139,250,.4);background:var(--qsub-soft)">Subqueries</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 03</span></div><h2>Subqueries</h2></div>
+        <p>Some questions have a question <em>inside</em> them. "Which links beat the average?" first needs the average. A <strong>scalar subquery</strong> computes that single value in place. "Which users were active this week?" is a membership test — <strong>IN</strong> or, better for pure existence, <strong>EXISTS</strong>, which probes for a match per outer row and stops at the first hit. When the inner query references the outer row, it's <strong>correlated</strong> — the inner question is asked <em>about each</em> candidate.</p>
+        <span class="filetag">nested.sql</span>
+        <pre><span class="cmt">-- scalar: links beating the overall average</span>
+<span class="kw">SELECT</span> code, clicks <span class="kw">FROM</span> link_stats
+<span class="kw">WHERE</span> clicks > (<span class="kw">SELECT</span> <span class="fn">avg</span>(clicks) <span class="kw">FROM</span> link_stats);
+
+<span class="cmt">-- EXISTS: users with a click this week (a semi-join)</span>
+<span class="kw">SELECT</span> u.name <span class="kw">FROM</span> users u
+<span class="kw">WHERE EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> clicks c
+  <span class="kw">JOIN</span> links l <span class="kw">ON</span> l.id = c.link_id
+  <span class="kw">WHERE</span> l.user_id = u.id                <span class="cmt">-- ← correlated</span>
+    <span class="kw">AND</span> c.clicked_at >= <span class="fn">now</span>() - <span class="kw">interval</span> <span class="str">'7 days'</span>);</pre>
+        <p>That <code class="tok">link_stats</code> relation isn't a table — it's a <em>view</em> we'll define in Module 11; subqueries compose with anything that produces rows. And a nested question that gets deep or repeated is your cue for the next module's tool: name the step with a CTE.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Correlated subqueries rerun once per outer row — always slow.</div><div class="truth">That's the <b>mental model</b>, not necessarily the execution. The planner routinely rewrites EXISTS/IN into hash semi-joins that scan each side once. Write the clearest form, then check what actually runs with EXPLAIN (Module 09).</div></div>
+          <div class="mc"><div class="myth">EXISTS should select real columns to be meaningful.</div><div class="truth">EXISTS tests <b>presence</b>, nothing else — the select list is never evaluated, which is why <code class="tok">SELECT 1</code> is idiomatic. It also short-circuits on the first match, making it the natural semi-join: "is there at least one?"</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qsub);border-color:rgba(167,139,250,.4);background:var(--qsub-soft)">CTEs</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>CTEs &amp; recursion</h2></div>
+        <p>A <strong>common table expression</strong> — the <code class="tok">WITH</code> clause — gives a subquery a <em>name</em>, turning a nested one-liner into a readable pipeline: stage one produces rows, stage two refines them, the final SELECT reads like a sentence. But CTEs hide a superpower: <code class="tok">WITH RECURSIVE</code> lets a query reference <em>itself</em>, iterating until no new rows appear — the fixpoint. That's how SQL walks chains, trees, and graphs.</p>
+        <p>Snip has a chain to walk: some short links point at <em>other</em> short links. Resolving <code class="tok">promo</code> means following hops until the URL leaves Snip:</p>
+        <span class="filetag">resolve_chain.sql</span>
+        <pre><span class="kw">WITH RECURSIVE</span> chain <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> code, url, <span class="num">0</span> <span class="kw">AS</span> depth
+  <span class="kw">FROM</span> links <span class="kw">WHERE</span> code = <span class="str">'promo'</span>          <span class="cmt">-- base case</span>
+  <span class="kw">UNION ALL</span>
+  <span class="kw">SELECT</span> l.code, l.url, chain.depth + <span class="num">1</span>     <span class="cmt">-- recursive step</span>
+  <span class="kw">FROM</span> chain
+  <span class="kw">JOIN</span> links l <span class="kw">ON</span> chain.url = <span class="str">'snip.ly/'</span> || l.code
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> chain;</pre>
+        <p>Run the recursion one iteration at a time and watch the working set grow until it can't:</p>
+        <div class="lab" id="cteLab">
+          <div class="lab-head"><div><div class="pt">Recursion to a fixpoint</div><div class="ps">base case · UNION ALL · repeat until empty</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="cteStep">▸ run next iteration</button>
+              <button class="ds-btn" id="cteReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="cte-chain" id="cteChain"></div>
+            <div class="stateline" id="cteStatus"></div>
+          </div>
+          <div class="lab-foot" id="cteFoot">Each iteration joins the newest rows against links again. When a pass adds nothing, the recursion is complete.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Data Structures</span><div>This is <b>graph traversal</b> — the breadth-first walk from <i>Data Structures</i>, expressed declaratively. Each iteration is one BFS level; <code class="tok">depth</code> is the distance from the start node. Org charts, category trees, dependency graphs: same shape, same query.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">CTEs are just formatting — a style choice.</div><div class="truth">Readable staging is reason enough, but CTEs also enable <b>recursion</b> and let one result feed several later stages by name. They're how a 50-line query stays maintainable — each stage testable by selecting from it alone.</div></div>
+          <div class="mc"><div class="myth">A CTE is an optimization fence — Postgres always materializes it.</div><div class="truth">That was true <i>historically</i>. Since PostgreSQL 12, single-use CTEs are <b>inlined</b> into the outer query unless you write <code class="tok">MATERIALIZED</code> to force the fence. Write CTEs for clarity; the planner sees through them.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)">Windows</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Window functions</h2></div>
+        <p>Here is the single biggest level-up in analytical SQL. <code class="tok">GROUP BY</code> answers questions by <em>collapsing</em> rows — you get the total, but lose the rows. <strong>Window functions</strong> keep every row and add context <em>alongside</em> it: this row's rank, its running total, the value from the row before. The magic phrase is <code class="tok">OVER (PARTITION BY … ORDER BY …)</code> — "compute across this window of related rows, but don't collapse them."</p>
+        <span class="filetag">leaderboard.sql</span>
+        <pre><span class="cmt">-- a leaderboard with honest ties…</span>
+<span class="kw">SELECT</span> code, clicks,
+       <span class="fn">RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> clicks <span class="kw">DESC</span>) <span class="kw">AS</span> place
+<span class="kw">FROM</span> link_stats;
+
+<span class="cmt">-- …and a running total per link, rows intact</span>
+<span class="kw">SELECT</span> day, code, clicks,
+       <span class="fn">SUM</span>(clicks) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> code <span class="kw">ORDER BY</span> day) <span class="kw">AS</span> so_far
+<span class="kw">FROM</span> daily_clicks;</pre>
+        <p>Below are two links' daily clicks. Apply each function and read the highlighted column — notice when partitions matter, how ties behave, and where NULL appears:</p>
+        <div class="lab" id="windowLab">
+          <div class="lab-head"><div><div class="pt">One table, four windows</div><div class="ps">rows stay · context appears</div></div></div>
+          <div class="lab-body">
+            <div class="qtabs" id="winTabs">
+              <span class="qtab on" data-fn="rownum">ROW_NUMBER</span>
+              <span class="qtab" data-fn="rank">RANK</span>
+              <span class="qtab" data-fn="sum">running SUM</span>
+              <span class="qtab" data-fn="lag">LAG</span>
+            </div>
+            <div class="sqlbox" id="winSql"></div>
+            <div class="win-legend" id="winLegend"></div>
+            <div class="win-wrap"><table class="wtab" id="winTable"></table></div>
+          </div>
+          <div class="lab-foot" id="winFoot">ROW_NUMBER restarts at 1 inside each partition — a per-link sequence, with every original row still present.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ EF Core</span><div>This is where LINQ runs out of road — EF Core has no natural expression for <code class="tok">OVER (PARTITION BY …)</code>. The professional move is <code class="tok">FromSql</code>: let the database compute ranks and running totals in one pass instead of dragging rows into memory to loop over them.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">To aggregate you must GROUP BY — and lose the rows.</div><div class="truth">Window aggregates like <code class="tok">SUM(...) OVER (...)</code> give you the aggregate <b>and</b> the rows. "Each day's clicks next to the running total" is one query, no self-join, no app-side loop.</div></div>
+          <div class="mc"><div class="myth">ROW_NUMBER, RANK, DENSE_RANK — interchangeable.</div><div class="truth">Ties expose the difference: <code class="tok">RANK</code> gives equals the same place then <b>skips</b> (1,2,2,4); <code class="tok">DENSE_RANK</code> doesn't skip (1,2,2,3); <code class="tok">ROW_NUMBER</code> breaks ties arbitrarily unless you add a tiebreaker to ORDER BY — fine for pagination, wrong for a leaderboard.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qset);border-color:rgba(242,151,60,.4);background:var(--qset-soft)">Set ops</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>Set ops &amp; pivots</h2></div>
+        <p>Sometimes the question compares two <em>result sets</em>: this week's active links vs last week's. SQL treats results as sets: <strong>UNION</strong> combines them (deduplicating — <code class="tok">UNION ALL</code> keeps duplicates), <strong>INTERSECT</strong> keeps what's in both, <strong>EXCEPT</strong> keeps what's only in the first. "Links clicked both weeks" is retention; "clicked this week but not last" is your new arrivals — each one operator:</p>
+        <div class="lab" id="setLab">
+          <div class="lab-head"><div><div class="pt">Two weeks, three questions</div><div class="ps">UNION · INTERSECT · EXCEPT</div></div></div>
+          <div class="lab-body">
+            <div class="qtabs" id="setTabs">
+              <span class="qtab on" data-op="union">UNION</span>
+              <span class="qtab" data-op="intersect">INTERSECT</span>
+              <span class="qtab" data-op="except">EXCEPT</span>
+            </div>
+            <div class="sqlbox" id="setSql"></div>
+            <div class="set-grid">
+              <div class="set-col"><div class="sc-h">clicked this week</div><div id="setA"></div></div>
+              <div class="set-col"><div class="sc-h">clicked last week</div><div id="setB"></div></div>
+              <div class="set-col res-col"><div class="sc-h">result</div><div id="setOut"></div></div>
+            </div>
+            <div class="stateline" id="setStatus"></div>
+          </div>
+          <div class="lab-foot" id="setFoot">Amber chips appear in both weeks. Each operator asks the two sets a different question.</div>
+        </div>
+        <p>The other classic reshaping is the <strong>pivot</strong> — turning values into columns. Postgres makes conditional aggregation elegant with the <code class="tok">FILTER</code> clause:</p>
+        <span class="filetag">pivot.sql</span>
+        <pre><span class="kw">SELECT</span> l.code,
+  <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> c.device = <span class="str">'mobile'</span>)  <span class="kw">AS</span> mobile,
+  <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> c.device = <span class="str">'desktop'</span>) <span class="kw">AS</span> desktop,
+  <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> c.device = <span class="str">'tablet'</span>)  <span class="kw">AS</span> tablet
+<span class="kw">FROM</span> links l <span class="kw">JOIN</span> clicks c <span class="kw">ON</span> c.link_id = l.id
+<span class="kw">GROUP BY</span> l.code;   <span class="cmt">-- one row per link, one column per device</span></pre>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">UNION and UNION ALL are interchangeable.</div><div class="truth">UNION <b>deduplicates</b> — which costs a sort or hash over the whole result and silently merges rows you may have wanted. Default to <code class="tok">UNION ALL</code>; reach for UNION only when distinctness is the actual requirement.</div></div>
+          <div class="mc"><div class="myth">Cross-tabs need a special pivot extension.</div><div class="truth"><code class="tok">COUNT(*) FILTER (WHERE …)</code> — or the portable <code class="tok">CASE WHEN</code> inside any aggregate — pivots with plain SQL. One pass over the data, one column per condition, no extension required.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qjson);border-color:rgba(232,179,65,.4);background:var(--qjson-soft)">JSONB</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div><h2>JSONB &amp; arrays</h2></div>
+        <p>Some data refuses a fixed shape. Snip's <code class="tok">meta</code> column holds per-link extras — UTM parameters, tags, feature toggles — that vary link to link. Postgres handles this natively with <strong>jsonb</strong>: a binary, indexable JSON type with its own operator family. <code class="tok">-&gt;</code> extracts JSON, <code class="tok">-&gt;&gt;</code> extracts <em>text</em>, <code class="tok">#&gt;&gt;</code> follows a path, and <code class="tok">@&gt;</code> asks "does this document <em>contain</em> that fragment?" — the operator a GIN index accelerates.</p>
+        <div class="lab" id="jsonLab">
+          <div class="lab-head"><div><div class="pt">One document, four operators</div><div class="ps">extract · path · contain</div></div></div>
+          <div class="lab-body">
+            <div class="qtabs" id="jsonTabs">
+              <span class="qtab on" data-q="obj">-&gt;</span>
+              <span class="qtab" data-q="text">-&gt;&gt;</span>
+              <span class="qtab" data-q="path">#&gt;&gt;</span>
+              <span class="qtab" data-q="contain">@&gt;</span>
+            </div>
+            <div class="sqlbox" id="jsonSql"></div>
+            <div class="json-grid">
+              <div class="json-doc" id="jsonDoc"></div>
+              <div class="json-out" id="jsonOut"></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="jsonFoot">-&gt; returns jsonb (still queryable); -&gt;&gt; returns text (comparable, indexable with B-tree expression indexes).</div>
+        </div>
+        <span class="filetag">meta.sql</span>
+        <pre><span class="cmt">-- paid-tagged links and where their traffic came from</span>
+<span class="kw">SELECT</span> code, meta<span class="op">#>></span><span class="str">'{utm,source}'</span> <span class="kw">AS</span> source
+<span class="kw">FROM</span> links
+<span class="kw">WHERE</span> meta <span class="op">@></span> <span class="str">'{"tags": ["paid"]}'</span>;
+
+<span class="kw">CREATE INDEX</span> links_meta_gin <span class="kw">ON</span> links <span class="kw">USING</span> <span class="fn">gin</span> (meta);
+<span class="cmt">-- arrays get the same treatment: unnest(), ANY(), && overlap</span></pre>
+        <div class="xref"><span class="xi">↳ SQL &amp; PostgreSQL</span><div>The prequel taught you to <b>normalize</b> — and that's still the default. jsonb is the pressure valve for the genuinely variable edge of your data, not a replacement for columns you filter, join, or constrain every day. Core relational, edges flexible.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">With JSONB you can skip schema design.</div><div class="truth">A jsonb column is a schema decision — one that trades constraints, foreign keys, and column statistics for flexibility. Use it where shape truly varies (metadata, settings, payloads); keep identity and relationships in <b>real columns</b>.</div></div>
+          <div class="mc"><div class="myth">Queries inside JSON can't use indexes.</div><div class="truth">A <b>GIN</b> index makes containment (<code class="tok">@&gt;</code>) and key-existence fast across millions of documents, and a B-tree <b>expression index</b> on <code class="tok">(meta-&gt;&gt;'campaign')</code> serves equality like any column. Document data, indexed access.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qfts);border-color:rgba(45,212,191,.4);background:var(--qfts-soft)">Search</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 08</span></div><h2>Searching text</h2></div>
+        <p>"Find the link about the launch" is a text problem, and <code class="tok">LIKE '%launch%'</code> is the trap answer: a leading wildcard can't use a B-tree, so it scans everything. Postgres offers two real tools. For fuzzy, typo-tolerant matching on short strings — codes, names — the <strong>pg_trgm</strong> extension indexes <em>trigrams</em> (three-character shingles) with GIN, making similarity and even <code class="tok">%launch%</code> fast. For documents, <strong>full-text search</strong> parses text into a <code class="tok">tsvector</code> of stemmed lexemes ("launching" → "launch"), matches it against a <code class="tok">tsquery</code>, and ranks results.</p>
+        <span class="filetag">search.sql</span>
+        <pre><span class="cmt">-- fuzzy: typo-tolerant match on codes</span>
+<span class="kw">CREATE EXTENSION</span> pg_trgm;
+<span class="kw">SELECT</span> code <span class="kw">FROM</span> links <span class="kw">WHERE</span> code <span class="op">%</span> <span class="str">'lanch'</span>;      <span class="cmt">-- similar to 'launch'</span>
+
+<span class="cmt">-- full-text: stemmed, ranked search over page titles</span>
+<span class="kw">SELECT</span> url, <span class="fn">ts_rank</span>(tsv, q) <span class="kw">AS</span> rank
+<span class="kw">FROM</span> links, <span class="fn">websearch_to_tsquery</span>(<span class="str">'launch week'</span>) q
+<span class="kw">WHERE</span> tsv <span class="op">@@</span> q
+<span class="kw">ORDER BY</span> rank <span class="kw">DESC</span>;   <span class="cmt">-- tsv: a generated tsvector column, GIN-indexed</span></pre>
+        <p>The pattern to remember: store a generated <code class="tok">tsvector</code> column, GIN-index it, query with <code class="tok">websearch_to_tsquery</code> (it understands quoted phrases and <code class="tok">-exclusions</code> the way users type them), and order by <code class="tok">ts_rank</code>. Stemming, stop-words, ranking, and highlighting — inside the database you already run, transactionally consistent with the data it searches.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">LIKE '%term%' is fine — it's the simple option.</div><div class="truth">Simple to write, brutal to run: the leading wildcard forces a full scan of every row. At Snip's 48k links it's sloppy; at millions it's an outage. A trigram GIN index makes the same pattern an index lookup — <b>same query, different plan</b>.</div></div>
+          <div class="mc"><div class="myth">Real search needs Elasticsearch from day one.</div><div class="truth">Postgres FTS covers an enormous middle: stemming, multi-language configs, ranking, phrase search, highlighting — with <b>no sync pipeline</b> and no second system to operate. Reach for a dedicated engine when you need its extras, not by default.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qperf);border-color:rgba(251,113,133,.4);background:var(--qperf-soft)">Performance</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>EXPLAIN &amp; plans</h2></div>
+        <p>Every query you write is a <em>description</em> of a result, not a procedure — the <strong>planner</strong> decides how to actually compute it, and <code class="tok">EXPLAIN</code> shows you its plan. Add <code class="tok">ANALYZE</code> and Postgres <em>runs</em> the query, reporting actual times and row counts next to its estimates. Reading plans is the skill that separates "the query is slow" from "the query is scanning 1.2&nbsp;million rows to return 52 — it needs an index."</p>
+        <span class="filetag">explain.sql</span>
+        <pre><span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> clicks <span class="kw">WHERE</span> link_id = <span class="num">42</span>;
+
+<span class="cmt">-- the fix, when the plan says Seq Scan:</span>
+<span class="kw">CREATE INDEX</span> idx_clicks_link_id <span class="kw">ON</span> clicks (link_id);</pre>
+        <p>Here's that exact query against the 1.2-million-row <code class="tok">clicks</code> table. Create the index and watch the plan — and the work — change shape:</p>
+        <div class="lab" id="explainLab">
+          <div class="lab-head"><div><div class="pt">Read the plan</div><div class="ps">Seq Scan vs Index Scan, measured</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="expIdx">CREATE INDEX idx_clicks_link_id</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="sqlbox" id="expSql"></div>
+            <div class="plan" id="expPlan"></div>
+            <div class="exp-meter">
+              <div class="em-label"><span>rows touched to answer</span><span id="expMeterLbl"></span></div>
+              <div class="exp-track"><div class="exp-fill bad" id="expFill" style="width:100%"></div></div>
+            </div>
+            <div class="stateline" id="expCost"></div>
+          </div>
+          <div class="lab-foot" id="expFoot">Without an index the only strategy is reading everything. The B-tree turns "scan 1.2M rows" into "walk to the 52 that match."</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Big O · SQL &amp; PostgreSQL</span><div>This is <i>Big O</i> made visible: the Seq Scan is O(n), the Index Scan is O(log n) + matches — the same B-tree you met in the prequel's index module. EXPLAIN is how you catch the O(n) hiding in production before your users do.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Slow query? Add indexes until it's fast.</div><div class="truth">Every index taxes <b>every write</b> and competes for cache. Index the access paths your queries actually take — EXPLAIN tells you which — and remember the planner will rightly ignore an index when scanning is cheaper (tiny tables, low-selectivity filters).</div></div>
+          <div class="mc"><div class="myth">The cost numbers are milliseconds.</div><div class="truth">Cost is in <b>arbitrary planner units</b> — useful for comparing plans, meaningless as wall-clock. For truth, run <code class="tok">EXPLAIN (ANALYZE, BUFFERS)</code> and read actual times, actual rows, and pages hit. Estimates wildly off from actuals usually mean stale statistics: run <code class="tok">ANALYZE</code>.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--qtxn);border-color:rgba(237,110,158,.4);background:var(--qtxn-soft)">Concurrency</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Transactions &amp; isolation</h2></div>
+        <p>Production databases are concurrent: dozens of sessions reading and writing the same rows at once. <strong>Transactions</strong> make a group of statements atomic — all or nothing — and <strong>MVCC</strong> (multi-version concurrency control) lets readers and writers avoid blocking each other by giving each transaction a consistent snapshot. But the default <code class="tok">READ COMMITTED</code> isolation still permits a classic bug: the <strong>lost update</strong>. Two sessions read the same value, both compute a new one, and the second write silently erases the first.</p>
+        <p>Race two sessions incrementing the same click counter — then fix it with a row lock:</p>
+        <div class="lab" id="txnLab">
+          <div class="lab-head"><div><div class="pt">Two sessions, one row</div><div class="ps">the lost update, and the lock that prevents it</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="txnStep">▸ next statement</button>
+              <button class="ds-btn" id="txnMode">fix: SELECT FOR UPDATE</button>
+              <button class="ds-btn" id="txnReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="txn-grid">
+              <div class="txn-col"><div class="tc-h" style="color:var(--qjoin)">Session A</div><div id="txnA"></div></div>
+              <div class="txn-col"><div class="tc-h" style="color:var(--qset)">Session B</div><div id="txnB"></div></div>
+            </div>
+            <div class="stateline" id="txnState"></div>
+          </div>
+          <div class="lab-foot" id="txnFoot">Both sessions read 10, both write 11 — one increment vanishes. Concurrency bugs don't throw exceptions; they lose data quietly.</div>
+        </div>
+        <span class="filetag">safe_increment.sql</span>
+        <pre><span class="cmt">-- ① lock the row you're about to change</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">SELECT</span> clicks <span class="kw">FROM</span> link_stats <span class="kw">WHERE</span> id = <span class="num">42</span> <span class="kw">FOR UPDATE</span>;
+<span class="kw">UPDATE</span> link_stats <span class="kw">SET</span> clicks = <span class="num">11</span> <span class="kw">WHERE</span> id = <span class="num">42</span>;
+<span class="kw">COMMIT</span>;
+
+<span class="cmt">-- ② better: make the write itself atomic — no read step at all</span>
+<span class="kw">UPDATE</span> link_stats <span class="kw">SET</span> clicks = clicks + <span class="num">1</span> <span class="kw">WHERE</span> id = <span class="num">42</span>;</pre>
+        <p>Stronger isolation levels are the third tool: <code class="tok">REPEATABLE READ</code> freezes your snapshot for the whole transaction, and <code class="tok">SERIALIZABLE</code> guarantees the outcome equals <em>some</em> serial order — aborting one transaction with a serialization error when it can't, which your code retries. Locks, atomic statements, or serializable-plus-retry: pick per operation, and keep transactions short either way.</p>
+        <div class="xref"><span class="xi">↳ ASP.NET Core</span><div>Where does concurrency come from? <b>Every API request is a session.</b> Two users tapping the same Snip link hit this exact race on the click counter. The scoped <code class="tok">DbContext</code> from <i>ASP.NET Core</i> gives each request one unit of work — these tools decide what happens when those units collide.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Transactions are only for multi-table writes.</div><div class="truth">They're about <b>invariants under concurrency</b>. Even a single-row read-modify-write races with itself across sessions, as the lab shows. If correctness depends on what you just read still being true when you write — that's a transaction (or an atomic statement).</div></div>
+          <div class="mc"><div class="myth">SERIALIZABLE is academically nice but too slow for real apps.</div><div class="truth">Postgres implements it <b>optimistically</b> (SSI): no extra blocking, just aborts on genuine conflict, which you retry. For workflows where a lost update means lost money, a rare retry is vastly cheaper than the bug — measure before assuming you can't afford it.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>Views &amp; the dashboard</h2></div>
+        <p>Good queries deserve names. A <strong>view</strong> stores a query as a virtual table — always fresh, computed on read — which is how <code class="tok">link_stats</code> has been following us around since Module 03. When a view is expensive and its consumers can tolerate slight staleness, a <strong>materialized view</strong> caches the <em>results</em> on disk, refreshed on your schedule — analytics dashboards' best friend:</p>
+        <span class="filetag">views.sql</span>
+        <pre><span class="kw">CREATE VIEW</span> link_stats <span class="kw">AS</span>
+  <span class="kw">SELECT</span> l.id, l.code, <span class="fn">COUNT</span>(c.id) <span class="kw">AS</span> clicks
+  <span class="kw">FROM</span> links l <span class="kw">LEFT JOIN</span> clicks c <span class="kw">ON</span> c.link_id = l.id
+  <span class="kw">GROUP BY</span> l.id, l.code;              <span class="cmt">-- always current</span>
+
+<span class="kw">CREATE MATERIALIZED VIEW</span> weekly_top <span class="kw">AS</span> <span class="cmt">-- …expensive query…</span>;
+<span class="kw">REFRESH MATERIALIZED VIEW CONCURRENTLY</span> weekly_top;  <span class="cmt">-- cron, no read downtime</span></pre>
+        <p>And now the payoff. Everything this course taught, in one query — the dashboard for your own app. A CTE stages the week's numbers, a join connects links to their clicks, FILTER pivots devices into columns, an aggregate counts countries, and a window function hands out places:</p>
+        <span class="filetag">dashboard.sql</span>
+        <pre><span class="kw">WITH</span> weekly <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> l.code,
+         <span class="fn">COUNT</span>(*)                                    <span class="kw">AS</span> clicks,
+         <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> c.device = <span class="str">'mobile'</span>) <span class="kw">AS</span> mobile,
+         <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> c.country)                   <span class="kw">AS</span> countries
+  <span class="kw">FROM</span> links l
+  <span class="kw">JOIN</span> clicks c <span class="kw">ON</span> c.link_id = l.id
+  <span class="kw">WHERE</span> c.clicked_at >= <span class="fn">now</span>() - <span class="kw">interval</span> <span class="str">'7 days'</span>
+  <span class="kw">GROUP BY</span> l.code
+)
+<span class="kw">SELECT</span> code, clicks, mobile, countries,
+       <span class="fn">RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> clicks <span class="kw">DESC</span>) <span class="kw">AS</span> place
+<span class="kw">FROM</span> weekly
+<span class="kw">ORDER BY</span> place
+<span class="kw">LIMIT</span> <span class="num">10</span>;</pre>
+        <div class="note key">
+          <div class="nh">The query is the question</div>
+          <p>Ten modules ago that query would have been a page of application code: fetch everything, loop, count into dictionaries, sort, slice. Now it's <strong>one declarative statement</strong> the planner executes in a single indexed pass — joins for connection, WHERE for scope, GROUP BY and FILTER for shape, a window for context, a view to give it a name. Learning advanced SQL isn't learning more syntax; it's learning to <strong>say precisely what you want to know</strong> and let the database do what it was built for.</p>
+        </div>
+        <div class="xref"><span class="xi">↳ The Capstone</span><div>This dashboard is Snip's natural next feature — <code class="tok">GET /stats</code> returning exactly this result. The capstone built the write path; this course built the read path that turns a million clicks into product insight.</div></div>
+        <div class="closing">
+          <h2>Beyond SELECT *.</h2>
+          <p>You now hold both halves of the database craft. The prequel gave you tables, keys, and the index; this course gave you the questions — joins that keep the telling NULLs, groups and windows that shape millions of rows into meaning, recursion that walks graphs, JSONB and search for the messy edges, EXPLAIN to see what actually runs, and transactions to stay correct when the whole world writes at once.</p>
+          <p>The next time someone leans over and asks "hey, can we find out…?" — the answer is yes. It's one query away, and you know how to write it.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering Advanced SQL &amp; PostgreSQL — the sequel to SQL&nbsp;&amp;&nbsp;PostgreSQL, asking harder questions of the data your whole stack produces: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, and the Capstone whose Snip data this course interrogates. They built the app; this course asks it what happened.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/mastering-advanced-sql-postgresql.js"></script>
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distributed Systems · The Growth Lab</title>
+<meta name="description" content="A deep dive into distributed systems — the hard truths of partial failure and no global clock, partitioning and consistent hashing, replication and quorums, consensus and Raft, logical clocks, consistency models, the CAP theorem, two-phase commit and sagas, message-delivery guarantees and idempotency, circuit breakers, and conflict-free replicated data types. The running project, Snip, scaled across many machines.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/distributed-systems.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 7 L17 7 M7 7 L12 17 M17 7 L12 17" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="7" cy="7" r="2.6" fill="#0A0E1A" stroke="#10B981" stroke-width="1.6"/>
+        <circle cx="17" cy="7" r="2.6" fill="#0A0E1A" stroke="#10B981" stroke-width="1.6"/>
+        <circle cx="12" cy="17.5" r="2.6" fill="#0A0E1A" stroke="#10B981" stroke-width="1.6"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Distributed Systems</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 7 L17 7 M7 7 L12 17 M17 7 L12 17" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" opacity="0.7"/>
+            <circle cx="7" cy="7" r="2.6" fill="#0A0E1A" stroke="#10B981" stroke-width="1.6"/>
+            <circle cx="17" cy="7" r="2.6" fill="#0A0E1A" stroke="#10B981" stroke-width="1.6"/>
+            <circle cx="12" cy="17.5" r="2.6" fill="#0A0E1A" stroke="#10B981" stroke-width="1.6"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Distributed Systems</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">The Hard Truths · Advanced</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Why distributed is different</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Partitioning &amp; scale</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Replication &amp; quorums</span></a>
+      <div class="nav-group-label">Agreement · Expert</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Consensus &amp; Raft</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Time &amp; ordering</span></a>
+      <div class="nav-group-label">Consistency in Practice · Expert</div>
+      <a class="module" href="#m5"><span class="num">05</span><span>Consistency models</span></a>
+      <a class="module" href="#m6"><span class="num">06</span><span>The CAP theorem</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Distributed transactions</span></a>
+      <div class="nav-group-label">Building Blocks &amp; Failure · Expert</div>
+      <a class="module" href="#m8"><span class="num">08</span><span>Messaging &amp; delivery</span></a>
+      <a class="module" href="#m9"><span class="num">09</span><span>Failure &amp; circuit breakers</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Conflict resolution &amp; CRDTs</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>The whole system</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Advanced → Expert · Scaling Snip across many machines</div>
+        <h1>Some part is always failing.<br><span class="grad">Build a system that stays up anyway.</span></h1>
+        <p class="lede">A single machine is easy to reason about: one clock, one memory, and when it dies, everything stops together. A <em>distributed</em> system is the opposite on every count — many machines, no shared clock, and <strong>partial failure</strong> as the normal state, where some nodes are up, some are down, and some are merely slow in a way you can't tell from dead. That one fact reshapes everything. You <strong>partition</strong> data to scale and <strong>replicate</strong> it to survive failure; you need <strong>consensus</strong> to agree without a leader you can trust; you reason about <strong>time</strong> without a global clock; and under a network <strong>partition</strong>, the CAP theorem forces you to choose between staying consistent and staying available. Ten labs turn these abstractions into things you can watch happen — as we scale Snip from one box to a global fleet.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A six-node cluster split by a network partition into two groups; each group replicates data among its own nodes but the links across the partition are severed, so the two sides hold divergent values"></svg>
+          <div class="hero-cap">consistency · availability · partition-tolerance — <span style="color:var(--accent)">pick two when the network splits</span></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Enter the fleet →</a>
+          <a class="btn btn-ghost" href="#m2">Jump to quorums</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 00</span></div><h2>Why distributed is different</h2></div>
+        <p>Everything you know about programming assumes a single machine: one clock, one address space, and a simple failure model where the whole thing crashes at once. A distributed system breaks all three assumptions, and the consequences are the entire field. The defining property is <strong>partial failure</strong>: at any moment some nodes are running, some have crashed, and some are simply <em>slow</em> — and you fundamentally cannot tell a slow node from a dead one, because the only evidence you have is the absence of a reply. Add that there is <strong>no global clock</strong> to order events across machines, and that the network can <strong>drop, delay, duplicate, or reorder</strong> any message, and you have a world where the old certainties are gone.</p>
+        <p>The classic "fallacies of distributed computing" name the traps: the network is <em>not</em> reliable, latency is <em>not</em> zero, bandwidth is <em>not</em> infinite, and the topology is <em>not</em> stable. Every technique in this course is a response to those facts. You <strong>partition</strong> data across nodes to scale beyond one machine, and <strong>replicate</strong> it so a failure doesn't lose it. You use <strong>consensus</strong> to make a group of unreliable nodes agree on a single value. You reason about <strong>ordering</strong> with logical clocks instead of wall time. And you accept the <strong>CAP</strong> tradeoff: when the network splits, you cannot have both perfect consistency and full availability. We'll build all of it by scaling Snip — one URL shortener, from a single box to a fault-tolerant global fleet.</p>
+        <span class="filetag">the shift in assumptions</span>
+        <pre><span class="cmt">// single machine:</span>
+<span class="kw">var</span> hits = store.<span class="fn">Get</span>(code);     <span class="cmt">// one memory, one clock, all-or-nothing failure</span>
+
+<span class="cmt">// distributed:</span>
+<span class="kw">var</span> hits = <span class="kw">await</span> replicas.<span class="fn">Quorum</span>(code);  <span class="hl">// which replica? is it current? is that node even alive?</span>
+<span class="cmt">// the network may drop this call, or the node may be slow, not dead — you can't tell</span></pre>
+        <p>Hold the core truth the whole way through: <strong>in a distributed system, failure is not an exception you handle — it is the steady state you design for</strong>. The goal is never to prevent failure (you can't); it's to build a system that keeps serving correctly while pieces of it are broken.</p>
+        <div class="xref"><span class="xi">↳ The Capstone · Mastering ASP.NET Core · SDLC</span><div>Snip was built and deployed on a single server in the earlier courses. This one asks the next question every successful system faces: what happens when one machine isn't enough, or when that one machine fails? The lifecycle course treated outages as incidents; here, tolerating them is the architecture.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A distributed system is just a program running on several computers.</div><div class="truth">It's a program that must stay correct while <b>parts of it fail independently</b> and messages between them are lost, delayed, or reordered — with no shared clock or memory. The hard part isn't spreading work across machines; it's the coordination and failure-handling that spreading work forces on you.</div></div>
+          <div class="mc"><div class="myth">If a node stops responding, it has crashed.</div><div class="truth">You <b>can't know that</b>. A slow network, a long GC pause, or an overloaded node looks identical to a dead one — the only signal is silence. This impossibility of distinguishing slow from dead is at the root of timeouts, false failure detection, and much of the difficulty in the whole field.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--scale);border-color:var(--accent-line);background:var(--scale-soft)">Scale</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 01</span></div><h2>Partitioning &amp; scale</h2></div>
+        <p>To scale past one machine, you <strong>partition</strong> (shard) data across nodes — each node owns a slice of the keys. The question is <em>how</em> to map keys to nodes. The obvious answer, <code class="tok">hash(key) % N</code>, has a fatal flaw: change <code class="tok">N</code> (add or remove a node) and the modulus shifts for almost every key, so nearly all your data has to move — a catastrophic reshuffle. <strong>Consistent hashing</strong> fixes this by placing both nodes and keys on a ring; each key belongs to the next node clockwise. Now adding a node only steals the keys in <em>one arc</em> — roughly <code class="tok">K/N</code> of them — and everything else stays put. It's the foundation of every scalable data store.</p>
+        <span class="filetag">sharding.cs</span>
+        <pre><span class="cmt">// naive — remaps almost everything when N changes:</span>
+<span class="kw">int</span> node = <span class="fn">Hash</span>(code) % N;              <span class="hlbad">// add a node → ~all keys move</span>
+
+<span class="cmt">// consistent hashing — only one arc moves:</span>
+<span class="kw">int</span> node = ring.<span class="fn">NextClockwise</span>(<span class="fn">Hash</span>(code));  <span class="hlok">// add a node → ~K/N keys move</span></pre>
+        <p>Twelve Snip codes are sharded across the nodes. Pick a strategy, then add or remove a node and watch how many keys have to move — modulo reshuffles almost everything, consistent hashing barely disturbs the ring:</p>
+        <div class="lab" id="shardLab">
+          <div class="lab-head"><div><div class="pt">Add a node — how much moves?</div><div class="ps">modulo vs consistent hashing</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="shAddNode">add a node</button>
+              <button class="ds-btn" id="shRemoveNode">remove a node</button>
+              <button class="ds-btn" id="shReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">sharding strategy</div><div class="seg" id="shSeg"><button class="seg-opt on" data-mode="consistent">consistent hashing</button><button class="seg-opt" data-mode="modulo">hash(key) % N</button></div></div>
+            <div class="stat-row">
+              <div class="stat-box">nodes<b id="shNodeCount">3</b></div>
+              <div class="stat-box warn">keys moved (last change)<b id="shMoved">—</b></div>
+            </div>
+            <div class="nodes" id="shNodes"></div>
+            <div class="stateline" id="shStatus">add or remove a node and watch how many of the 12 keys relocate</div>
+            <div class="wlog" id="shLog"></div>
+          </div>
+          <div class="lab-foot" id="shFoot">Modulo hashing scatters keys by remainder, so changing N moves almost all of them. Consistent hashing puts keys and nodes on a ring; a new node only takes over the arc before it — a small fraction move, the rest stay home.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Data Structures · Advanced SQL (partitioning)</span><div>The ring is a hash structure from <i>Data Structures</i> repurposed for placement, and the sharding idea is the distributed cousin of table partitioning from <i>Advanced SQL</i> — split one big dataset into pieces so no single node (or partition) holds it all.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">hash(key) % N is a fine way to shard across nodes.</div><div class="truth">It works until <code class="tok">N</code> changes — then the remainder shifts for nearly every key and you reshuffle almost the entire dataset, a huge, disruptive data movement. Real systems use <b>consistent hashing</b> (often with virtual nodes) so scaling moves only a small, bounded slice.</div></div>
+          <div class="mc"><div class="myth">Sharding just spreads load; it's otherwise transparent.</div><div class="truth">It introduces hard questions: how to route a request to the right shard, how to run a query that spans shards, and how to rebalance when nodes come and go. Partitioning buys scale but complicates everything that used to be a single local lookup.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--replica);border-color:rgba(45,212,191,.4);background:var(--replica-soft)">Replication</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 02</span></div><h2>Replication &amp; quorums</h2></div>
+        <p>Partitioning scales you out; <strong>replication</strong> keeps you alive. Store each piece of data on <code class="tok">N</code> nodes so that losing one doesn't lose the data — but now the copies can disagree, and you must decide how consistent to keep them. The elegant tool is <strong>quorums</strong>: require a write to reach <code class="tok">W</code> replicas and a read to consult <code class="tok">R</code> of them. The key inequality is <strong>W + R &gt; N</strong>: when it holds, every read quorum is guaranteed to <em>overlap</em> every write quorum by at least one node, so a read always sees the latest write — strong consistency. Loosen it (<code class="tok">W + R ≤ N</code>) and reads get faster and more available, but may return stale data. Tuning <code class="tok">N</code>, <code class="tok">W</code>, and <code class="tok">R</code> is how you dial the consistency/availability trade directly.</p>
+        <span class="filetag">quorum.cs</span>
+        <pre><span class="kw">const int</span> N = <span class="num">5</span>;   <span class="cmt">// replicas per key</span>
+<span class="kw">await</span> <span class="fn">WriteTo</span>(W: <span class="num">3</span>, value);     <span class="cmt">// acknowledged once W replicas store it</span>
+<span class="kw">var</span> v = <span class="kw">await</span> <span class="fn">ReadFrom</span>(R: <span class="num">3</span>);   <span class="hlok">// W + R = 6 &gt; 5 → read overlaps the write → current</span>
+<span class="cmt">// with W=1, R=1: W + R = 2 ≤ 5 → the read may miss the latest write (stale)</span></pre>
+        <p>Five replicas hold a value. Tune <code class="tok">W</code> and <code class="tok">R</code>, write a new value <code class="tok">v2</code> to <code class="tok">W</code> replicas, then read from <code class="tok">R</code> — and see whether the read is guaranteed to observe <code class="tok">v2</code> or can come back stale:</p>
+        <div class="lab" id="replLab">
+          <div class="lab-head"><div><div class="pt">W + R &gt; N or stale</div><div class="ps">quorum overlap · the consistency dial</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="rpWrite">write v2 (to W)</button>
+              <button class="ds-btn" id="rpRead">read (from R)</button>
+              <button class="ds-btn" id="rpReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="rp-ctl">
+              <div class="rp-knob"><div class="rk-l">N · replicas</div><div class="rk-row"><span class="rk-v" id="rpN">5</span></div></div>
+              <div class="rp-knob"><div class="rk-l">W · write quorum</div><div class="rk-row"><button class="rk-btn" id="rpWdec">−</button><span class="rk-v" id="rpW">3</span><button class="rk-btn" id="rpWinc">+</button></div></div>
+              <div class="rp-knob"><div class="rk-l">R · read quorum</div><div class="rk-row"><button class="rk-btn" id="rpRdec">−</button><span class="rk-v" id="rpR">3</span><button class="rk-btn" id="rpRinc">+</button></div></div>
+            </div>
+            <div class="rp-quorum strong" id="rpQuorum">W + R = 6 &gt; 5 → strong (every read overlaps the write)</div>
+            <div class="dp-h">replicas — written copies of v2 highlighted, the read quorum outlined</div>
+            <div class="rp-reps" id="rpReplicas"></div>
+            <div class="stateline" id="rpReadResult">write v2, then read — the result appears here</div>
+            <div class="wlog" id="rpLog"></div>
+          </div>
+          <div class="lab-foot" id="rpFoot">When W + R &gt; N, the write set and read set must share a node, so the read always sees v2 — strong consistency. When W + R ≤ N, the sets can be disjoint and the read can return the old v1. Same replicas, different guarantee, set entirely by the numbers.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (the memory model)</span><div>The read/write overlap is the distributed echo of the memory-model lesson: just as an unsynchronized <code class="tok">count++</code> can miss an update on one machine, disjoint read/write quorums can miss a write across machines. Correctness in both comes from forcing an <b>overlap</b> — a happens-before that guarantees the reader sees the writer.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">More replicas automatically means stronger consistency.</div><div class="truth">Replicas give <b>durability and availability</b>; consistency comes from the <b>quorum rule</b>. Five replicas with W=R=1 are highly available but happily return stale reads. It's <code class="tok">W + R &gt; N</code> — the overlap — that buys consistency, and you pay for it in latency and availability.</div></div>
+          <div class="mc"><div class="myth">You have to choose one consistency level for the whole system.</div><div class="truth">Quorums let you tune it <b>per operation</b>. A financial write might demand a full quorum while an analytics read tolerates staleness for speed. The <code class="tok">N/W/R</code> knobs make the consistency/availability trade a dial you set per use case, not a single global switch.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--consensus);border-color:rgba(232,179,65,.4);background:var(--consensus-soft)">Consensus</span><span class="lvl expert">Expert</span><span class="mod-num">Module 03</span></div><h2>Consensus &amp; Raft</h2></div>
+        <p>How does a group of unreliable nodes agree on a single value — a leader, the next log entry, a config change — when any of them can fail and messages can be lost? That's the <strong>consensus</strong> problem, and <strong>Raft</strong> is the algorithm that made it teachable. Raft elects a single <strong>leader</strong> for a <em>term</em>: a candidate requests votes, and whoever wins a <strong>majority</strong> leads. The leader accepts new entries and replicates them; an entry is <strong>committed</strong> once a majority of nodes have stored it — so it survives any minority failure. If the leader dies, its followers time out, a new term begins, and a new leader is elected. Majority (quorum) everywhere is the trick: any two majorities overlap, so decisions can't contradict.</p>
+        <span class="filetag">raft.txt</span>
+        <pre>1. leader election  → candidate wins a MAJORITY of votes → leader for term T
+2. log replication  → leader appends entry → committed once a MAJORITY store it
+3. leader failure   → followers time out → term T+1 → elect a new leader
+<span class="hl">// any two majorities of N nodes overlap → no two conflicting decisions can commit</span></pre>
+        <p>Run an election across five nodes, replicate a log entry (committed only when a majority acknowledges), then kill the leader and watch the cluster elect a new one in a fresh term:</p>
+        <div class="lab" id="raftLab">
+          <div class="lab-head"><div><div class="pt">Agree by majority</div><div class="ps">election · replication · re-election</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="raElect">elect a leader</button>
+              <button class="ds-btn" id="raReplicate">replicate an entry</button>
+              <button class="ds-btn" id="raKill">kill the leader</button>
+              <button class="ds-btn" id="raReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="stat-row">
+              <div class="stat-box ok">leader<b id="raLeader">none</b></div>
+              <div class="stat-box">term<b id="raTerm">0</b></div>
+              <div class="stat-box">committed entries<b id="raCommitted">0</b></div>
+            </div>
+            <div class="nodes" id="raNodes"></div>
+            <div class="stateline" id="raStatus">elect a leader to begin — a candidate needs 3 of 5 votes</div>
+            <div class="wlog" id="raLog"></div>
+          </div>
+          <div class="lab-foot" id="raFoot">A candidate needs a majority (3 of 5) to lead. An entry commits only once a majority stores it, so it can't be lost to a minority failure. Kill the leader and a follower wins the next term — the cluster heals itself.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Replication &amp; quorums (m02) · Design Patterns</span><div>Consensus is the quorum idea from m02 turned into agreement: majorities overlap, so no two conflicting values can both win. It's how a replicated store elects which node leads and which writes commit — the coordination layer beneath the replication you just tuned.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Nodes can just vote and take the majority answer — consensus is easy.</div><div class="truth">The difficulty is doing it <b>while nodes fail and messages drop</b>, without ever committing two conflicting values. Raft's terms, majority votes, and commit rules exist precisely to stay correct through failures — and even so, the FLP result proves no consensus algorithm can guarantee termination in a fully asynchronous network.</div></div>
+          <div class="mc"><div class="myth">A committed entry can still be lost if nodes crash.</div><div class="truth">No — "committed" <b>means</b> a majority already stored it, and any future leader must be elected by a majority, which therefore includes a node that has the entry. That overlap guarantees committed data survives any minority failure. It's the whole safety argument in one sentence.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--dtime);border-color:rgba(167,139,250,.4);background:var(--dtime-soft)">Time</span><span class="lvl expert">Expert</span><span class="mod-num">Module 04</span></div><h2>Time &amp; ordering</h2></div>
+        <p>There is no global clock, and wall-clock timestamps from different machines can't be trusted to order events — clocks drift, and "later" by one node's clock may be "earlier" by another's. So distributed systems track <strong>logical time</strong>. A <strong>Lamport clock</strong> is a per-node counter: increment it on every local event, attach it to every message you send, and on receiving a message set your counter to <code class="tok">max(local, received) + 1</code>. This guarantees that if event A <em>causes</em> B (a message flows A→B), then A's timestamp is less than B's — capturing the <strong>happens-before</strong> relation without any real clock. Vector clocks go further, detecting when two events are <em>concurrent</em> (neither caused the other) — exactly the situation that produces conflicting updates.</p>
+        <span class="filetag">lamport.txt</span>
+        <pre>local event  →  clock = clock + 1
+send msg     →  clock = clock + 1;  attach clock to the message
+receive msg  →  clock = max(local, received) + 1      <span class="hl">// causality: cause &lt; effect</span></pre>
+        <p>Drive events on three nodes and pass messages between them. Watch each node's Lamport clock advance — and a receiving node's clock <em>jump forward</em> to stay ahead of the sender, preserving causal order:</p>
+        <div class="lab" id="clockLab">
+          <div class="lab-head"><div><div class="pt">Order without a clock</div><div class="ps">Lamport timestamps · happens-before</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="ckLocalA">event on A</button>
+              <button class="ds-btn" id="ckLocalB">event on B</button>
+              <button class="ds-btn primary" id="ckSendAB">A → B message</button>
+              <button class="ds-btn" id="ckSendBC">B → C message</button>
+              <button class="ds-btn" id="ckReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="nodes">
+              <div class="node"><div class="nd-id">Node A</div><div class="nd-sub">Lamport clock</div><div class="big-n" style="font-size:26px;margin-top:6px" id="ckA">0</div></div>
+              <div class="node"><div class="nd-id">Node B</div><div class="nd-sub">Lamport clock</div><div class="big-n" style="font-size:26px;margin-top:6px" id="ckB">0</div></div>
+              <div class="node"><div class="nd-id">Node C</div><div class="nd-sub">Lamport clock</div><div class="big-n" style="font-size:26px;margin-top:6px" id="ckC">0</div></div>
+            </div>
+            <div class="stateline" id="ckStatus">fire events and send messages to build a causal order</div>
+            <div class="wlog" id="ckLog"></div>
+          </div>
+          <div class="lab-foot" id="ckFoot">A local event ticks one node's clock. A message carries the sender's time, and the receiver jumps to max(local, received) + 1 — so a received event always outranks its send. That inequality is happens-before, reconstructed with counters, not clocks.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Bits, Pointers &amp; Overflow · Advanced C# (the memory model)</span><div>Happens-before is the same relation the memory model used to order reads and writes across threads — here generalized across machines. Both replace "what time is it?" with "what provably came before what?", because that causal ordering is the only kind you can actually guarantee.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Just use timestamps to order events across servers.</div><div class="truth">Wall clocks <b>drift and skew</b>; two servers can disagree on which of two events was first, and NTP only bounds the error. Logical clocks order events by <b>causality</b> instead, which is what you actually need — and what physical time can't reliably give you across machines.</div></div>
+          <div class="mc"><div class="myth">If two events have different Lamport timestamps, one caused the other.</div><div class="truth">Not necessarily — Lamport clocks guarantee cause &lt; effect, but the reverse doesn't hold: unrelated (concurrent) events can still get different numbers. To actually <b>detect concurrency</b> you need vector clocks, which is why conflict detection uses them rather than a single counter.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--consistency);border-color:rgba(86,199,255,.4);background:var(--consistency-soft)">Consistency</span><span class="lvl expert">Expert</span><span class="mod-num">Module 05</span></div><h2>Consistency models</h2></div>
+        <p>"Consistency" isn't one thing — it's a spectrum of <em>guarantees</em> about what a read is allowed to return, and the stronger the guarantee, the more coordination (and latency) it costs. <strong>Linearizable</strong> is the strongest: every operation appears to take effect at a single instant, so a read always returns the most recent write, matching real-time order. <strong>Sequential</strong> keeps a single order consistent with each client's program order, but not necessarily real time. <strong>Causal</strong> guarantees only that causally-related writes are seen in order (and reads never go backward). <strong>Eventual</strong> is the weakest: reads may return stale values, with the sole promise that if writes stop, all replicas <em>converge</em>. Choosing a model is choosing how much reality you're willing to blur for speed.</p>
+        <span class="filetag">a writer sets x = 1 then x = 2 · a reader reads three times</span>
+        <pre>linearizable → 2, 2, 2   <span class="cmt">// always the latest write</span>
+causal       → 1, 2, 2   <span class="cmt">// monotonic — never goes backward</span>
+eventual     → 0, 1, 2   <span class="hl">// stale reads allowed; converges in the end</span></pre>
+        <p>A writer sets <code class="tok">x = 1</code> then <code class="tok">x = 2</code>; a reader then reads three times. Switch the consistency model and see which sequences of read results the model <em>permits</em>:</p>
+        <div class="lab" id="consistencyLab">
+          <div class="lab-head"><div><div class="pt">What may a read return?</div><div class="ps">linearizable · causal · eventual</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="cyReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">consistency model</div><div class="seg" id="cySeg"><button class="seg-opt on" data-mode="linearizable">linearizable</button><button class="seg-opt" data-mode="causal">causal</button><button class="seg-opt" data-mode="eventual">eventual</button></div></div>
+            <div class="dp-h">reads R1 · R2 · R3 (after both writes)</div>
+            <div class="nodes" id="cyReads">
+              <div class="node"><div class="nd-id">R1</div><div class="nd-sub" id="cyR1">—</div></div>
+              <div class="node"><div class="nd-id">R2</div><div class="nd-sub" id="cyR2">—</div></div>
+              <div class="node"><div class="nd-id">R3</div><div class="nd-sub" id="cyR3">—</div></div>
+            </div>
+            <div class="stateline" id="cyGuarantee">pick a model to see what its reads may return</div>
+            <div class="wlog" id="cyLog"></div>
+          </div>
+          <div class="lab-foot" id="cyFoot">Linearizable forces every read to the latest write. Causal only forbids going backward, so an early read can still be stale but the sequence never regresses. Eventual permits any stale value, promising only that the replicas converge once writes stop.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Eventual consistency means the data is basically correct.</div><div class="truth">It means reads can return <b>arbitrarily stale</b> values until replicas converge — and "eventually" has no time bound. It's the right choice for many workloads (likes, view counts), but treating it as "almost strong" leads to bugs where the application acts on data that's simply out of date.</div></div>
+          <div class="mc"><div class="myth">Stronger consistency is always better; use it everywhere.</div><div class="truth">Strong consistency costs <b>coordination and latency</b> and reduces availability under partitions. The engineering skill is matching the model to the operation — linearizable where correctness demands it, weaker where staleness is harmless — because paying for linearizability everywhere makes a system slow and fragile.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--cap);border-color:rgba(124,156,255,.4);background:var(--cap-soft)">CAP</span><span class="lvl expert">Expert</span><span class="mod-num">Module 06</span></div><h2>The CAP theorem</h2></div>
+        <p>The most famous result in the field, and the most misunderstood. <strong>CAP</strong> says that when a network <strong>partition</strong> splits your nodes into groups that can't talk, you must choose between <strong>consistency</strong> (every read sees the latest write) and <strong>availability</strong> (every request gets a non-error response) — you cannot have both across the split. A <strong>CP</strong> system refuses to serve on the side that can't reach a quorum, staying consistent by becoming partly unavailable. An <strong>AP</strong> system keeps serving on both sides, staying available by letting the copies diverge (to be reconciled later). The crucial clarification: partitions are rare but <em>inevitable</em>, so CAP is really about what you do <em>during</em> one — and PACELC adds that even without a partition, you still trade latency against consistency.</p>
+        <span class="filetag">during a partition</span>
+        <pre>CP  → minority side returns errors  <span class="hl">// consistent, but not available</span>
+AP  → both sides keep serving       <span class="hl">// available, but the copies diverge</span>
+<span class="cmt">// no partition (PACELC): still choose lower Latency or stronger Consistency</span></pre>
+        <p>The cluster is split into two partitions. Choose CP or AP, induce the partition, and issue writes to each side — then heal it and see the consequence: a rejected write and consistency, or two writes and a divergence to reconcile:</p>
+        <div class="lab" id="capLab">
+          <div class="lab-head"><div><div class="pt">Consistent, or available?</div><div class="ps">the choice a partition forces</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="caPartition">split the network</button>
+              <button class="ds-btn primary" id="caWriteA">write to A</button>
+              <button class="ds-btn" id="caWriteB">write to B</button>
+              <button class="ds-btn" id="caHeal">heal partition</button>
+              <button class="ds-btn" id="caReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">mode during a partition</div><div class="seg" id="caSeg"><button class="seg-opt on" data-mode="cp">CP · stay consistent</button><button class="seg-opt" data-mode="ap">AP · stay available</button></div></div>
+            <div class="ca-parts">
+              <div class="ca-part avail" id="caPartA"><div class="cap-h">Partition A · nodes 1–3 (majority)</div><div class="cap-v" id="caValA">x = 1</div><div class="cap-a" id="caAvailA">available</div></div>
+              <div class="ca-part avail" id="caPartB"><div class="cap-h">Partition B · nodes 4–5 (minority)</div><div class="cap-v" id="caValB">x = 1</div><div class="cap-a" id="caAvailB">available</div></div>
+            </div>
+            <div class="stateline" id="caStatus">split the network, then try writing to each side</div>
+            <div class="wlog" id="caLog"></div>
+          </div>
+          <div class="lab-foot" id="caFoot">CP freezes the minority side — writes to B are rejected, so nothing diverges and consistency holds at the cost of availability. AP serves both sides, so A and B accept different writes and diverge, and healing forces a conflict to reconcile. That's the whole theorem, lived.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Replication &amp; quorums (m02) · Consistency models (m05)</span><div>CAP is the quorum inequality under stress: a partition can make a quorum unreachable on one side, and then <code class="tok">W + R &gt; N</code> can't be satisfied there. CP chooses to fail that side; AP chooses to serve it with weaker (eventual) consistency from m05. The knobs you tuned earlier <i>are</i> where you sit on CAP.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">CAP means you pick two of consistency, availability, and partition-tolerance.</div><div class="truth">Partition-tolerance isn't optional on a real network — partitions <b>will</b> happen — so you don't get to "pick" P. The real choice is C vs A <b>when a partition occurs</b>. Framing it as "two of three" obscures that every distributed system must tolerate partitions and decide how to behave during them.</div></div>
+          <div class="mc"><div class="myth">A good system is both consistent and available, full stop.</div><div class="truth">Only when there's no partition. During a split, physics forces the choice — and even when connected, PACELC says you still trade <b>latency</b> for consistency. "Consistent and available" is achievable in the happy path; the design work is deciding what happens when the happy path breaks.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--txn);border-color:rgba(242,151,60,.4);background:var(--txn-soft)">Transactions</span><span class="lvl expert">Expert</span><span class="mod-num">Module 07</span></div><h2>Distributed transactions</h2></div>
+        <p>A single-database transaction is atomic for free. Spanning a change across <em>several</em> services or shards is far harder, and the classic answer is <strong>two-phase commit (2PC)</strong>. A coordinator runs a <strong>prepare</strong> phase — asking every participant "can you commit?" — and only if <em>all</em> vote yes does it send <strong>commit</strong>; any no triggers a global <strong>abort</strong>. It gives atomicity, but it has a notorious weakness: if the coordinator <strong>fails after prepare but before deciding</strong>, the participants are <em>blocked</em> — they've promised to commit, hold their locks, and can't safely proceed without the coordinator. Because of that, many systems avoid 2PC in favor of <strong>sagas</strong>: a sequence of local transactions, each with a <strong>compensating action</strong> to undo it if a later step fails — trading atomicity for availability.</p>
+        <span class="filetag">two-phase commit</span>
+        <pre>phase 1 (prepare) → coordinator asks all: "can you commit?"
+phase 2 (commit)  → all voted yes → COMMIT   |   any voted no → ABORT
+<span class="hlbad">// coordinator dies between phases → participants are BLOCKED, holding locks</span></pre>
+        <p>Run a two-phase commit across three participants — all-yes commits, one-no aborts — then kill the coordinator mid-commit and watch the participants block, unable to decide alone:</p>
+        <div class="lab" id="txnLab">
+          <div class="lab-head"><div><div class="pt">All commit, or none — unless the coordinator dies</div><div class="ps">prepare · commit · the blocking flaw</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="txCommit">2PC · all ready</button>
+              <button class="ds-btn" id="txAbort">2PC · one aborts</button>
+              <button class="ds-btn" id="txKill">kill coordinator mid-commit</button>
+              <button class="ds-btn" id="txReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="stat-row">
+              <div class="stat-box">coordinator<b id="txCoord">ready</b></div>
+              <div class="stat-box">participants<b id="txPartN">3</b></div>
+            </div>
+            <div class="tx-phase" id="txPhase">idle — run a transaction</div>
+            <div class="dp-h">participants</div>
+            <div class="nodes" id="txParts"></div>
+            <div class="wlog" id="txLog"></div>
+          </div>
+          <div class="lab-foot" id="txFoot">Prepare then commit gives all-or-nothing atomicity across services. But a coordinator crash after prepare leaves participants holding locks with no safe way to decide — the blocking problem that pushes many systems toward sagas and compensating actions instead.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Mastering EF Core · Advanced SQL (transactions)</span><div>The single-node ACID transaction from the database courses is the guarantee 2PC tries to stretch across machines — and the difficulty of doing so is exactly why microservice architectures lean on sagas and eventual consistency instead of distributed ACID. Atomicity is cheap in one database and expensive across many.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Two-phase commit gives you ACID transactions across services.</div><div class="truth">It gives <b>atomicity</b>, but at the cost of availability: it's a blocking protocol that stalls when the coordinator fails, and it doesn't scale well. Distributed ACID is possible but expensive — which is why most large systems choose sagas plus idempotency and accept eventual consistency.</div></div>
+          <div class="mc"><div class="myth">A saga is just a transaction with extra steps.</div><div class="truth">A saga has <b>no global atomicity</b> — intermediate states are visible, and instead of a rollback it runs <b>compensating actions</b> to semantically undo completed steps. That's a genuinely different model: you design the undo for each step and tolerate temporary inconsistency, in exchange for staying available and scalable.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--message);border-color:rgba(78,214,107,.4);background:var(--message-soft)">Messaging</span><span class="lvl expert">Expert</span><span class="mod-num">Module 08</span></div><h2>Messaging &amp; delivery</h2></div>
+        <p>Services talk through messages, and because the network can lose them, you must choose a <strong>delivery guarantee</strong> — each a different answer to "what if the acknowledgment is lost?" <strong>At-most-once</strong> never retries, so a message may be <em>lost</em> but never duplicated. <strong>At-least-once</strong> retries until acknowledged, so it's never lost but may be <em>duplicated</em> (the retry arrives after the original was already processed). True <strong>exactly-once</strong> delivery is impossible over an unreliable network — but you get its <em>effect</em> by combining at-least-once with <strong>idempotency</strong> or <strong>deduplication</strong>: give each message an id, and a consumer that has seen an id simply drops the repeat. That's how Snip can ingest a burst of click events, retry safely, and still count each click once.</p>
+        <span class="filetag">delivery.txt</span>
+        <pre>at-most-once   → send, don't retry        <span class="hl">// may LOSE, never duplicates</span>
+at-least-once  → retry until acked         <span class="hl">// never lost, may DUPLICATE</span>
+exactly-once*  → at-least-once + dedup(id)  <span class="hlok">// duplicates dropped → processed once</span></pre>
+        <p>Send a message whose acknowledgment gets lost, forcing a retry, under each guarantee — and watch what the consumer actually processes: a possible loss, a duplicate, or a deduplicated single delivery:</p>
+        <div class="lab" id="deliveryLab">
+          <div class="lab-head"><div><div class="pt">Lost, duplicated, or exactly once</div><div class="ps">the ack was dropped — now what?</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="dlSend">send (ack will drop)</button>
+              <button class="ds-btn" id="dlReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">delivery guarantee</div><div class="seg" id="dlSeg"><button class="seg-opt on" data-mode="atmost">at-most-once</button><button class="seg-opt" data-mode="atleast">at-least-once</button><button class="seg-opt" data-mode="exactly">exactly-once (dedup)</button></div></div>
+            <div class="stat-row">
+              <div class="stat-box">processed by consumer<b id="dlDelivered">0</b></div>
+              <div class="stat-box bad">duplicates<b id="dlDuplicates">0</b></div>
+            </div>
+            <div class="dp-h">consumer inbox</div>
+            <div class="dl-recv" id="dlReceived"></div>
+            <div class="stateline" id="dlStatus">send a message and see how each guarantee handles the lost ack</div>
+            <div class="wlog" id="dlLog"></div>
+          </div>
+          <div class="lab-foot" id="dlFoot">At-most-once processes it once but risks losing messages whose send is dropped. At-least-once retries and the consumer processes a duplicate. Exactly-once retries too, but the consumer recognizes the message id and drops the repeat — processed once, safely.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (channels &amp; backpressure)</span><div>The message queue is the distributed version of the bounded channel from Advanced C#: it decouples producer from consumer and applies backpressure when the consumer falls behind — but now across machines, where retries and duplicates make <b>idempotency</b> essential rather than optional.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Use exactly-once delivery and you never worry about duplicates.</div><div class="truth">Exactly-once <i>delivery</i> is impossible on a lossy network; what's real is exactly-once <b>processing</b>, built from at-least-once plus <b>idempotent</b> consumers or dedup by id. The duplicates still arrive — you design the consumer so a repeat has no effect, rather than pretending the network won't repeat.</div></div>
+          <div class="mc"><div class="myth">Idempotency is a nice-to-have optimization.</div><div class="truth">In an at-least-once world it's a <b>correctness requirement</b>. Retries are guaranteed to redeliver messages, so any non-idempotent handler will eventually double-charge, double-count, or double-send. Designing operations to be safely repeatable is one of the most important habits in distributed systems.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--fault);border-color:rgba(251,113,133,.4);background:var(--fault-soft)">Failure</span><span class="lvl expert">Expert</span><span class="mod-num">Module 09</span></div><h2>Failure &amp; circuit breakers</h2></div>
+        <p>Because you can't tell a slow dependency from a dead one, calling a failing service naively is dangerous: requests pile up waiting on timeouts, threads and connections exhaust, and the failure <em>cascades</em> to callers that were themselves healthy. The <strong>circuit breaker</strong> is the standard defense, a small state machine wrapping a remote call. In <strong>closed</strong> state calls flow normally while failures are counted; once failures cross a threshold the breaker trips <strong>open</strong> and calls <em>fail fast</em> without even trying — protecting both caller and the struggling dependency. After a cooldown it goes <strong>half-open</strong> and lets a single probe through: success closes it, failure opens it again. Paired with <strong>retries with backoff</strong>, it turns a cascading outage into a contained, self-healing one.</p>
+        <span class="filetag">circuit-breaker.txt</span>
+        <pre>CLOSED     → calls pass, count failures → threshold reached → trip
+OPEN       → fail fast, don't call the dependency  <span class="hl">// stop the cascade</span>
+HALF-OPEN  → allow one probe → success ? CLOSED : OPEN   <span class="hlok">// self-healing</span></pre>
+        <p>Make calls to a dependency you can flip between healthy and failing. Watch failures trip the breaker <strong>open</strong> (calls then fail fast), a cooldown move it to <strong>half-open</strong>, and a successful probe close it again:</p>
+        <div class="lab" id="circuitBreakerLab">
+          <div class="lab-head"><div><div class="pt">Trip open, fail fast, self-heal</div><div class="ps">closed → open → half-open</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="cbCall">make a call</button>
+              <button class="ds-btn" id="cbToggleDep">toggle dependency</button>
+              <button class="ds-btn" id="cbTimeout">cooldown elapses ▸</button>
+              <button class="ds-btn" id="cbReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="cb-state"><span class="pill green" id="cbState">CLOSED</span></div>
+            <div class="cb-flow">CLOSED &nbsp;<b>&mdash;3 failures&rarr;</b>&nbsp; OPEN &nbsp;<b>&mdash;cooldown&rarr;</b>&nbsp; HALF-OPEN &nbsp;<b>&mdash;probe ok&rarr;</b>&nbsp; CLOSED</div>
+            <div class="stat-row">
+              <div class="stat-box bad">consecutive failures<b id="cbFailures">0</b></div>
+              <div class="stat-box">dependency<b id="cbDep">healthy</b></div>
+            </div>
+            <div class="stateline" id="cbStatus">the dependency is healthy — toggle it to failing, then make calls</div>
+            <div class="wlog" id="cbLog"></div>
+          </div>
+          <div class="lab-foot" id="cbFoot">Three consecutive failures trip the breaker open, and further calls fail instantly instead of hanging on timeouts — stopping the cascade. A cooldown allows one half-open probe; if the dependency has recovered, the breaker closes and normal traffic resumes.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Mastering Testing in .NET · SDLC</span><div>Circuit breakers, timeouts, and backoff are resilience patterns you'd verify with the fault-injection and chaos testing from the testing and lifecycle courses — deliberately failing a dependency to prove the system degrades gracefully instead of collapsing. Resilience is a property you test, not assume.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Retrying a failed call is the right way to handle failure.</div><div class="truth">Naive retries make things <b>worse</b> — they add load to a service that's already struggling, amplifying the outage (a "retry storm"). Retries need <b>backoff and jitter</b>, and a circuit breaker to stop retrying entirely once a dependency is clearly down. Blind retries turn a small failure into a large one.</div></div>
+          <div class="mc"><div class="myth">A single failing service only affects that service.</div><div class="truth">Without isolation, its callers block on timeouts waiting for it, exhausting their own threads and connections, so <b>they</b> fail too — a cascade that can take down an entire system from one weak link. Bulkheads, timeouts, and circuit breakers exist to contain failure to where it started.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--replica);border-color:rgba(45,212,191,.4);background:var(--replica-soft)">Convergence</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Conflict resolution &amp; CRDTs</h2></div>
+        <p>An AP system lets replicas accept writes independently, which means they <em>will</em> diverge — and something has to merge them back. The naive fix, <strong>last-write-wins</strong> (keep the value with the highest timestamp), is simple but <em>lossy</em>: two concurrent increments to a counter merge to one, silently dropping the other. <strong>Conflict-free replicated data types (CRDTs)</strong> solve this by designing the data so that merging is <strong>commutative, associative, and idempotent</strong> — replicas can merge in any order, any number of times, and always converge to the same correct result with <em>no coordination</em>. A grow-only counter (G-Counter) keeps a per-replica count and merges by taking the max of each entry, then summing — so two concurrent increments both survive. It's how you count Snip's clicks across regions without a global lock and without losing a single one.</p>
+        <span class="filetag">merge two replicas that each got increments</span>
+        <pre>last-write-wins → keep max(a, b)   <span class="hlbad">// one side's increments are LOST</span>
+
+G-Counter       → per-replica: { A: a, B: b };  merge = max each;  total = sum
+                <span class="hlok">// both sides survive → converges to a + b, no coordination</span></pre>
+        <p>Two replicas of a Snip click-counter each take increments during a partition. Merge them under last-write-wins versus a G-Counter CRDT, and watch one silently lose data while the other converges to the true total:</p>
+        <div class="lab" id="crdtLab">
+          <div class="lab-head"><div><div class="pt">Merge without losing writes</div><div class="ps">last-write-wins vs G-Counter</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="crIncA">+1 on replica A</button>
+              <button class="ds-btn" id="crIncB">+1 on replica B</button>
+              <button class="ds-btn primary" id="crMerge">merge replicas</button>
+              <button class="ds-btn" id="crReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">merge strategy</div><div class="seg" id="crSeg"><button class="seg-opt on" data-mode="crdt">G-Counter (CRDT)</button><button class="seg-opt" data-mode="lww">last-write-wins</button></div></div>
+            <div class="cr-reps">
+              <div class="cr-rep"><div class="crr-id">Replica A</div><div class="crr-v" id="crRepA">0</div></div>
+              <div class="cr-rep"><div class="crr-id">Replica B</div><div class="crr-v" id="crRepB">0</div></div>
+            </div>
+            <div class="cr-merged" id="crMerged">merged total<span class="crm-v" id="crMergedV">—</span></div>
+            <div class="stateline" id="crStatus">increment each replica, then merge</div>
+            <div class="wlog" id="crLog"></div>
+          </div>
+          <div class="lab-foot" id="crFoot">Last-write-wins keeps only the larger counter, discarding the other replica's increments — data loss on every concurrent update. The G-Counter tracks each replica separately and sums them, so both sides' increments survive and every replica converges to the same total.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Time &amp; ordering (m04) · Advanced C# (the memory model)</span><div>CRDTs are the constructive answer to the concurrency m04 could only <i>detect</i>: instead of flagging concurrent updates as conflicts, they define a merge that makes conflicts impossible. It's the distributed, coordination-free cousin of the atomic increment — correctness by design rather than by locking.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Last-write-wins is a reasonable default for merging replicas.</div><div class="truth">It's easy but <b>silently loses data</b> whenever writes are concurrent — the "losing" write just vanishes, which for counters, sets, or carts is a real bug. LWW is only safe when losing concurrent updates is genuinely acceptable; otherwise you need a CRDT or explicit conflict resolution.</div></div>
+          <div class="mc"><div class="myth">Merging divergent replicas always needs coordination or a conflict resolver.</div><div class="truth">Not if the data type is a <b>CRDT</b>. By making merge commutative, associative, and idempotent, replicas converge automatically no matter the order or repetition of merges — no locks, no coordinator, no manual resolution. The cleverness is moved into the data structure's design.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>The whole system</h2></div>
+        <p>Every technique in this course is a response to the same two facts — <strong>partial failure</strong> and <strong>no global clock</strong> — and together they compose into a system that scales and survives. You <strong>partition</strong> to grow, <strong>replicate</strong> with <strong>quorums</strong> to stay durable and tune consistency, run <strong>consensus</strong> to agree, order events with <strong>logical clocks</strong>, choose your spot on <strong>CAP</strong> during partitions, coordinate change with <strong>2PC or sagas</strong>, move work through <strong>idempotent messaging</strong>, contain failure with <strong>circuit breakers</strong>, and merge divergence with <strong>CRDTs</strong>. The map:</p>
+        <span class="filetag">the distributed toolkit</span>
+        <pre>  partition + consistent hashing  → scale out                <span class="cmt">// m01</span>
+  replication + quorums (W+R&gt;N)   → durable, tunable consistency <span class="cmt">// m02</span>
+  consensus (Raft) · logical clocks → agree · order            <span class="cmt">// m03–04</span>
+  consistency models · CAP         → what a read may return    <span class="cmt">// m05–06</span>
+  2PC / sagas · idempotent queues  → coordinate · deliver      <span class="cmt">// m07–08</span>
+  circuit breakers · CRDTs         → contain failure · converge <span class="cmt">// m09–10</span></pre>
+        <p>And here is Snip as a global fleet — sharded, replicated, consensus-configured, and resilient — every line a technique from the course:</p>
+        <span class="filetag">snip-at-scale.txt</span>
+        <pre>route:    node = ring.NextClockwise(hash(code))      <span class="cmt">// m01 · consistent hashing</span>
+read:     value = await ReadFrom(R) over N replicas  <span class="cmt">// m02 · quorum (W+R &gt; N → current)</span>
+config:   leader = raft.Elect(); replicate(change)   <span class="cmt">// m03 · consensus for cluster config</span>
+order:    stamp events with Lamport clocks           <span class="cmt">// m04 · causal ordering</span>
+partition:AP for click counts, CP for link creation  <span class="cmt">// m05–06 · consistency per operation</span>
+ingest:   queue.Publish(click, id);  dedup on id     <span class="hlok">// m08 · at-least-once + idempotent</span>
+deps:     breaker.Call(() => analytics.Record(...))  <span class="cmt">// m09 · circuit breaker</span>
+counts:   hits = GCounter.Merge(regionA, regionB)    <span class="hlok">// m10 · CRDT — converges, no loss</span></pre>
+        <div class="note key">
+          <div class="nh">The fleet, coherent</div>
+          <p>Links are <strong>sharded</strong> across nodes by a consistent-hash ring (m01) and <strong>replicated</strong> with quorums whose <code class="tok">W + R</code> sets the consistency of each read (m02). Cluster config is agreed by <strong>Raft</strong> (m03); events are ordered by <strong>logical clocks</strong> (m04). Link creation runs <strong>CP</strong> for correctness while click counting runs <strong>AP</strong> for availability (m05–06). Clicks flow through an <strong>idempotent queue</strong> so retries never double-count (m08), dependencies are wrapped in <strong>circuit breakers</strong> (m09), and per-region hit counts merge with a <strong>CRDT</strong> that can't lose a write (m10). <strong>No single machine is essential, no single failure is fatal, and the system stays correct while pieces of it break — which is the entire point.</strong></p>
+        </div>
+        <div class="xref"><span class="xi">↳ The Capstone · Mastering ASP.NET Core · SDLC</span><div>Snip began as one service on one box; it is now a fleet that scales horizontally and tolerates the failures the lifecycle course taught you to expect. Same product, a wholly different class of system — and the operational maturity that lets a small idea serve the whole world.</div></div>
+        <div class="closing">
+          <h2>The system, mastered.</h2>
+          <p>You started from two unforgiving facts — some part is always failing, and there is no shared clock — and built upward: partitioning and replication for scale and durability, quorums and consensus for agreement, logical clocks for order, CAP and consistency models for the choices a partition forces, transactions and messaging for coordination, and circuit breakers and CRDTs for surviving and reconciling failure. None of it removes the uncertainty; all of it lets a system keep working <em>despite</em> the uncertainty.</p>
+          <p>That's the distributed-systems mindset — assume failure, design for partial breakage, coordinate only as much as you must, and prefer techniques that converge on their own over ones that need a fragile central authority. You can now take a system that runs on one machine and reason about what it takes to run on a thousand: what scales, what breaks, what it costs, and what guarantees you can honestly make. Go build something that stays up when the network doesn't.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Distributed Systems — where the whole curriculum scales out: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, Advanced&nbsp;SQL&nbsp;&amp;&nbsp;PostgreSQL, Front-End&nbsp;Engineering, Mastering&nbsp;Angular, Angular&nbsp;Internals, Advanced&nbsp;C#&nbsp;(Vol.&nbsp;I &amp; II), the TypeScript&nbsp;type&nbsp;system, and the Capstone that built Snip. One machine became a fleet — and the fleet stays up.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/distributed-systems.js"></script>
+</body>
+</html>

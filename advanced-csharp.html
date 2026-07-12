@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced C# · The Growth Lab</title>
+<meta name="description" content="A deep-dive master course on how C# and the .NET runtime actually work — value vs reference semantics and the stack/heap, Span&lt;T&gt; and zero-allocation slicing, the async/await state machine, channels and backpressure, generics and JIT specialization, pattern matching and exhaustiveness, LINQ deferred execution, expression trees and source generators, the generational garbage collector, and the memory model with lock-free increments.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/advanced-csharp.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="16" height="16" rx="3.5" stroke="#6366F1" stroke-width="1.6"/>
+        <rect x="8" y="8" width="8" height="8" rx="1.6" stroke="#6366F1" stroke-width="1.2" opacity="0.6"/>
+        <path d="M2 9 L4 9 M2 15 L4 15 M20 9 L22 9 M20 15 L22 15 M9 2 L9 4 M15 2 L15 4 M9 20 L9 22 M15 20 L15 22" stroke="#6366F1" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Advanced C#</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="16" height="16" rx="3.5" stroke="#6366F1" stroke-width="1.6"/>
+            <rect x="8" y="8" width="8" height="8" rx="1.6" stroke="#6366F1" stroke-width="1.2" opacity="0.6"/>
+            <path d="M2 9 L4 9 M2 15 L4 15 M20 9 L22 9 M20 15 L22 15 M9 2 L9 4 M15 2 L15 4 M9 20 L9 22 M15 20 L15 22" stroke="#6366F1" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Advanced C#</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Memory &amp; Values · Advanced</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Beneath the syntax</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Structs, classes &amp; the copy</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Span&lt;T&gt; &amp; zero allocation</span></a>
+      <div class="nav-group-label">Async &amp; Concurrency · Advanced</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>The async state machine</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Channels &amp; backpressure</span></a>
+      <div class="nav-group-label">The Type System, Deeply · Advanced → Expert</div>
+      <a class="module" href="#m5"><span class="num">05</span><span>Generics &amp; JIT specialization</span></a>
+      <a class="module" href="#m6"><span class="num">06</span><span>Pattern matching</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>LINQ &amp; deferred execution</span></a>
+      <div class="nav-group-label">Performance &amp; the Runtime · Expert</div>
+      <a class="module" href="#m8"><span class="num">08</span><span>Expression trees</span></a>
+      <a class="module" href="#m9"><span class="num">09</span><span>The garbage collector</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>The memory model</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>C# to machine code</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Advanced → Expert · Deep dive after Mastering C#</div>
+        <h1>Beneath the syntax.<br><span class="grad">The machine underneath.</span></h1>
+        <p class="lede">C# is a systems language wearing a friendly face. The intro course taught you to write it fluently; this one shows you the <em>machine</em> underneath the keywords — where your data actually lives (<strong>stack vs heap</strong>, value vs reference), how <code class="tok">Span&lt;T&gt;</code> slices memory with <strong>zero allocation</strong>, how <code class="tok">async/await</code> compiles to a <strong>state machine</strong> that blocks no thread, how generics get <strong>JIT-specialized</strong> per value type, why LINQ is <strong>lazy pull-based</strong> enumeration, how <strong>expression trees</strong> are code as data, how the <strong>generational GC</strong> promotes survivors, and why an unsynchronized <code class="tok">count++</code> loses updates. Ten labs, each instrumented so you can watch allocations, states, and collections move. The running project stays <strong>Snip</strong>; this time we make its hot paths fast.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The C# memory model: a call stack of value-type locals on the left, the managed heap of reference objects on the right, a reference pointing across, and a Span window slicing into the heap array with zero allocation"></svg>
+          <div class="hero-cap">stack · heap · span — <span style="color:var(--accent)">where your data actually lives</span></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Open the machine →</a>
+          <a class="btn btn-ghost" href="#m2">Jump to Span&lt;T&gt;</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 00</span></div><h2>Beneath the syntax</h2></div>
+        <p>C# reads like a high-level language — garbage-collected, memory-safe, no pointers in sight. But that friendliness is a surface. Underneath sits a genuine systems platform: a stack and a heap you can reason about precisely, value types that live inline and reference types that live behind a pointer, a JIT that turns your generics into specialized machine code, and a garbage collector making generational bets about object lifetimes. The intro course taught you to write C#. This one shows you the machine it runs on — because at the senior level, performance and correctness both live in the details the syntax hides.</p>
+        <p>Three layers sit under every line you write. Your C# is compiled to <strong>IL</strong> (a portable stack-based bytecode) by Roslyn. At runtime the <strong>JIT</strong> compiles that IL to machine code for your CPU, specializing and inlining as it goes. And the whole thing executes on the <strong>CLR</strong> — the runtime that manages memory, threads, and the type system. Most of the time you can ignore all three. The moments you can't — a hot path allocating on every request, an async deadlock, a data race — are exactly what separates fluent from expert.</p>
+        <span class="filetag">the surface, and under it</span>
+        <pre><span class="kw">int</span> x = <span class="num">5</span>;                    <span class="cmt">// value — lives inline, on the stack</span>
+<span class="kw">var</span> link = <span class="kw">new</span> <span class="typ">Link</span>();          <span class="cmt">// reference — a pointer to a heap object</span>
+
+<span class="typ">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; code = url.<span class="fn">AsSpan</span>(<span class="num">5</span>, <span class="num">4</span>);  <span class="hl">// a window into memory — 0 allocation</span>
+<span class="kw">await</span> db.<span class="fn">SaveAsync</span>(link);       <span class="cmt">// compiles to a state machine — blocks no thread</span></pre>
+        <p>Every module opens one of these boxes and instruments it, so you can watch the mechanism move rather than take it on faith. We'll optimize Snip along the way: parse short codes without allocating, run the request pipeline without blocking threads, and count hits without losing a single one. Hold one idea for the whole course: <strong>the abstraction is a convenience, not a mystery — and you can always look underneath</strong>.</p>
+        <div class="xref"><span class="xi">↳ Bits, Pointers &amp; Overflow · OOP</span><div>The <i>Bits</i> course showed how numbers sit in memory; this one shows how <i>everything else</i> does — objects, references, spans, stack frames. And the value-vs-reference split you'll instrument here is the concrete, in-memory reason the <i>OOP</i> course's "identity vs equality" distinction matters.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">C# is a high-level language, so memory isn't my concern.</div><div class="truth">C# is high-level <b>and</b> gives you precise control when you want it — spans, <code class="tok">stackalloc</code>, struct layout, ref semantics. Ignoring memory is fine until a hot path allocates millions of times a second. The GC is a safety net, not a reason to be careless.</div></div>
+          <div class="mc"><div class="myth">The JIT just translates IL one-to-one to machine code.</div><div class="truth">The JIT <b>specializes and optimizes</b> — inlining calls, eliminating bounds checks it can prove safe, generating distinct code per value-type generic. Your <code class="tok">List&lt;int&gt;</code> and <code class="tok">List&lt;string&gt;</code> run genuinely different machine code, and knowing that explains real performance differences.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--mem);border-color:var(--accent-line);background:var(--mem-soft)">Memory</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 01</span></div><h2>Structs, classes &amp; the copy</h2></div>
+        <p>The single most consequential choice in C# is <code class="tok">struct</code> versus <code class="tok">class</code>, and it's a choice about <em>memory and identity</em>. A <strong>class</strong> is a reference type: the variable holds a pointer to an object on the heap, and assigning it copies the <em>pointer</em> — two variables now alias one object. A <strong>struct</strong> is a value type: the variable <em>is</em> the data, laid out inline, and assigning it <strong>copies the whole value</strong> — two independent copies. Mutating one never affects the other. Get this wrong and you get either surprising aliasing bugs or accidental allocation storms.</p>
+        <span class="filetag">value-vs-reference.cs</span>
+        <pre><span class="kw">struct</span> <span class="typ">PointV</span> { <span class="kw">public int</span> X; }    <span class="cmt">// value type</span>
+<span class="kw">class</span>  <span class="typ">PointR</span> { <span class="kw">public int</span> X; }    <span class="cmt">// reference type</span>
+
+<span class="kw">var</span> a = <span class="kw">new</span> <span class="typ">PointV</span> { X = <span class="num">1</span> };
+<span class="kw">var</span> b = a;        <span class="cmt">// struct: COPY — b is a separate value</span>
+b.X = <span class="num">9</span>;          <span class="hl">// a.X is still 1 — they don't share</span>
+
+<span class="kw">object</span> boxed = a; <span class="cmt">// BOXING — copies the struct onto the heap (allocation!)</span></pre>
+        <p>Pick a type, then assign <code class="tok">b = a</code>, mutate <code class="tok">b.X</code>, and watch what happens to <code class="tok">a</code> — and to the heap. Struct copies leave <code class="tok">a</code> untouched and allocate nothing; class assignment aliases, so mutating <code class="tok">b</code> changes <code class="tok">a</code> too:</p>
+        <div class="lab" id="structLab">
+          <div class="lab-head"><div><div class="pt">Copy, or alias?</div><div class="ps">value semantics · reference semantics · boxing</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="scAssign">b = a</button>
+              <button class="ds-btn" id="scMutate">b.X = 9</button>
+              <button class="ds-btn" id="scBox">box a → object</button>
+              <button class="ds-btn" id="scReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">type of a and b</div><div class="seg" id="scSeg"><button class="seg-opt on" data-type="struct">struct PointV (value)</button><button class="seg-opt" data-type="class">class PointR (reference)</button></div></div>
+            <div class="sc-read">
+              <div class="sc-stat">a.X<b id="scAX">1</b></div>
+              <div class="sc-stat">b.X<b id="scBX">1</b></div>
+              <div class="sc-stat">heap allocations<b id="scAllocs">0</b></div>
+              <div class="sc-stat">ReferenceEquals(a,b)<b id="scIdentity">n/a</b></div>
+            </div>
+            <div class="sc-grid">
+              <div class="sc-mem stack"><div class="sm-h">stack</div><div id="scStack"></div></div>
+              <div class="sc-mem heap"><div class="sm-h">managed heap</div><div id="scHeap"></div></div>
+            </div>
+            <div class="wlog" id="scLog"></div>
+          </div>
+          <div class="lab-foot" id="scFoot">Struct: <b>b = a</b> copies; mutating b leaves a at 1; zero heap allocations. Class: b = a aliases the same object; mutating b changes a too. Boxing a struct always allocates.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ OOP &amp; Coding Principles</span><div>"Prefer immutability" has teeth here: a mutable struct copied by accident is a classic bug source, which is why modern C# leans on <code class="tok">readonly struct</code> and <code class="tok">record struct</code>. Value semantics done right gives you the equality-by-value the <i>OOP</i> course wanted, with no heap cost.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Structs are just lightweight classes.</div><div class="truth">They have <b>opposite semantics</b>: copied on assignment, compared by value, stored inline, no heap allocation, no null by default. That makes them great for small immutable data and terrible for large mutable state passed around — every copy duplicates every field.</div></div>
+          <div class="mc"><div class="myth">Boxing is a rare, obscure thing.</div><div class="truth">It happens whenever a value type flows into an <code class="tok">object</code> or a non-generic interface slot — and each box is a heap allocation plus a copy. Generics and <code class="tok">Span&lt;T&gt;</code> exist largely to <b>avoid</b> it. Spotting hidden boxing in a hot loop is a core optimization skill.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--mem);border-color:var(--accent-line);background:var(--mem-soft)">Memory</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 02</span></div><h2>Span&lt;T&gt; &amp; zero allocation</h2></div>
+        <p>Here's the flagship idea of high-performance C#: you can work with slices of memory <em>without copying them</em>. A <code class="tok">Span&lt;T&gt;</code> (and its read-only sibling) is a <strong>window</strong> — a pointer plus a length — into contiguous memory that already exists: an array, a string, or a <code class="tok">stackalloc</code>'d buffer. Slicing a span produces another window into the <em>same</em> memory, allocating nothing. Contrast <code class="tok">Substring</code>, which allocates a brand-new string every time. For Snip, parsing a short code out of a URL a million times a second is the difference between zero allocations and a million.</p>
+        <span class="filetag">parse-code.cs</span>
+        <pre><span class="typ">string</span> url = <span class="str">"SNIP-4C92-LAUNCH"</span>;
+
+<span class="typ">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; code = url.<span class="fn">AsSpan</span>(<span class="num">5</span>, <span class="num">4</span>);  <span class="hlok">// window into the SAME chars — 0 alloc</span>
+<span class="typ">string</span> copy = url.<span class="fn">Substring</span>(<span class="num">5</span>, <span class="num">4</span>);       <span class="hl">// a NEW 4-char string — 1 allocation</span>
+
+<span class="typ">Span</span>&lt;<span class="kw">byte</span>&gt; scratch = <span class="kw">stackalloc byte</span>[<span class="num">16</span>];    <span class="cmt">// 16 bytes on the stack — 0 heap</span></pre>
+        <p>The buffer below is Snip's URL in memory. Slice out the code as a <strong>span</strong> and watch the window land on the existing cells with the allocation counter frozen at zero — then do the same with <code class="tok">Substring</code> and watch the heap counter climb with every call:</p>
+        <div class="lab" id="spanLab">
+          <div class="lab-head"><div><div class="pt">A window, not a copy</div><div class="ps">Span slices free · Substring allocates</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="spSliceSpan">AsSpan(5,4)</button>
+              <button class="ds-btn" id="spSliceSub">Substring(5,4)</button>
+              <button class="ds-btn" id="spStackalloc">stackalloc[16]</button>
+              <button class="ds-btn" id="spReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">the string in memory · char[16]</div>
+            <div class="sp-buffer" id="spBuffer"></div>
+            <div class="sp-two">
+              <div class="sp-pane span"><div class="sp-h">ReadOnlySpan&lt;char&gt; · a window</div><div class="sp-val" id="spSpanVal">—</div><div class="sp-alloc"><span id="spSpanAllocs">0</span> <span>heap allocations</span></div></div>
+              <div class="sp-pane sub"><div class="sp-h">Substring · a copy</div><div class="sp-val" id="spSubVal">—</div><div class="sp-alloc"><span id="spSubAllocs">0</span> <span>heap allocations</span></div></div>
+            </div>
+            <div class="wlog" id="spLog"></div>
+          </div>
+          <div class="lab-foot" id="spFoot">The span reads the same "4C92" straight out of the buffer — the counter never moves. Every Substring materializes a fresh string. On a hot path, that gap is the whole game.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Bits, Pointers &amp; Overflow · Data Structures</span><div>A span is the safe, bounds-checked version of the pointer-plus-length the <i>Bits</i> course described — the same idea C used for decades, minus the foot-guns. And it's why array-backed structures from <i>Data Structures</i> can be sliced and passed around without ever copying their contents.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Slicing a string or array copies the data out.</div><div class="truth">A <code class="tok">Span</code> slice copies <b>nothing</b> — it's a new (pointer, length) pair over the same memory. That's why it's a <code class="tok">ref struct</code> that can't escape to the heap: its whole purpose is to reference memory it doesn't own. Zero-copy is the default, not an optimization.</div></div>
+          <div class="mc"><div class="myth">Avoiding allocations is premature optimization.</div><div class="truth">On a request hot path, allocation <i>is</i> the cost — it's what feeds GC pressure and pauses. Spans, <code class="tok">stackalloc</code>, and pooling let hot code run allocation-free while the rest of the app stays comfortably high-level. Measure first, then span the paths that matter.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--async);border-color:rgba(45,212,191,.4);background:var(--async-soft)">Async</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 03</span></div><h2>The async state machine</h2></div>
+        <p>The biggest misconception in C# is that <code class="tok">async</code> means "runs on another thread." It doesn't. The compiler rewrites an async method into a <strong>state machine</strong> — a struct with an integer state field and a <code class="tok">MoveNext()</code> method. Each <code class="tok">await</code> is a state. When you hit an await whose operation isn't finished, <code class="tok">MoveNext</code> <em>returns</em>, handing the thread back to do other work, and schedules a continuation to call <code class="tok">MoveNext</code> again when the operation completes. No thread is blocked waiting — that's the entire point of async I/O.</p>
+        <span class="filetag">what the compiler generates (sketch)</span>
+        <pre><span class="kw">async</span> <span class="typ">Task</span> <span class="fn">HandleAsync</span>() {
+  <span class="kw">await</span> db.<span class="fn">SaveAsync</span>(link);      <span class="cmt">// state 0 — suspend here if not done</span>
+  <span class="kw">await</span> cache.<span class="fn">SetAsync</span>(code);    <span class="cmt">// state 1 — suspend here if not done</span>
+}
+<span class="cmt">// ≈ struct with: int _state; MoveNext(){ switch(_state){ ... } }</span>
+<span class="cmt">// incomplete awaiter → return, release the thread, resume via continuation</span></pre>
+        <p>Call the method and step it. Watch <code class="tok">MoveNext</code> run to the first <code class="tok">await</code> and <strong>suspend — releasing the thread</strong>; complete the awaited operation to resume into the next state, and again, until the machine finishes:</p>
+        <div class="lab" id="asyncLab">
+          <div class="lab-head"><div><div class="pt">await is a state, not a thread</div><div class="ps">MoveNext · suspend · resume · continuation</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="azCall">call HandleAsync()</button>
+              <button class="ds-btn" id="azComplete">complete awaited op ▸</button>
+              <button class="ds-btn" id="azReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">state field</div>
+            <div class="az-states" id="azStates">
+              <span class="az-state cur" id="azStart">start · state −1</span>
+              <span class="az-state" id="azAwait1">await SaveAsync · state 0</span>
+              <span class="az-state" id="azAwait2">await SetAsync · state 1</span>
+              <span class="az-state" id="azDone">completed</span>
+            </div>
+            <div class="az-row">
+              <div class="az-stat">current<b id="azState">not started</b></div>
+              <div class="az-stat">MoveNext() calls<b id="azMoveNext">0</b></div>
+              <div class="az-stat thread">calling thread<b id="azThread">idle</b></div>
+            </div>
+            <div class="wlog" id="azLog"></div>
+          </div>
+          <div class="lab-foot" id="azFoot">Each await is a suspension point: MoveNext returns and the thread goes back to the pool. When the I/O completes, a continuation calls MoveNext again to pick up at the next state. Nothing blocked.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Mastering ASP.NET Core</span><div>This is why an async web server handles thousands of concurrent requests on a handful of threads: each awaited database or network call <b>releases</b> its thread instead of parking it. The intro course's async controllers were this state machine, once per request.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">async/await spins up a background thread for the work.</div><div class="truth">By default it spins up <b>nothing</b>. Async I/O uses the OS's completion mechanism; the thread is returned to the pool at each await and reused. <code class="tok">Task.Run</code> is how you'd move CPU work to a thread — awaiting I/O is the opposite of that.</div></div>
+          <div class="mc"><div class="myth">Blocking on async (.Result / .Wait()) is basically the same as awaiting.</div><div class="truth">It defeats the machine — the thread is <b>held</b> instead of released, and can deadlock when the continuation needs that very thread back. The state machine only helps if you let it suspend. "async all the way" isn't a style preference; it's how the mechanism stays correct.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--async);border-color:rgba(45,212,191,.4);background:var(--async-soft)">Concurrency</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 04</span></div><h2>Channels &amp; backpressure</h2></div>
+        <p>Once work is async, you need to coordinate producers and consumers — and the modern tool is <code class="tok">Channel&lt;T&gt;</code>, an async-native queue. The subtle, essential feature is <strong>backpressure</strong>: a <em>bounded</em> channel has a capacity, and when it's full, <code class="tok">WriteAsync</code> doesn't fail or buffer unboundedly — it <em>awaits</em> until a consumer makes room. That single behavior is what keeps a fast producer from exhausting memory when the consumer can't keep up. For Snip, it's how you'd feed a burst of click events into an analytics writer without falling over.</p>
+        <span class="filetag">click-pipeline.cs</span>
+        <pre><span class="kw">var</span> ch = <span class="typ">Channel</span>.<span class="fn">CreateBounded</span>&lt;<span class="typ">Click</span>&gt;(capacity: <span class="num">3</span>);   <span class="cmt">// bounded → backpressure</span>
+
+<span class="kw">await</span> ch.Writer.<span class="fn">WriteAsync</span>(click);   <span class="hl">// awaits here when the buffer is full</span>
+<span class="kw">await foreach</span> (<span class="kw">var</span> c <span class="kw">in</span> ch.Reader.<span class="fn">ReadAllAsync</span>())   <span class="cmt">// consumer drains at its own pace</span>
+    <span class="kw">await</span> analytics.<span class="fn">RecordAsync</span>(c);</pre>
+        <p>Fill the bounded channel by writing, and watch the writer <strong>block on backpressure</strong> once capacity is reached — then read to free a slot and let a pending write through:</p>
+        <div class="lab" id="channelLab">
+          <div class="lab-head"><div><div class="pt">Full means wait</div><div class="ps">bounded capacity · WriteAsync awaits</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="chWrite">WriteAsync(click)</button>
+              <button class="ds-btn" id="chRead">ReadAsync ▸</button>
+              <button class="ds-btn" id="chReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ch-chan">
+              <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--ink-muted)">capacity 3 →</span>
+              <div class="ch-slots"><div class="ch-slot" id="chSlot0"></div><div class="ch-slot" id="chSlot1"></div><div class="ch-slot" id="chSlot2"></div></div>
+              <span class="ch-pending" id="chPending" style="display:none">WriteAsync awaiting…</span>
+            </div>
+            <div class="ch-row">
+              <div class="ch-stat">buffered<b id="chBuffered">0</b></div>
+              <div class="ch-stat">pending writes<b id="chPendingN">0</b></div>
+              <div class="ch-stat">total written<b id="chWritten">0</b></div>
+              <div class="ch-stat">total read<b id="chReadN">0</b></div>
+            </div>
+            <div class="stateline" id="chStatus">write items until the buffer fills — the next write will have to wait</div>
+            <div class="wlog" id="chLog"></div>
+          </div>
+          <div class="lab-foot" id="chFoot">Three writes fill the buffer; a fourth awaits. A read frees exactly one slot and lets one pending write complete. That coupling is backpressure — the producer can never outrun memory.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A queue between producer and consumer smooths everything out.</div><div class="truth">An <b>unbounded</b> queue just relocates the failure — a fast producer fills it until you run out of memory. A bounded channel converts overload into <b>waiting</b>, which is recoverable. Backpressure is the difference between slowing down and falling over.</div></div>
+          <div class="mc"><div class="myth">Channels are just a fancy ConcurrentQueue.</div><div class="truth">They're an <b>async coordination primitive</b>: writers and readers await instead of spin, completion is signalled, and bounded mode applies backpressure. <code class="tok">ConcurrentQueue</code> gives you thread-safe storage; a channel gives you the whole producer/consumer protocol.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--gen);border-color:rgba(167,139,250,.4);background:var(--gen-soft)">Generics</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 05</span></div><h2>Generics &amp; JIT specialization</h2></div>
+        <p>C# generics aren't C++ templates (compile-time code duplication) or Java generics (type erasure). They're a <em>runtime</em> mechanism with a clever split. For each <strong>value-type</strong> argument, the JIT generates <strong>dedicated machine code</strong> with the type laid out inline — no boxing, real specialization. For all <strong>reference-type</strong> arguments, it shares <em>one</em> canonical implementation (called <code class="tok">__Canon</code>) because every reference is the same size — a pointer. So <code class="tok">List&lt;int&gt;</code> and <code class="tok">List&lt;double&gt;</code> run distinct code, while <code class="tok">List&lt;string&gt;</code> and <code class="tok">List&lt;Link&gt;</code> share it. This is why generics are both fast <em>and</em> compact.</p>
+        <span class="filetag">specialization.cs</span>
+        <pre><span class="kw">var</span> a = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="kw">int</span>&gt;();      <span class="cmt">// JIT: dedicated code, int inline, no boxing</span>
+<span class="kw">var</span> b = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="kw">double</span>&gt;();   <span class="cmt">// JIT: a second dedicated specialization</span>
+<span class="kw">var</span> c = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="typ">string</span>&gt;();   <span class="hl">// JIT: shared __Canon (reference)</span>
+<span class="kw">var</span> d = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="typ">Link</span>&gt;();     <span class="hl">// JIT: same __Canon — no new code</span></pre>
+        <p>Instantiate the generic with different type arguments and watch which ones trigger a fresh JIT specialization and which reuse the shared canonical code:</p>
+        <div class="lab" id="genericLab">
+          <div class="lab-head"><div><div class="pt">One generic, many machine-code bodies</div><div class="ps">value → dedicated · reference → __Canon</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="gnInt">new List&lt;int&gt;</button>
+              <button class="ds-btn" id="gnDouble">new List&lt;double&gt;</button>
+              <button class="ds-btn" id="gnString">new List&lt;string&gt;</button>
+              <button class="ds-btn" id="gnClass">new List&lt;Link&gt;</button>
+              <button class="ds-btn" id="gnReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="gn-code"><div class="gc-h">JIT-compiled specializations</div><div class="gn-variants" id="gnVariants"><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint)">none yet — instantiate the generic</span></div></div>
+            <div class="sc-read"><div class="sc-stat">distinct native code bodies<b id="gnSpecializations">0</b></div></div>
+            <div class="wlog" id="gnLog"></div>
+          </div>
+          <div class="lab-foot" id="gnFoot">int and double each get their own specialized body; string and Link both resolve to the single shared __Canon. Four instantiations, three native bodies.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Data Structures · Big O</span><div>Every generic collection from <i>Data Structures</i> pays this off: <code class="tok">List&lt;int&gt;</code> stores ints inline with no per-element boxing, so the constant factor behind its O(1) access is genuinely small. Generics are how you get type safety and the tight memory layout the complexity assumed.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Generics are erased at runtime like in some other languages.</div><div class="truth">C# keeps <b>full type information</b> at runtime — you can ask a <code class="tok">List&lt;int&gt;</code> what its element type is, and the JIT produces specialized code for value types. No erasure, no hidden boxing for value-type generics. That reified model is a real performance and expressiveness advantage.</div></div>
+          <div class="mc"><div class="myth">Using many generic type arguments bloats the binary.</div><div class="truth">Reference-type instantiations <b>share one</b> canonical body, so a hundred <code class="tok">List&lt;SomeClass&gt;</code> types cost one implementation. Only distinct value types add code — and that's the code you <i>want</i>, because it's the fast, allocation-free path.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--types);border-color:rgba(232,179,65,.4);background:var(--types-soft)">Type system</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 06</span></div><h2>Pattern matching</h2></div>
+        <p>Modern C# turned <code class="tok">switch</code> from a jump table into a <strong>pattern-matching expression</strong>. You can match on type, on property values, on relational conditions (<code class="tok">&gt; 0</code>), on tuples, and on list shapes — and the whole thing is an expression that returns a value. The feature that makes it <em>safe</em> is <strong>exhaustiveness checking</strong>: for a closed set of inputs, the compiler warns (<code class="tok">CS8509</code>) if you haven't handled every case, including <code class="tok">null</code>. That turns "did I forget a case?" from a runtime surprise into a compile-time warning.</p>
+        <span class="filetag">classify.cs</span>
+        <pre><span class="typ">string</span> label = n <span class="kw">switch</span> {
+    &lt; <span class="num">0</span>    =&gt; <span class="str">"negative"</span>,       <span class="cmt">// relational pattern</span>
+    <span class="num">0</span>      =&gt; <span class="str">"zero"</span>,
+    &gt; <span class="num">0</span>    =&gt; <span class="str">"positive"</span>,
+    <span class="kw">null</span>   =&gt; <span class="str">"none"</span>,           <span class="hlok">// handle null → exhaustive</span>
+};   <span class="cmt">// omit the null arm and the compiler warns: not all inputs handled</span></pre>
+        <p>Pick an input and watch the matching arm light up. Then toggle the <code class="tok">null</code> arm off and see the switch become <strong>non-exhaustive</strong> — the compiler's warning, live:</p>
+        <div class="lab" id="patternLab">
+          <div class="lab-head"><div><div class="pt">One arm matches · every case covered?</div><div class="ps">relational patterns · exhaustiveness</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="pmNeg">n = −5</button>
+              <button class="ds-btn" id="pmZero">n = 0</button>
+              <button class="ds-btn" id="pmPos">n = 42</button>
+              <button class="ds-btn" id="pmNull">n = null</button>
+              <button class="ds-btn primary" id="pmNullArm">null arm: on</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="pm-arms">
+              <div class="pm-arm" id="pmArmNeg"><span class="pa-pat">&lt; 0</span><span class="pa-res">⇒ "negative"</span></div>
+              <div class="pm-arm" id="pmArmZero"><span class="pa-pat">0</span><span class="pa-res">⇒ "zero"</span></div>
+              <div class="pm-arm" id="pmArmPos"><span class="pa-pat">&gt; 0</span><span class="pa-res">⇒ "positive"</span></div>
+              <div class="pm-arm" id="pmArmNull"><span class="pa-pat">null</span><span class="pa-res">⇒ "none"</span></div>
+            </div>
+            <div class="pm-exhaust ok" id="pmExhaust">✓ exhaustive — every input is handled</div>
+            <div class="stateline" id="pmStatus">pick an input to see which arm the switch selects</div>
+            <div class="wlog" id="pmLog"></div>
+          </div>
+          <div class="lab-foot" id="pmFoot">Relational patterns partition the number line; the null arm closes the last gap. Drop it and the compiler warns that null falls through — exhaustiveness caught at build time.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ OOP &amp; Coding Principles · Design Patterns</span><div>Pattern matching is often the clean alternative to a Visitor or a type-switch tower from the <i>Patterns</i> course — especially over <code class="tok">record</code> hierarchies, where property patterns read like the shape of the data. Exhaustiveness gives you the "handled every subtype" guarantee OOP polymorphism promised.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">switch expressions are just cleaner switch statements.</div><div class="truth">They're <b>expressions that return values</b> and support rich patterns — type, property, relational, positional, list — plus exhaustiveness analysis. That combination replaces whole families of if-else towers and Visitor boilerplate with one checked, value-producing construct.</div></div>
+          <div class="mc"><div class="myth">A default (_) arm is always good defensive practice.</div><div class="truth">Over a closed set (an enum, a sealed hierarchy), an explicit <code class="tok">_</code> can <b>hide</b> the exhaustiveness warning that would otherwise tell you a new case is unhandled. Sometimes the safer choice is to omit it and let the compiler flag the gap when the type grows.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--linq);border-color:rgba(78,214,107,.4);background:var(--linq-soft)">LINQ</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div><h2>LINQ &amp; deferred execution</h2></div>
+        <p>Here's a truth that will feel familiar if you took <em>Angular Internals</em>: LINQ is <strong>lazy, pull-based enumeration</strong>. Building a query with <code class="tok">Where</code> and <code class="tok">Select</code> executes <em>nothing</em> — it composes an iterator. Elements flow through the pipeline one at a time, and only when a <strong>terminal</strong> operation (<code class="tok">ToList</code>, <code class="tok">Count</code>, <code class="tok">First</code>) pulls them. This is exactly the signals model — writes mark, reads compute — applied to sequences. It's why <code class="tok">First()</code> can short-circuit after one match, and why a query can stream a huge source without materializing it.</p>
+        <span class="filetag">deferred.cs</span>
+        <pre><span class="kw">var</span> query = numbers.<span class="fn">Where</span>(n =&gt; n % <span class="num">2</span> == <span class="num">0</span>)   <span class="cmt">// deferred — nothing runs</span>
+                   .<span class="fn">Select</span>(n =&gt; n * n);       <span class="cmt">// deferred — still nothing</span>
+
+<span class="kw">var</span> list = query.<span class="fn">ToList</span>();   <span class="hl">// NOW it enumerates — pulls every element through</span>
+<span class="kw">var</span> one  = query.<span class="fn">First</span>();    <span class="hlok">// pulls only until the first match, then stops</span></pre>
+        <p>Build the query and see the per-stage counters stay at zero. Then <code class="tok">ToList()</code> to pull everything through, or <code class="tok">First()</code> to watch it <strong>short-circuit</strong> after the first element that passes:</p>
+        <div class="lab" id="linqLab">
+          <div class="lab-head"><div><div class="pt">Building runs nothing · pulling runs it</div><div class="ps">deferred pipeline · short-circuit</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="lqBuild">build query</button>
+              <button class="ds-btn primary" id="lqToList">.ToList()</button>
+              <button class="ds-btn" id="lqFirst">.First()</button>
+              <button class="ds-btn" id="lqReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">source · int[] { 1, 2, 3, 4, 5, 6 }</div>
+            <div class="lq-pipe">
+              <div class="lq-stage src"><div class="ls-h">source</div><div class="ls-body" id="lqSource">1 → 2 → 3 → 4 → 5 → 6</div></div>
+              <div class="lq-stage where" id="lqWhere"><div class="ls-h">.Where(n%2==0) <span class="rc" id="lqWhereRc">×0</span></div><div class="ls-body">predicate invocations</div></div>
+              <div class="lq-stage select" id="lqSelect"><div class="ls-h">.Select(n*n) <span class="rc" id="lqSelectRc">×0</span></div><div class="ls-body">projection invocations</div></div>
+            </div>
+            <div class="lq-out" id="lqOutput"><span>result:</span> —</div>
+            <div class="wlog" id="lqLog"></div>
+          </div>
+          <div class="lab-foot" id="lqFoot">ToList pulls all six through Where (×6) and the three survivors through Select (×3). First pulls only until 2 passes — Where ×2, Select ×1 — then stops. Laziness, counted.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Angular Internals · Advanced SQL</span><div>The deferred pipeline <i>is</i> the signals graph in another costume — lazy, pull-driven, computed on demand. And it's why LINQ-to-SQL can defer: the query is a tree until you enumerate, so the provider can translate the whole thing into one <b>SQL</b> statement instead of fetching and filtering in memory.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Each LINQ operator loops the collection once, so chaining is slow.</div><div class="truth">Operators <b>don't loop</b> on their own — they compose one iterator that pulls each element through the whole chain a single time. <code class="tok">Where().Select()</code> is one pass, not two, and nothing runs until a terminal operator asks for elements.</div></div>
+          <div class="mc"><div class="myth">A LINQ query is a value you can reuse freely.</div><div class="truth">It's a <b>recipe</b>, re-executed on every enumeration — iterate it twice and the source is walked twice (and any side effects happen twice). If you need the results as data, call <code class="tok">ToList</code> once. This is the same cold-vs-materialized distinction as observables.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--il);border-color:rgba(124,156,255,.4);background:var(--il-soft)">Metaprogramming</span><span class="lvl expert">Expert</span><span class="mod-num">Module 08</span></div><h2>Expression trees</h2></div>
+        <p>A lambda can be two completely different things depending on its target type. Assigned to a <code class="tok">Func&lt;&gt;</code>, it's <em>compiled code</em> — a delegate you call. Assigned to an <code class="tok">Expression&lt;Func&lt;&gt;&gt;</code>, it's <strong>data</strong> — a tree describing the code, which you can inspect, rewrite, and <code class="tok">Compile()</code> into a delegate at runtime. This "code as data" is the engine behind ORMs (EF turns your <code class="tok">Where(x =&gt; ...)</code> into SQL by reading the tree), mappers, and validation libraries. It's the most powerful metaprogramming tool in the language.</p>
+        <span class="filetag">expression-tree.cs</span>
+        <pre><span class="typ">Func</span>&lt;<span class="kw">int</span>,<span class="kw">int</span>&gt; compiled = x =&gt; x * <span class="num">2</span> + <span class="num">1</span>;          <span class="cmt">// executable delegate</span>
+
+<span class="typ">Expression</span>&lt;<span class="typ">Func</span>&lt;<span class="kw">int</span>,<span class="kw">int</span>&gt;&gt; tree = x =&gt; x * <span class="num">2</span> + <span class="num">1</span>;   <span class="hl">// DATA — an inspectable tree</span>
+<span class="typ">Func</span>&lt;<span class="kw">int</span>,<span class="kw">int</span>&gt; f = tree.<span class="fn">Compile</span>();                    <span class="cmt">// tree → real delegate at runtime</span>
+<span class="kw">int</span> y = <span class="fn">f</span>(<span class="num">5</span>);   <span class="cmt">// 11</span></pre>
+        <p>Below is the tree for <code class="tok">x =&gt; x * 2 + 1</code>. <code class="tok">Compile()</code> it to a delegate and invoke it; then <strong>rewrite</strong> the multiply operand and watch the tree change and demand a recompile — proof you're manipulating code as data:</p>
+        <div class="lab" id="exprLab">
+          <div class="lab-head"><div><div class="pt">Code you can read and rewrite</div><div class="ps">Expression tree → Compile() → delegate</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="exCompile">Compile()</button>
+              <button class="ds-btn" id="exInvoke">invoke f(5)</button>
+              <button class="ds-btn" id="exTransform">rewrite × operand</button>
+              <button class="ds-btn" id="exReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">Expression&lt;Func&lt;int,int&gt;&gt;</div>
+            <div class="ex-tree" id="exTree">
+              <span class="ex-node op">Add</span> ( <span class="ex-node op" id="exMulNode">Multiply</span> ( <span class="ex-node par">x</span> , <span class="ex-node con" id="exMulConst">2</span> ) , <span class="ex-node con">1</span> )
+            </div>
+            <div class="ex-row">
+              <div class="ex-stat no" id="exCompiledStat">compiled?<b id="exCompiled">no</b></div>
+              <div class="ex-stat">f(5)<b id="exOutput">—</b></div>
+            </div>
+            <div class="wlog" id="exLog"></div>
+          </div>
+          <div class="lab-foot" id="exFoot">Compile turns the tree into a callable delegate; f(5) = 5×2+1 = 11. Rewriting the operand mutates the data and invalidates the delegate — recompile to get 5×3+1 = 16.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Mastering Entity Framework Core</span><div>This is exactly how EF Core works: your <code class="tok">Where(u =&gt; u.Active)</code> is an <b>expression tree</b>, and the provider walks it to emit SQL instead of running it in memory. The intro course's LINQ-to-SQL translation was this mechanism — a tree read by a query provider.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A lambda is always just an anonymous function.</div><div class="truth">Its <b>target type</b> decides everything. As a delegate it's compiled code; as an <code class="tok">Expression&lt;&gt;</code> it's a data structure the runtime hands you to inspect and transform. Same syntax, two entirely different runtime objects — and the second is what makes ORMs possible.</div></div>
+          <div class="mc"><div class="myth">Source generators and expression trees are the same idea.</div><div class="truth">They run at <b>different times</b>. Source generators run at <i>compile time</i>, emitting extra C# with zero runtime cost. Expression trees are built and compiled at <i>runtime</i>. Both are metaprogramming, but one trades startup work for flexibility and the other trades flexibility for speed.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--gc);border-color:rgba(251,113,133,.4);background:var(--gc-soft)">Runtime</span><span class="lvl expert">Expert</span><span class="mod-num">Module 09</span></div><h2>The garbage collector</h2></div>
+        <p>The GC is why you never <code class="tok">free()</code> in C# — and understanding its bet is how you write allocation-friendly code. The .NET collector is <strong>generational</strong>, built on a well-supported hypothesis: <em>most objects die young</em>. New allocations go into <strong>gen 0</strong>, which is small and collected often and cheaply. Objects that survive a collection get <strong>promoted</strong> to gen 1, and survivors of that to gen 2 — collected rarely, because long-lived objects tend to keep living. The practical upshot: short-lived garbage is nearly free, but allocating heavily still drives collection frequency, and objects that leak into gen 2 are expensive to reclaim.</p>
+        <span class="filetag">the generational bet</span>
+        <pre><span class="kw">var</span> temp = <span class="kw">new</span> <span class="typ">byte</span>[<span class="num">64</span>];   <span class="cmt">// gen 0 — cheap, collected soon</span>
+<span class="cmt">// survives a gen-0 collection → promoted to gen 1 → then gen 2</span>
+<span class="cmt">// gen 0: collected constantly · gen 2: collected rarely (full GC)</span>
+<span class="typ">GC</span>.<span class="fn">Collect</span>(<span class="num">0</span>);   <span class="cmt">// force a gen-0 collection (survivors promote, garbage is freed)</span></pre>
+        <p>Allocate objects into gen 0, drop a reference to make one collectible, and run a collection — watch the dead object get freed while survivors <strong>promote</strong> up a generation:</p>
+        <div class="lab" id="gcLab">
+          <div class="lab-head"><div><div class="pt">Die young, or get promoted</div><div class="ps">gen 0 → gen 1 → gen 2</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="gcAlloc">allocate</button>
+              <button class="ds-btn" id="gcDrop">drop reference</button>
+              <button class="ds-btn" id="gcCollect">GC.Collect() ▸</button>
+              <button class="ds-btn" id="gcReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="gc-gens">
+              <div class="gc-gen g0"><div class="gg-h">gen 0</div><div class="gg-sub">new · collected often</div><div class="gc-objs" id="gcObjs0"></div><div class="gc-cols">collections: <span id="gcCol0">0</span></div></div>
+              <div class="gc-gen g1"><div class="gg-h">gen 1</div><div class="gg-sub">survived once</div><div class="gc-objs" id="gcObjs1"></div><div class="gc-cols">collections: <span id="gcCol1">0</span></div></div>
+              <div class="gc-gen g2"><div class="gg-h">gen 2</div><div class="gg-sub">long-lived · full GC</div><div class="gc-objs" id="gcObjs2"></div><div class="gc-cols">collections: <span id="gcCol2">0</span></div></div>
+            </div>
+            <div class="stateline" id="gcStatus">allocate a few objects — they land in gen 0</div>
+            <div class="wlog" id="gcLog"></div>
+          </div>
+          <div class="lab-foot" id="gcFoot">Dropped objects are reclaimed on the next collection; survivors move gen 0 → gen 1 → gen 2. Keep allocations short-lived and they stay in the cheap generation; leak them and they cost a full GC.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Data Structures · Span&lt;T&gt; (m02)</span><div>This is why the allocation-free tricks matter: every object you <i>don't</i> allocate is gen-0 pressure you avoid. Spans, <code class="tok">stackalloc</code>, pooling, and struct locals keep hot paths out of the GC's way — the runtime payoff of the memory discipline from module 02.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The GC makes memory management something I never think about.</div><div class="truth">It removes manual <code class="tok">free</code>, not the cost of allocation. Allocation rate drives collection frequency, and collections pause your app. Senior .NET performance work is largely <b>reducing allocations</b> so the GC has less to do — exactly what modules 01 and 02 set up.</div></div>
+          <div class="mc"><div class="myth">Calling GC.Collect() regularly keeps memory tidy.</div><div class="truth">It usually <b>hurts</b> — forcing full collections throws away the generational schedule the runtime tunes for you, and can promote objects that would have died in gen 0. The collector is smarter than a manual timer; the real lever is allocating less, not collecting more.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--perf);border-color:rgba(86,199,255,.4);background:var(--perf-soft)">Memory model</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>The memory model</h2></div>
+        <p>Concurrency's sharpest edge: <code class="tok">count++</code> is not one operation. It's <em>read, add one, write back</em> — three steps — and when two threads run it on a shared field without synchronization, their reads and writes interleave and <strong>updates get lost</strong>. Each thread reads the same old value, both add one, both write back the same new value: two increments, one result. The fix is to make the update <strong>atomic</strong>: <code class="tok">Interlocked.Increment</code> performs read-modify-write as a single indivisible CPU instruction, or a <code class="tok">lock</code> serializes the section. For Snip's click counter under load, this is the difference between an accurate number and a silently wrong one.</p>
+        <span class="filetag">counting-clicks.cs</span>
+        <pre><span class="kw">int</span> hits = <span class="num">0</span>;
+
+<span class="cmt">// two threads, 50 increments each:</span>
+hits++;                          <span class="hl">// read-modify-write — RACY, loses updates</span>
+<span class="typ">Interlocked</span>.<span class="fn">Increment</span>(<span class="kw">ref</span> hits);   <span class="hlok">// atomic — never loses one</span></pre>
+        <p>Run 100 increments across two threads. In <strong>unsafe</strong> mode the interleaving drops updates and the total comes up short; switch to <strong>Interlocked</strong> and every increment survives:</p>
+        <div class="lab" id="raceLab">
+          <div class="lab-head"><div><div class="pt">count++ is three operations</div><div class="ps">lost updates · atomic increment</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="rzRun">run 100 increments ▸</button>
+              <button class="ds-btn" id="rzReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">increment strategy</div><div class="seg" id="rzSeg"><button class="seg-opt on" data-mode="unsafe">hits++ (unsynchronized)</button><button class="seg-opt" data-mode="interlocked">Interlocked.Increment</button></div></div>
+            <div class="rz-bar"><div class="rz-fill" id="rzFill"></div></div>
+            <div class="rz-viz">
+              <div class="rz-stat"><div class="rs-n">expected</div><div class="rs-v" id="rzExpected">100</div></div>
+              <div class="rz-stat result"><div class="rs-n">final count</div><div class="rs-v" id="rzResult">0</div></div>
+              <div class="rz-stat lost"><div class="rs-n">lost updates</div><div class="rs-v" id="rzLost">0</div></div>
+            </div>
+            <div class="stateline" id="rzStatus">run in unsafe mode, then switch to Interlocked and compare</div>
+            <div class="wlog" id="rzLog"></div>
+          </div>
+          <div class="lab-foot" id="rzFoot">Unsafe increments interleave and lose some — the count falls short of 100. Interlocked makes each read-modify-write atomic, so the total is always exactly 100.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Bits, Pointers &amp; Overflow · SDLC</span><div>The race is a bit-level truth — the CPU's load/store of a word interleaved across cores — and its cost is a <i>Lifecycle</i>-grade production bug: intermittent, load-dependent, invisible in a single-threaded test. Knowing the memory model is how you prevent the heisenbug rather than chase it.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Incrementing an int is atomic — the CPU does it in one step.</div><div class="truth">The <i>read-modify-write</i> is three steps and can interleave across threads, losing updates. Even a single aligned read or write being atomic doesn't make <code class="tok">++</code> atomic. You need <code class="tok">Interlocked</code> or a lock — the hardware guarantee is narrower than the operation.</div></div>
+          <div class="mc"><div class="myth">If it passed my tests, the concurrent code is correct.</div><div class="truth">Races are <b>non-deterministic</b> — a passing run proves nothing, because the losing interleaving simply didn't happen this time. Correctness here comes from the <i>memory model</i> (atomics, locks, immutability), not from green tests. This is the one place "it works on my machine" is actively dangerous.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>C# to machine code</h2></div>
+        <p>Zoom all the way out and the pipeline is four stages. Your C# is compiled by <strong>Roslyn</strong> to <strong>IL</strong> — a portable, stack-based bytecode in the assembly. At runtime the <strong>JIT</strong> compiles each method's IL to <strong>machine code</strong> for your exact CPU, specializing generics, inlining, and eliding checks it can prove safe. And it all runs on the <strong>CLR</strong>, which manages the heap, the GC, and the type system. Every module in this course opened one stage of that stack:</p>
+        <span class="filetag">the pipeline · and where each module lived</span>
+        <pre>  C#  ──Roslyn──▸  IL  ──JIT──▸  machine code   <span class="cmt">// on the CLR</span>
+   │               │            │
+ syntax        expression    generics/JIT      <span class="cmt">// m06–08 read the tree · m05 specializes</span>
+ &amp; types        trees (m08)   spec. (m05)
+   │               │            │
+ stack/heap ── async state ── memory model      <span class="cmt">// m01–02 memory · m03–04 async · m09–10 runtime</span>
+ (m01–02)      machine (m03)  &amp; GC (m09–10)</pre>
+        <p>And here is Snip's request hot path, rebuilt with the whole course — allocation-free parsing, a specialized cache, a non-blocking pipeline, and a correct counter:</p>
+        <span class="filetag">snip-hotpath.cs</span>
+        <pre><span class="kw">async</span> <span class="typ">Task</span>&lt;<span class="typ">Link</span>?&gt; <span class="fn">ResolveAsync</span>(<span class="typ">string</span> url) {
+  <span class="typ">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; code = url.<span class="fn">AsSpan</span>(<span class="num">5</span>, <span class="num">4</span>);    <span class="cmt">// m02 · parse, 0 alloc</span>
+  <span class="kw">if</span> (_cache.<span class="fn">TryGet</span>(code, <span class="kw">out var</span> hit)) {              <span class="cmt">// m05 · List&lt;Link&gt; shares __Canon</span>
+    <span class="typ">Interlocked</span>.<span class="fn">Increment</span>(<span class="kw">ref</span> hit.Hits);            <span class="hlok">// m10 · atomic — never loses a click</span>
+    <span class="kw">return</span> hit;                                       <span class="cmt">// gen-0 friendly: nothing allocated</span>
+  }
+  <span class="kw">var</span> link = <span class="kw">await</span> _db.<span class="fn">FindAsync</span>(code.<span class="fn">ToString</span>());     <span class="cmt">// m03 · state machine, no thread held</span>
+  <span class="kw">await</span> _clicks.Writer.<span class="fn">WriteAsync</span>(<span class="kw">new</span> <span class="typ">Click</span>(link));   <span class="cmt">// m04 · bounded — backpressure</span>
+  <span class="kw">return</span> link <span class="kw">is</span> { Active: <span class="kw">true</span> } ? link : <span class="kw">null</span>;      <span class="cmt">// m06 · property pattern</span>
+}</pre>
+        <div class="note key">
+          <div class="nh">The machine, in your hands</div>
+          <p>Every line now traces to a mechanism you instrumented. <code class="tok">AsSpan</code> is a window you watched slice with zero allocation (m02). The cache is a value-type-specialized generic (m05). <code class="tok">Interlocked</code> is the atomic that never drops a count (m10). <code class="tok">await</code> is a state machine that releases its thread (m03), feeding a bounded channel that applies backpressure (m04). The <code class="tok">is { Active: true }</code> is an exhaustively-checkable pattern (m06). <strong>The syntax was never the language — the machine underneath was, and now you can see it, measure it, and make it fast.</strong></p>
+        </div>
+        <div class="xref"><span class="xi">↳ The Capstone · Mastering ASP.NET Core</span><div>Snip was built, deployed, and scaled in the earlier courses. Now its hot path is <i>fast</i> — allocation-free, non-blocking, race-free — because you understand what the runtime does with every line. The application and the machine beneath it, finally seen as one.</div></div>
+        <div class="closing">
+          <h2>The machine, mastered.</h2>
+          <p>You opened every box under the syntax and found engineering, not magic — a stack and a heap you can place data in deliberately, windows that slice memory without copying, a state machine that turns waiting into released threads, a JIT that specializes your generics into real machine code, a collector that bets on youth, and a memory model where an increment is three fragile steps. The friendly surface is still there; now you know exactly what it rests on.</p>
+          <p>That knowledge is what performance work and hard-bug diagnosis both require. When a service allocates too much, you'll see the gen-0 pressure. When an async call deadlocks, you'll see the held thread. When a counter drifts under load, you'll see the lost write. C# will keep looking high-level — and you'll keep being able to look underneath. Go make something fast, and this time you'll know precisely why it is.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Advanced C# — the deep dive beneath Mastering&nbsp;C#, across the whole curriculum: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, Advanced&nbsp;SQL&nbsp;&amp;&nbsp;PostgreSQL, Front-End&nbsp;Engineering, Mastering&nbsp;Angular, Angular&nbsp;Internals, and the Capstone that built Snip. You learned to write the language; then you learned the machine beneath it.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/advanced-csharp.js"></script>
+</body>
+</html>

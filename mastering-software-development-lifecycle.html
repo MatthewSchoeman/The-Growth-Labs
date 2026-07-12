@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering the Software Development Lifecycle · The Growth Lab</title>
+<meta name="description" content="An interactive course on the software development lifecycle — from requirements and design through version control, code review, CI/CD, deployment strategies, and operations. How software really gets built, shipped, and maintained by a team, using Snip as the running example.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-software-development-lifecycle.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 12a8 8 0 1 1-2.3-5.6" stroke="#FB7185" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M20 4.5V8.2H16.3" stroke="#FB7185" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Lifecycle</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 12a8 8 0 1 1-2.3-5.6" stroke="#FB7185" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M20 4.5V8.2H16.3" stroke="#FB7185" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Lifecycle</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">The Big Picture · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>What the SDLC is</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Waterfall vs iterative</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Agile &amp; its values</span></a>
+      <div class="nav-group-label">Planning &amp; Building · Beginner → Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Requirements</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Design &amp; architecture</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Version control</span></a>
+      <div class="nav-group-label">Quality &amp; Delivery · Intermediate</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Code review</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Testing in the lifecycle</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>CI/CD</span></a>
+      <div class="nav-group-label">Running &amp; Improving · Intermediate → Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Deployment &amp; release</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Operate &amp; maintain</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Putting it together</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert</div>
+        <h1>Ship it.<br><span class="grad">Then do it again.</span></h1>
+        <p class="lede">Writing code is a fraction of the job. Real software is <strong>planned, designed, built, reviewed, tested, deployed, and maintained</strong> — usually by a team, and never just once. The software development lifecycle (SDLC) is the repeatable process that carries an idea all the way to production and keeps it healthy there. This course walks the whole loop: <strong>requirements</strong> and <strong>design</strong>, <strong>version control</strong> and <strong>code review</strong>, <strong>CI/CD</strong> and <strong>deployment strategies</strong>, <strong>monitoring</strong> and <strong>maintenance</strong> — the difference between code that runs on your machine and software that ships, over and over, without breaking. We'll ship <strong>Snip</strong>, the app from the capstone, through every phase.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The software development lifecycle as a continuous loop: plan, design, build, test, review, deploy, operate, and back to plan"></svg>
+          <div class="hero-cap">plan → design → build → test → review → deploy → operate → <span style="color:var(--accent)">repeat</span> · a loop, not a line</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start the loop →</a>
+          <a class="btn btn-ghost" href="#m8">Jump to CI/CD</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>What the SDLC is</h2></div>
+        <p>Here's the thing every course before this one quietly assumed: that you already knew <em>what</em> to build, that you were working alone, and that the job ended when the code ran. In real software, none of that holds. The <strong>software development lifecycle</strong> is the process that turns a rough idea into working, maintained software — through a sequence of phases that most teams recognize: <strong>plan</strong> what to build, <strong>design</strong> how, <strong>build</strong> it, <strong>test</strong> it, <strong>review</strong> it, <strong>deploy</strong> it, and <strong>operate</strong> it in production — then feed what you learn back into the next round.</p>
+        <p>Writing code sits in the middle of that list, and it's a smaller slice than newcomers expect. Understanding the problem, agreeing on scope, coordinating with other people, keeping the thing running after launch — that's the bulk of professional software work. A <em>process</em> exists because it makes the outcome predictable: it catches problems early, keeps a team moving in the same direction, and turns "it works on my machine" into "it ships reliably, again and again."</p>
+        <p>The single most important shift in how this is done: the lifecycle is a <strong>loop, not a line</strong>. The old model ran the phases once, start to finish. Modern teams run them continuously in small cycles, shipping a little, learning, and going around again — which is the through-line of this entire course.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Software development means writing code.</div><div class="truth">Coding is one phase. The lifecycle also covers figuring out <b>what</b> to build, designing it, reviewing it, releasing it safely, and maintaining it for years. Most of the effort — and most of the cost — lives outside the editor.</div></div>
+          <div class="mc"><div class="myth">Process is bureaucracy that slows developers down.</div><div class="truth">Good process removes friction, not adds it. It's what lets ten people change the same codebase without chaos, and what turns a scary release into a routine one. The alternative to process isn't speed — it's rework and outages.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--plan);border-color:rgba(124,156,255,.4);background:var(--plan-soft)">Models</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Waterfall vs iterative</h2></div>
+        <p>The original lifecycle model is <strong>Waterfall</strong>: run the phases once, in strict order, finishing each before the next begins. Gather <em>all</em> the requirements, then design everything, then build everything, then test, then release. Its appeal is real — it's clear, documented, and easy to plan on a chart. Its problem is just as real: you don't find out whether you built the right thing until the very end, and by then a single changed requirement can invalidate months of work.</p>
+        <p>The <strong>iterative</strong> (and incremental) model runs the phases in small, repeating cycles instead. Each iteration produces a working slice, gets feedback, and adjusts. Change stops being a catastrophe and becomes just the input to the next cycle. Watch what a late requirement change does to each approach:</p>
+        <div class="lab" id="waterfallLab">
+          <div class="lab-head"><div><div class="pt">One change, two models</div><div class="ps">why modern teams iterate</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="wfChange">a requirement changes →</button>
+              <button class="ds-btn" id="wfReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="wf-cols">
+              <div class="wf-panel">
+                <div class="wf-h" style="color:var(--fail)">▸ Waterfall</div>
+                <div id="wfWaterfall"></div>
+                <div class="wf-verdict" id="wfVerdictW"></div>
+              </div>
+              <div class="wf-panel">
+                <div class="wf-h" style="color:var(--done)">↻ Iterative</div>
+                <div class="wf-loop" id="wfIter"></div>
+                <div class="wf-verdict" id="wfVerdictI"></div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-foot" id="wfFoot">In Waterfall a late change ripples backward through finished phases. Iterating, the same change is just the next cycle's work.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Waterfall is simply wrong — always iterate.</div><div class="truth">Waterfall fits <b>stable, well-understood</b> work where requirements genuinely won't move — some hardware, safety-critical, or fixed-contract projects. The trouble is that most software lives in uncertainty, where iterating beats guessing everything up front.</div></div>
+          <div class="mc"><div class="myth">More up-front planning always lowers risk.</div><div class="truth">In an uncertain domain, detailed up-front plans lock in decisions before you've learned enough to make them — <b>raising</b> risk. Iterating buys information: you plan a little, build a little, and let real feedback correct the course.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--iterate);border-color:rgba(232,179,65,.4);background:var(--iterate-soft)">Agile</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Agile &amp; its values</h2></div>
+        <p>Iterating became a movement in 2001 when a group of practitioners wrote the <strong>Agile Manifesto</strong> — a short statement of four value preferences. Put in plain terms: favour <strong>people and collaboration</strong> over rigid process and tooling; favour <strong>working software</strong> over exhaustive documentation; favour <strong>working <em>with</em> the customer</strong> over negotiating contracts; and favour <strong>responding to change</strong> over rigidly following a plan. The word to notice is <em>favour</em> — the things on the right still have value; Agile just weights the left more heavily.</p>
+        <p>Underneath sit principles that all point the same way: deliver working software frequently in small increments, welcome changing requirements even late, keep business and developers talking daily, and reflect regularly on how to improve. Agile isn't a specific tool or a rule about standups — it's a <em>bias toward short feedback loops</em>. The concrete frameworks people use to practise it, chiefly <strong>Scrum</strong> and <strong>Kanban</strong>, are the subject of the final module.</p>
+        <div class="note key"><div class="nh">Agile in one sentence</div><p>Build software in small slices, show it to real users often, and let what you learn steer what you build next — instead of committing to a full plan before you've written a line. Every practice in the rest of this course, from short-lived branches to continuous deployment, exists to make that feedback loop <strong>faster</strong>.</p></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Agile means no documentation and no planning.</div><div class="truth">It means <i>just enough</i> of both, valued below working software and adaptability. Agile teams still plan and document — they just don't let a plan or a spec become more important than delivering something real and responding to feedback.</div></div>
+          <div class="mc"><div class="myth">Agile is just having a daily standup.</div><div class="truth">Ceremonies are the visible surface, not the substance. A team can run every Scrum ritual and still be un-agile if it can't ship small and adapt. The point is the short feedback loop; the meetings only matter insofar as they serve it.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--plan);border-color:rgba(124,156,255,.4);background:var(--plan-soft)">Requirements</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 03</span></div><h2>Requirements</h2></div>
+        <p>Before anyone writes code, someone has to decide <em>what</em> to build — and getting that wrong is the most expensive mistake in the lifecycle, because every later phase amplifies it. Agile teams capture requirements as <strong>user stories</strong>: short, plain-language descriptions of a need from a user's point of view, in the form <em>"As a &lt;role&gt;, I want &lt;goal&gt;, so that &lt;reason&gt;."</em> The format forces you to name who wants it and, crucially, <em>why</em>.</p>
+        <p>A story isn't done until it has <strong>acceptance criteria</strong> — concrete conditions that decide when it's finished. Build a story for a new Snip feature and watch its criteria and quality checks fill in:</p>
+        <div class="lab" id="storyLab">
+          <div class="lab-head"><div><div class="pt">Write a user story</div><div class="ps">role · goal · reason → acceptance criteria</div></div></div>
+          <div class="lab-body">
+            <div class="story-pick" id="storyPick"></div>
+            <div class="story-card" id="storyCard"></div>
+            <div class="ac-head">Acceptance criteria</div>
+            <div id="storyAC"></div>
+            <div class="invest" id="storyInvest"></div>
+          </div>
+          <div class="lab-foot" id="storyFoot">A good story is small, valuable, and testable — the acceptance criteria are what make "done" objective instead of an argument.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ The Capstone</span><div>These are features for <i>Snip</i>, the URL shortener you built. Notice how a story like "custom alias" quietly implies work in every layer — the domain model, the API, the database's unique constraint. Requirements are where a feature's true cost first becomes visible.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Requirements means a giant specification document.</div><div class="truth">A thick spec written up front goes stale the moment things change. Small user stories plus a <b>conversation</b> capture intent without pretending to predict everything — and they're easy to reprioritize as you learn.</div></div>
+          <div class="mc"><div class="myth">Build exactly what the ticket literally says.</div><div class="truth">The <i>so that</i> clause is the real requirement. Understanding the underlying need lets you spot a simpler solution — or notice the request wouldn't actually solve the user's problem. Literal-mindedness ships the wrong feature correctly.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--design);border-color:rgba(167,139,250,.4);background:var(--design-soft)">Design</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Design &amp; architecture</h2></div>
+        <p>With a story agreed, the next question is <em>how</em>. Design is where you decide the shape before committing to the details: which components change, what the interfaces look like, how data flows, and which trade-offs you're accepting. For anything non-trivial, teams write it down — a short <strong>design doc</strong> or <strong>architecture decision record (ADR)</strong> — so the reasoning is reviewable before code makes it expensive to revisit.</p>
+        <p>A good design doc is short and focused on decisions, not ceremony:</p>
+        <pre><span class="cmt"># ADR: Custom aliases for Snip</span>
+<span class="prop">Context</span>   Users want memorable codes (snip.ly/launch) instead of 4C92.
+<span class="prop">Decision</span>  Add an optional alias on POST /shorten; store in links.code;
+          reuse the existing UNIQUE index to reject duplicates.
+<span class="prop">Options</span>   (a) separate aliases table  (b) reuse code column ✓
+<span class="prop">Consequences</span>  Sequential + custom codes share one column and one
+          uniqueness guarantee; no new join on the redirect hot path.</pre>
+        <p>Notice this design leans entirely on ideas from earlier courses — which is the point. Architecture isn't invented fresh each time; it's the accumulated judgement those courses were teaching.</p>
+        <div class="xref"><span class="xi">↳ Design Patterns · OOP · EF · SQL</span><div>Right-sizing the design draws on all of them: the <b>patterns</b> and <b>SOLID</b> from <i>Design Patterns</i> and <i>OOP</i>, the schema and index thinking from <i>SQL</i> and <i>EF Core</i>, and the layered architecture from the <i>Capstone</i>. Design is where that technical knowledge is spent deliberately, before the code locks it in.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Design means big diagrams for everything up front.</div><div class="truth">Match the design effort to the risk. A one-line change needs none; a new subsystem deserves an ADR. Over-designing is its own waste — some structure is best left to <b>emerge</b> as the code teaches you what it needs.</div></div>
+          <div class="mc"><div class="myth">Skip design — just start coding and figure it out.</div><div class="truth">A little design catches the expensive mistakes (the wrong data model, an interface that leaks) while they're still cheap words on a page. The skill is finding the middle: enough design to de-risk, not so much that it's fiction.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--build);border-color:rgba(86,199,255,.4);background:var(--build-soft)">Version Control</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 05</span></div><h2>Version control</h2></div>
+        <p>Now the building — but building with other people needs a way to change the same code without stepping on each other. That's <strong>version control</strong>, and in practice it means <strong>Git</strong>. The core flow: keep the shared history on <code class="tok">main</code>, branch off to do a piece of work in isolation, make small focused <strong>commits</strong>, then open a <strong>pull request</strong> to merge it back after review. <code class="tok">main</code> stays releasable at all times.</p>
+        <p>Step through the life of a feature branch for Snip's custom-alias work:</p>
+        <div class="lab" id="gitLab">
+          <div class="lab-head"><div><div class="pt">A feature branch, end to end</div><div class="ps">branch → commit → PR → merge</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="gitStep">▸ next step</button>
+              <button class="ds-btn" id="gitReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="git-graph"><svg id="gitSvg" class="git-svg" viewBox="0 0 560 150"></svg></div>
+            <div class="git-legend">
+              <span><span class="git-dot" style="background:var(--build)"></span>main</span>
+              <span><span class="git-dot" style="background:var(--accent)"></span>feature branch</span>
+              <span><span class="git-dot" style="background:var(--design)"></span>merge</span>
+            </div>
+            <div class="git-status" id="gitStatus"></div>
+          </div>
+          <div class="lab-foot" id="gitFoot">Short-lived branches and small commits keep merges painless and main always shippable.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Every course before this</span><div>All the code you wrote — from the Big O exercises to Snip — belongs in a repository like this. Version control is the substrate the whole lifecycle runs on: it's how review happens (Module 06), what CI builds (Module 08), and what you roll back to when a deploy goes wrong (Module 09).</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Commit everything at the end in one big commit.</div><div class="truth">Small, focused commits with clear messages make history readable, reviews tractable, and bugs bisectable. One giant "did stuff" commit throws away Git's biggest advantage — the ability to see and undo change in meaningful units.</div></div>
+          <div class="mc"><div class="myth">Long-lived branches are fine; merge when it's all done.</div><div class="truth">The longer a branch lives, the further it drifts from <code class="tok">main</code>, and the uglier the eventual merge. Short-lived branches — or trunk-based development with feature flags — keep integration continuous and conflicts small, which is what CI/CD assumes.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--review);border-color:rgba(251,113,133,.4);background:var(--review-soft)">Review</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>Code review</h2></div>
+        <p>A pull request usually can't merge until another person has read it. <strong>Code review</strong> does more than catch bugs: it spreads knowledge across the team, keeps the codebase consistent, and makes ownership collective — the reviewer now understands the change too. Good reviewers look past "does it work" to design, readability, edge cases, and whether the tests actually cover the behavior.</p>
+        <p>Walk a Snip pull request through review, from opened to merged:</p>
+        <div class="lab" id="reviewLab">
+          <div class="lab-head"><div><div class="pt">A pull request under review</div><div class="ps">open → changes → approved → merged</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="reviewStep">▸ next step</button>
+              <button class="ds-btn" id="reviewReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="pr-bar">
+              <span class="pr-title">Add custom aliases <span class="pr-branch">feature/custom-alias → main</span></span>
+              <span class="pr-state-badge open" id="prBadge">OPEN</span>
+            </div>
+            <div class="diff" id="prDiff"></div>
+            <div id="prComments"></div>
+            <div class="git-status" id="reviewStatus"></div>
+          </div>
+          <div class="lab-foot" id="reviewFoot">Review is a conversation, not a gate — specific, kind, and timely feedback improves both the code and the people.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Testing · OOP · Design Patterns</span><div>Reviewers apply the whole series: does the change have <b>tests</b> (Testing), does it respect <b>encapsulation and SOLID</b> (OOP), does it use the right <b>pattern</b> or force one where none belongs (Design Patterns)? Review is where that judgement gets shared rather than siloed in one head.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Code review is about finding fault and gatekeeping.</div><div class="truth">Its bigger value is <b>shared understanding and better design</b>. Framed as collaboration, review lifts the whole team; framed as gatekeeping, it breeds fear and rubber-stamps. Critique the code, support the author.</div></div>
+          <div class="mc"><div class="myth">Approve quickly so you don't block anyone.</div><div class="truth">A rubber-stamp "LGTM" adds no value and lets defects through. But so does a review that sits for two days. The craft is <b>timely and genuine</b> — read it properly, soon, and distinguish real blockers from personal nitpicks.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--test);border-color:rgba(78,214,107,.4);background:var(--test-soft)">Testing</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 07</span></div><h2>Testing in the lifecycle</h2></div>
+        <p>Testing isn't a phase you reach after building — in a healthy lifecycle it runs <em>throughout</em>. This is the idea of <strong>shift-left</strong>: push testing as early as possible, so defects are caught when they're cheap rather than in production. Developers write automated tests alongside the code, those tests run on every push (Module 08), and only changes that keep them green move forward. "Done" isn't "the code compiles" — it's "the code works and is proven to, with tests."</p>
+        <p>The lifecycle uses the whole <strong>testing pyramid</strong> at different stages: a wide base of fast <strong>unit tests</strong> on every commit, a middle band of <strong>integration tests</strong> verifying components together, and a thin top of <strong>end-to-end tests</strong> against a staging environment before release. Quality is the whole team's job, not a separate department's — developers, reviewers, and QA all contribute to the same green bar.</p>
+        <div class="xref"><span class="xi">↳ Testing in .NET · The Capstone</span><div>The <i>Testing</i> course is the deep dive — xUnit, mocks, the pyramid, TDD — and <i>Snip</i> already carries the suite: a property test on the encoder, a mocked service test, an integration test through <code class="tok">WebApplicationFactory</code>. This module is about <b>where those tests run</b> in the process: continuously, gating every change.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Testing is a phase after development is finished.</div><div class="truth">Bugs found late cost far more than bugs found early. Shift-left means writing and running tests <b>as you build</b>, so a regression is caught in seconds on your branch — not weeks later by a user. Testing is continuous, not terminal.</div></div>
+          <div class="mc"><div class="myth">Quality is QA's responsibility.</div><div class="truth">When quality is "someone else's job," developers stop owning it and it erodes. Modern teams share it: automated tests written by developers, checked in review, and augmented — not replaced — by exploratory QA. The whole team keeps the bar green.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--build);border-color:rgba(86,199,255,.4);background:var(--build-soft)">Automation</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 08</span></div><h2>CI/CD</h2></div>
+        <p><strong>Continuous Integration</strong> is the practice of merging everyone's work frequently and verifying each change automatically: every push triggers a pipeline that builds the code and runs the tests, so integration problems surface in minutes instead of at a dreaded end-of-project merge. <strong>Continuous Delivery/Deployment</strong> extends that pipeline all the way to release — automatically shipping changes that pass every gate to staging, and often to production.</p>
+        <p>A pipeline is just a sequence of automated stages, each of which must pass before the next runs:</p>
+        <span style="display:inline-block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.5px;color:var(--ink-muted);background:var(--surface-2);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:5px 12px;margin-bottom:-1px">.github/workflows/ci.yml</span>
+        <pre><span class="prop">on</span>: [push, pull_request]
+<span class="prop">jobs</span>:
+  build-test:
+    <span class="prop">steps</span>:
+      - <span class="prop">uses</span>: actions/checkout@v4
+      - <span class="prop">run</span>: dotnet build
+      - <span class="prop">run</span>: dotnet test           <span class="hlok"># red here blocks the merge</span>
+      - <span class="prop">run</span>: dotnet format --verify-no-changes</pre>
+        <p>Run Snip's pipeline. Then break a test and watch the pipeline stop the bad change before it can reach production:</p>
+        <div class="lab" id="cicdLab">
+          <div class="lab-head"><div><div class="pt">The pipeline</div><div class="ps">build → test → deploy, automatically</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="cicdRun">▸ run pipeline</button>
+              <button class="ds-btn" id="cicdBreak">make a test fail</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="pipe" id="cicdPipe"></div>
+            <div class="pipe-verdict" id="cicdVerdict"></div>
+          </div>
+          <div class="lab-foot" id="cicdFoot">Every push runs the pipeline. A failure anywhere halts it — the broken change never reaches the next stage.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Testing · Version control</span><div>CI is where the <i>Testing</i> suite earns its keep — it runs on every push to the branches from Module 05, automatically. The green checkmark on a pull request that reviewers rely on? That's the pipeline reporting back. Testing, version control, and review all converge here.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">CI is just a server that compiles your code.</div><div class="truth">CI is the <b>practice</b> of integrating and verifying continuously; the server is only the tool. Its value is the discipline — small, frequent merges each proven green — that keeps the codebase always working instead of drifting into a broken mess.</div></div>
+          <div class="mc"><div class="myth">Continuous delivery means every commit auto-deploys to production.</div><div class="truth">Continuous <i>delivery</i> keeps every change <b>deployable</b> and pushes it to staging automatically; a human can still approve the production step. Continuous <i>deployment</i> removes that gate. Both are valid — the choice is about risk tolerance, not correctness.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--deploy);border-color:rgba(242,151,60,.4);background:var(--deploy-soft)">Release</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>Deployment &amp; release</h2></div>
+        <p>The pipeline can ship automatically — but shipping to <em>everyone at once</em> is how a small bug becomes a big outage. Deployment strategies exist to limit the <strong>blast radius</strong>. A <strong>rolling</strong> deploy replaces instances gradually; <strong>blue-green</strong> stands up the new version alongside the old and flips traffic in one switch (with instant rollback); <strong>canary</strong> sends a tiny slice of traffic to the new version first and only proceeds if it stays healthy.</p>
+        <p>Release v2 of Snip with each strategy — then mark v2 broken and watch how much damage each one lets through before rolling back:</p>
+        <div class="lab" id="deployLab">
+          <div class="lab-head"><div><div class="pt">Getting v2 to production</div><div class="ps">limit the blast radius</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="depRun">▸ release v2</button>
+              <button class="ds-btn" id="depBad">v2 is broken</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dep-strats" id="depStrats">
+              <span class="dep-strat on" data-strat="rolling">rolling</span>
+              <span class="dep-strat" data-strat="bluegreen">blue-green</span>
+              <span class="dep-strat" data-strat="canary">canary</span>
+            </div>
+            <div class="dep-track">
+              <div class="dep-bar-wrap">
+                <div class="dep-bar-label"><span id="depVer">traffic → v1 (old) vs v2 (new)</span><span id="depSplit"></span></div>
+                <div class="dep-bar" id="depBar"></div>
+              </div>
+            </div>
+            <div class="dep-status" id="depStatus"></div>
+          </div>
+          <div class="lab-foot" id="depFoot">Progressive rollout means a bad release is caught while it affects a fraction of users — then rolled back automatically.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Feature flags · CI/CD</span><div>Strategies pair with <b>feature flags</b>, which decouple <i>deploy</i> from <i>release</i>: code ships dark and is switched on for a few users, then everyone. That's the same <code class="tok">[Flags]</code> idea from the <i>Bits</i> course and Snip's <code class="tok">LinkFlags</code>, applied to rollout instead of storage.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Deploying means flipping one switch for all users.</div><div class="truth">An all-at-once deploy gives a bad change the maximum blast radius. Canary and rolling releases expose new code to a <b>fraction</b> first, so problems show up small and contained — the difference between a blip and an outage.</div></div>
+          <div class="mc"><div class="myth">Rollback means manually redeploying the old version.</div><div class="truth">That's slow when minutes matter. Blue-green keeps the old version running for an instant switch-back, and feature flags turn a bad feature off without any deploy at all. Fast, automatic rollback is part of the release design, not an afterthought.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--operate);border-color:rgba(45,212,191,.4);background:var(--operate-soft)">Operate</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Operate &amp; maintain</h2></div>
+        <p>Deployment isn't the finish line — it's the start of the longest phase. Software runs in production for years, and keeping it healthy is its own discipline. It begins with <strong>observability</strong>: logs, metrics, and traces that let you see what the system is actually doing. On top of that sit <strong>monitoring and alerting</strong> (know something's wrong before users tell you), <strong>on-call and incident response</strong> (fix it fast, then run a <em>blameless</em> postmortem so it can't recur), and targets like <strong>SLOs</strong> that define "healthy enough."</p>
+        <p>Alongside operations runs <strong>maintenance</strong>: fixing bugs, patching security holes, updating dependencies, and paying down <strong>technical debt</strong> before it compounds. And this is where the lifecycle closes its loop — what you learn from running the software in production becomes the input to the next round of planning. The redirect latency you're watching, the feature users keep requesting, the incident that revealed a design flaw: all of it flows back to Module 00, and the cycle begins again.</p>
+        <div class="xref"><span class="xi">↳ Big O · The whole loop</span><div>What you monitor is exactly what the technical courses taught you to reason about — the <b>O(1)</b> redirect path from <i>Big O</i>, the index from <i>SQL</i>, the memory of the cache. Operations is those concepts observed under real load, feeding evidence back into design. The line becomes a circle.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Software is done when it ships.</div><div class="truth">Launch is roughly the <b>midpoint</b> of a system's life, not the end. Most of the total effort and cost goes into running, fixing, and evolving software after release. "Done" is a milestone in an ongoing loop, not a final state.</div></div>
+          <div class="mc"><div class="myth">Technical debt is just messy code you can ignore.</div><div class="truth">Debt <b>compounds</b>: every shortcut makes the next change slower and riskier until the system ossifies. Like financial debt, a little can be a smart trade — but only if you track it and pay it down deliberately, not pretend it's free.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>Putting it together</h2></div>
+        <p>Zoom out and the phases form one continuous flow. A single Snip feature — custom aliases — travels the whole lifecycle: it starts as a backlog item, gets built on a branch, passes review, goes green in CI/CD, is verified in staging, ships to production, and is watched there — and what's learned seeds the next item. Advance it through the loop:</p>
+        <div class="lab" id="flowLab">
+          <div class="lab-head"><div><div class="pt">A feature through the whole loop</div><div class="ps">backlog → prod → feedback → repeat</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="flowStep">▸ advance feature</button>
+              <button class="ds-btn" id="flowReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="flow-cols" id="flowCols"></div>
+            <div class="flow-status" id="flowStatus"></div>
+          </div>
+          <div class="lab-foot" id="flowFoot">This is the lifecycle in motion. The frameworks below — Scrum, Kanban — are just different ways to organize this same flow.</div>
+        </div>
+        <p>Teams organize that flow with frameworks. <strong>Scrum</strong> batches work into fixed <em>sprints</em> with a backlog, a daily standup, and a review and retrospective at the end. <strong>Kanban</strong> drops the fixed cadence for continuous flow with limits on work-in-progress. And teams measure the health of the whole loop with the <strong>DORA metrics</strong>: how often they deploy, how long a change takes to reach production, how often changes fail, and how fast they recover. Fast, safe, frequent iteration is the goal — everything in this course serves it.</p>
+        <div class="note key">
+          <div class="nh">The lifecycle around the code</div>
+          <p>Every earlier course taught you to write good code; this one is everything <em>around</em> the code that turns it into software people can rely on. <strong>Requirements</strong> decide what to build, <strong>design</strong> shapes it, <strong>version control</strong> and <strong>review</strong> let a team build it together, <strong>CI/CD</strong> and <strong>testing</strong> prove it, <strong>deployment</strong> ships it safely, and <strong>operations</strong> keeps it alive and feeds the next round. Knowing the lifecycle is what separates someone who can write code from someone who can deliver software.</p>
+        </div>
+        <div class="closing">
+          <h2>Ship it. Then do it again.</h2>
+          <p>The lifecycle isn't a checklist you complete once — it's a loop you get better at spinning. Each turn, an idea becomes a small, working, tested slice of software that ships to real users and teaches you what to do next. The phases you just walked — plan, design, build, review, test, deploy, operate — aren't stops on a line; they're stations on a wheel that never really stops turning.</p>
+          <p>That's the shape of a career in this craft, too. You'll write the code — the fundamentals, the language, the frameworks, all of it — but delivering software is the loop that carries that code to the people who need it, again and again. Learn to love the loop, and everything else compounds.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering the Software Development Lifecycle — the process layer over the whole curriculum: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, and the Capstone that built Snip. They taught you to write the code; this taught you to ship it.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/mastering-software-development-lifecycle.js"></script>
+</body>
+</html>

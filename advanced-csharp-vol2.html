@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced C# · Vol. II · The Growth Lab</title>
+<meta name="description" content="Volume II of the C# deep dive — the expert language features the compiler rewrites over the runtime: ref returns and ref locals, the stack-only rules of ref struct, the yield iterator state machine, closures and captured variables, records and value equality, nullable-reference flow analysis, generic variance, deterministic disposal, ValueTask and async allocation, and compile-time source generators.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/advanced-csharp-vol2.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="16" height="16" rx="3.5" stroke="#7A5CF5" stroke-width="1.6"/>
+        <rect x="7" y="7" width="10" height="10" rx="2" stroke="#7A5CF5" stroke-width="1.2" opacity="0.62"/>
+        <rect x="10" y="10" width="4" height="4" rx="1" stroke="#7A5CF5" stroke-width="1" opacity="0.4"/>
+        <path d="M2 9 L4 9 M2 15 L4 15 M20 9 L22 9 M20 15 L22 15 M9 2 L9 4 M15 2 L15 4 M9 20 L9 22 M15 20 L15 22" stroke="#7A5CF5" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Advanced C# · Vol. II</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="16" height="16" rx="3.5" stroke="#7A5CF5" stroke-width="1.6"/>
+            <rect x="7" y="7" width="10" height="10" rx="2" stroke="#7A5CF5" stroke-width="1.2" opacity="0.62"/>
+            <rect x="10" y="10" width="4" height="4" rx="1" stroke="#7A5CF5" stroke-width="1" opacity="0.4"/>
+            <path d="M2 9 L4 9 M2 15 L4 15 M20 9 L22 9 M20 15 L22 15 M9 2 L9 4 M15 2 L15 4 M9 20 L9 22 M15 20 L15 22" stroke="#7A5CF5" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Advanced C# · Vol. II</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">References &amp; Values, Deeper · Advanced</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>The second layer</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>ref returns, ref locals &amp; in</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>ref struct &amp; the stack-only rule</span></a>
+      <div class="nav-group-label">State Machines &amp; Laziness · Advanced</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Iterators &amp; yield</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Closures &amp; captured variables</span></a>
+      <div class="nav-group-label">Types, Equality &amp; Nullability · Advanced → Expert</div>
+      <a class="module" href="#m5"><span class="num">05</span><span>Records &amp; value equality</span></a>
+      <a class="module" href="#m6"><span class="num">06</span><span>Nullable reference types</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Generic variance</span></a>
+      <div class="nav-group-label">Resources &amp; Metaprogramming · Expert</div>
+      <a class="module" href="#m8"><span class="num">08</span><span>IDisposable &amp; finalization</span></a>
+      <a class="module" href="#m9"><span class="num">09</span><span>ValueTask &amp; async allocation</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Source generators</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>The whole language</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Advanced → Expert · Advanced C#, Volume II</div>
+        <h1>The feature you write.<br><span class="grad">The machine it compiles to.</span></h1>
+        <p class="lede">Volume I opened the runtime — memory, the async state machine, generics, the GC. Volume II is about the layer just above it: the expert <em>language</em> features, nearly all of which are the <strong>compiler quietly rewriting your code</strong> into machinery that runs on that runtime. <code class="tok">yield</code> becomes an iterator state machine; a lambda becomes a heap-allocated display class; a <code class="tok">record</code> gets generated equality and a <code class="tok">with</code> clone; a source generator emits whole files at build time. You'll instrument each rewrite: alias an array slot through a <code class="tok">ref</code> local, watch a <code class="tok">ref struct</code> get rejected from the heap, step a <code class="tok">yield</code> method one <code class="tok">MoveNext</code> at a time, catch a closure capturing the <em>variable</em> not the value, narrow a nullable through a guard, and see <code class="tok">ValueTask</code> return a cache hit with zero allocation. Ten labs. Snip gets sharper still.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The compiler as a rewriter: on the left the language features you write (yield, a lambda, a record, a source-gen attribute), and on the right the machinery Roslyn emits for each (an iterator state machine, a display class, generated equality, a generated source file)"></svg>
+          <div class="hero-cap">you write the feature — <span style="color:var(--accent)">the compiler writes the machine</span></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Open Volume II →</a>
+          <a class="btn btn-ghost" href="#m3">Jump to yield</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 00</span></div><h2>The second layer</h2></div>
+        <p>Volume I went underneath the syntax to the runtime: where data lives, how <code class="tok">await</code> releases a thread, how the JIT specializes generics, how the GC bets on youth. Volume II sits one layer up — the expert <em>language</em> features — and its unifying secret is this: most of them are the <strong>compiler rewriting your code</strong>. You write a convenient surface; Roslyn emits the machinery that runs on the runtime you now understand. Learn to see the rewrite and these features stop being magic and start being predictable.</p>
+        <p>The pattern repeats across the whole volume. <code class="tok">yield return</code> is rewritten into a state machine implementing <code class="tok">IEnumerator</code> — the same trick as <code class="tok">async</code>, but for sequences. A lambda that captures a variable is rewritten into a heap-allocated <em>display class</em> holding that variable. A <code class="tok">record</code> is rewritten with a full value-equality implementation and a <code class="tok">with</code> clone. A source generator runs <em>during</em> compilation and writes entire files. Even nullable reference types are a compile-time flow analysis with no runtime footprint at all. Seeing the emitted machine is the through-line.</p>
+        <span class="filetag">the surface, and what the compiler emits</span>
+        <pre><span class="kw">yield return</span> x;            <span class="cmt">// → a struct implementing IEnumerator&lt;T&gt;.MoveNext()</span>
+Func&lt;<span class="kw">int</span>&gt; f = () =&gt; n + <span class="num">1</span>;  <span class="cmt">// → sealed class Display { int n; int Invoke(){...} }</span>
+<span class="kw">record</span> <span class="typ">Link</span>(<span class="kw">string</span> Code);   <span class="cmt">// → Equals, GetHashCode, ToString, with-clone, all generated</span>
+[<span class="typ">JsonGen</span>] <span class="kw">partial class</span> <span class="typ">Dto</span>;  <span class="hl">// → a whole .g.cs file emitted at compile time</span></pre>
+        <p>Every module names a feature and shows the machine it becomes. We keep optimizing Snip: alias its counters through <code class="tok">ref</code>, stream results with iterators, model its state with immutable records, and serialize its DTOs with a generator instead of reflection. Hold the through-line the whole way: <strong>you write the feature; the compiler writes the machine — and now you can read both</strong>.</p>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I</span><div>This volume assumes the runtime from Vol. I. The iterator state machine here is the <b>sibling</b> of the async state machine you stepped there; the display-class allocation is gen-0 pressure of exactly the kind the GC module described; <code class="tok">ValueTask</code> is the allocation-avoidance discipline of the Span module, applied to async.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Advanced language features are runtime magic.</div><div class="truth">Most are <b>compile-time rewrites</b> — the CLR never heard of <code class="tok">yield</code>, closures, records, or <code class="tok">with</code>. Roslyn lowers them to ordinary classes, structs, and methods. Read the lowered form and the behavior (and the cost) becomes obvious.</div></div>
+          <div class="mc"><div class="myth">Syntactic sugar is free.</div><div class="truth">Each rewrite has a shape and a cost: a captured closure allocates a display object, an iterator allocates an enumerator, a <code class="tok">with</code> allocates a copy. Convenient isn't the same as free — knowing the emitted machine is how you keep the sugar out of hot paths.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--refm);border-color:var(--accent-line);background:var(--refm-soft)">Ref semantics</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 01</span></div><h2>ref returns, ref locals &amp; in</h2></div>
+        <p>C# has safe references without pointers. A <strong><code class="tok">ref</code> local</strong> is an alias to an existing storage location — an array element, a field — and writing through it mutates the <em>original</em>, not a copy. A <strong><code class="tok">ref</code> return</strong> hands a caller a writable alias into your data. And <strong><code class="tok">in</code></strong> passes an argument by <em>readonly</em> reference, avoiding the copy that a large struct would otherwise incur on every call. Together they give you pointer-like efficiency with full memory safety — no dangling, no arithmetic, checked by the compiler.</p>
+        <span class="filetag">ref-aliasing.cs</span>
+        <pre><span class="kw">int</span>[] hits = { <span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span> };
+
+<span class="kw">ref int</span> slot = <span class="kw">ref</span> hits[<span class="num">1</span>];   <span class="hl">// alias to the element, not a copy</span>
+slot = <span class="num">99</span>;                    <span class="cmt">// hits[1] is now 99 — mutated in place</span>
+
+<span class="kw">int</span> copy = hits[<span class="num">1</span>];         <span class="cmt">// a value copy</span>
+copy = <span class="num">7</span>;                     <span class="cmt">// hits[1] unchanged — copy is independent</span>
+
+<span class="fn">Process</span>(<span class="kw">in</span> bigStruct);        <span class="cmt">// readonly reference — no copy of the fields</span></pre>
+        <p>The array below is Snip's per-region hit counts. Take a <code class="tok">ref</code> local to <code class="tok">hits[1]</code> and write through it — the array element changes. Take a value copy and write to that — the array is untouched:</p>
+        <div class="lab" id="refLab">
+          <div class="lab-head"><div><div class="pt">An alias, not a copy</div><div class="ps">ref local · value copy · in-parameter</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="rfRefWrite">ref slot = 99</button>
+              <button class="ds-btn" id="rfCopyWrite">copy = 7</button>
+              <button class="ds-btn" id="rfInPass">Process(in big)</button>
+              <button class="ds-btn" id="rfReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">int[] hits · region counters</div>
+            <div class="rf-array" id="rfArray"></div>
+            <div class="stat-row">
+              <div class="stat-box">hits[1] (the aliased slot)<b id="rfSlot">20</b></div>
+              <div class="stat-box">value copies made<b id="rfCopies">0</b></div>
+            </div>
+            <div class="wlog" id="rfLog"></div>
+          </div>
+          <div class="lab-foot" id="rfFoot">Writing through the ref local mutates hits[1] in place; writing to a value copy leaves the array alone. The in-parameter passes a big struct by readonly reference — zero field copies.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (Structs) · Bits</span><div>This is the value-vs-reference split from Vol. I, made explicit and controllable: a <code class="tok">ref</code> local gives you the aliasing of a class with the inline storage of a struct. It's the pointer-plus-length idea from <i>Bits</i> — an alias to memory — but bounds-checked and lifetime-verified by the compiler.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">C# can't do references without unsafe pointers.</div><div class="truth"><code class="tok">ref</code> locals, <code class="tok">ref</code> returns, and <code class="tok">in</code> are <b>safe</b> references — the compiler enforces that they never outlive what they point to. You get in-place mutation and copy-free passing with none of the danger of raw pointers.</div></div>
+          <div class="mc"><div class="myth">in just documents that a parameter won't change.</div><div class="truth">It changes the <b>calling convention</b> — the argument is passed by readonly reference instead of copied. For a large <code class="tok">readonly struct</code> on a hot path, that eliminates a full field-by-field copy per call. It's a performance tool, not just an annotation.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--refm);border-color:var(--accent-line);background:var(--refm-soft)">Ref semantics</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 02</span></div><h2>ref struct &amp; the stack-only rule</h2></div>
+        <p>How does <code class="tok">Span&lt;T&gt;</code> guarantee it never dangles? It's a <strong><code class="tok">ref struct</code></strong> — a type the compiler forces to live only on the stack. Because a ref struct may hold a reference into stack memory or another object's interior, letting it escape to the heap would create a dangling reference. So the compiler <em>forbids</em> the escapes: you can't box it, can't make it a field of a class, can't capture it in a lambda or an <code class="tok">async</code>/iterator local, can't put it in an array. What's left — locals, parameters, returns — is exactly the set of uses that stay on the stack. The safety of <code class="tok">Span</code> is these rules.</p>
+        <span class="filetag">stack-only.cs</span>
+        <pre><span class="kw">ref struct</span> <span class="typ">Cursor</span> { <span class="kw">public</span> <span class="typ">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; Rest; }
+
+<span class="typ">Cursor</span> c = <span class="kw">default</span>;        <span class="hlok">// ✓ local — stays on the stack</span>
+<span class="kw">object</span> boxed = c;          <span class="hlbad">// ✗ CS0029/CS8345 — cannot box a ref struct</span>
+<span class="kw">class</span> <span class="typ">Holder</span> { <span class="typ">Cursor</span> f; }  <span class="hlbad">// ✗ CS8345 — cannot be a field of a class</span>
+<span class="kw">async</span> Task <span class="fn">Read</span>(<span class="typ">Cursor</span> c){}   <span class="hlbad">// ✗ CS4012 — cannot live across an await</span></pre>
+        <p>Try to place a <code class="tok">ref struct</code> in each location below. The compiler allows the stack-scoped ones and rejects every escape to the heap — click each to see the verdict and the error code:</p>
+        <div class="lab" id="refStructLab">
+          <div class="lab-head"><div><div class="pt">What the compiler allows</div><div class="ps">the escapes a ref struct can't make</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="rsReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="rs-places">
+              <div class="rs-place" id="rsLocal"><span>local variable</span><span class="rs-vd">test →</span></div>
+              <div class="rs-place" id="rsParam"><span>method parameter</span><span class="rs-vd">test →</span></div>
+              <div class="rs-place" id="rsReturn"><span>ref-safe return</span><span class="rs-vd">test →</span></div>
+              <div class="rs-place" id="rsBox"><span>box to object</span><span class="rs-vd">test →</span></div>
+              <div class="rs-place" id="rsField"><span>field of a class</span><span class="rs-vd">test →</span></div>
+              <div class="rs-place" id="rsAsync"><span>local across await</span><span class="rs-vd">test →</span></div>
+            </div>
+            <div class="stateline" id="rsStatus">click a placement to see whether the compiler permits it</div>
+            <div class="wlog" id="rsLog"></div>
+          </div>
+          <div class="lab-foot" id="rsFoot">Locals, parameters, and ref-safe returns keep the value on the stack — allowed. Boxing, class fields, and async/iterator locals would let it reach the heap — rejected. Those rules are exactly why Span can't dangle.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (Span&lt;T&gt;)</span><div>The zero-allocation <code class="tok">Span</code> you sliced in Vol. I is a ref struct — and now you know why it can't be stored in a field or awaited across. The constraint that felt arbitrary is the mechanism: stack-only lifetime is what makes a window into borrowed memory safe.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The restrictions on Span are annoying compiler pedantry.</div><div class="truth">They're the <b>safety proof</b>. A ref struct can reference stack memory or an object's interior; if it escaped to the heap it could outlive that memory and dangle. Forbidding the escapes is how you get a borrowed-memory view with zero risk — the rules <i>are</i> the feature.</div></div>
+          <div class="mc"><div class="myth">If I need a Span in an async method, I'm just stuck.</div><div class="truth">You restructure: slice the span in a synchronous helper, or carry a heap-safe <code class="tok">Memory&lt;T&gt;</code> across the await and convert to a span only where you use it. The constraint pushes you toward code that's correct about lifetimes rather than accidentally wrong.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--iter);border-color:rgba(45,212,191,.4);background:var(--iter-soft)">State machines</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 03</span></div><h2>Iterators &amp; yield</h2></div>
+        <p>Here's the insight that unifies half of C#: <code class="tok">yield return</code> compiles to a <strong>state machine</strong> — the exact same mechanism as <code class="tok">async</code>, but producing a sequence instead of a result. Calling an iterator method runs <em>none</em> of its body; it returns an object implementing <code class="tok">IEnumerator&lt;T&gt;</code>. Each call to <code class="tok">MoveNext()</code> runs the body until the next <code class="tok">yield return</code>, hands back that value, and <strong>suspends</strong>, remembering exactly where it paused. This is why iterators are lazy, why LINQ is lazy (it's built on them), and why you can iterate an infinite sequence — nothing is computed until it's pulled.</p>
+        <span class="filetag">iterator.cs</span>
+        <pre><span class="typ">IEnumerable</span>&lt;<span class="kw">int</span>&gt; <span class="fn">Numbers</span>() {
+    <span class="kw">yield return</span> <span class="num">1</span>;   <span class="cmt">// state 1 — produce, then suspend here</span>
+    <span class="kw">yield return</span> <span class="num">2</span>;   <span class="cmt">// state 2</span>
+    <span class="kw">yield return</span> <span class="num">3</span>;   <span class="cmt">// state 3</span>
+}   <span class="hl">// calling Numbers() runs NOTHING — it returns an enumerator; MoveNext() drives it</span></pre>
+        <p>Call the iterator (watch zero body code run), then step <code class="tok">MoveNext()</code> and see it advance to each <code class="tok">yield</code>, produce a value, and suspend — one state at a time:</p>
+        <div class="lab" id="iterLab">
+          <div class="lab-head"><div><div class="pt">yield is a suspend point</div><div class="ps">lazy · MoveNext drives the sequence</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="itCall">call Numbers()</button>
+              <button class="ds-btn" id="itNext">MoveNext() ▸</button>
+              <button class="ds-btn" id="itReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">iterator state</div>
+            <div class="it-states" id="itStates">
+              <span class="it-state" id="itStart">created · not started</span>
+              <span class="it-state" id="itY1">yield 1</span>
+              <span class="it-state" id="itY2">yield 2</span>
+              <span class="it-state" id="itY3">yield 3</span>
+              <span class="it-state" id="itDone">completed</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat-box">current<b id="itState">not called</b></div>
+              <div class="stat-box">MoveNext() calls<b id="itMoveNext">0</b></div>
+              <div class="stat-box">body ran on call?<b id="itLazy">—</b></div>
+            </div>
+            <div class="it-yield" id="itYield"><span>produced:</span> —</div>
+            <div class="wlog" id="itLog"></div>
+          </div>
+          <div class="lab-foot" id="itFoot">Calling the method executes zero lines — it just builds the enumerator. Each MoveNext runs to the next yield and suspends. That laziness is the same state-machine trick as async, applied to sequences.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (async · LINQ)</span><div>Same machine, two costumes: the async state machine suspended at <code class="tok">await</code>; this one suspends at <code class="tok">yield</code>. And the LINQ deferred pipeline you counted in Vol. I is <b>built on iterators</b> — <code class="tok">Where</code> and <code class="tok">Select</code> are themselves <code class="tok">yield</code> methods, which is exactly why pulling one element runs one pass.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">An iterator method runs and collects its results when you call it.</div><div class="truth">It runs <b>nothing</b> on the call — it returns an enumerator. The body executes incrementally, one <code class="tok">yield</code> per <code class="tok">MoveNext</code>, and only while something enumerates. That's why an iterator can be infinite and why side effects in it are deferred until iteration.</div></div>
+          <div class="mc"><div class="myth">yield is just a shortcut for building and returning a list.</div><div class="truth">It's the opposite — a <b>lazy, streaming</b> producer that never materializes the whole sequence. It holds one element's worth of state and computes the next only on demand, which is what makes streaming huge or unbounded sequences possible without memory blowup.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--closure);border-color:rgba(232,179,65,.4);background:var(--closure-soft)">Closures</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 04</span></div><h2>Closures &amp; captured variables</h2></div>
+        <p>When a lambda uses a local variable from its enclosing scope, it <em>captures</em> that variable — and the crucial word is <strong>variable</strong>, not value. The compiler hoists the captured variable into a heap-allocated <strong>display class</strong> shared between the outer method and the lambda; both see the same cell. This produces the most famous gotcha in C#: capture a loop variable and every closure shares one cell, so they all observe its <em>final</em> value. Capture a fresh per-iteration copy and each closure gets its own. The behavior falls straight out of what the compiler hoisted.</p>
+        <span class="filetag">capture.cs</span>
+        <pre><span class="kw">var</span> fns = <span class="kw">new</span> List&lt;Func&lt;<span class="kw">int</span>&gt;&gt;();
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++)
+    fns.<span class="fn">Add</span>(() =&gt; i);      <span class="hlbad">// captures the variable i — one shared cell</span>
+<span class="cmt">// fns[0]() == fns[1]() == fns[2]() == 3   (all see the final i)</span>
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++)
+    { <span class="kw">int</span> copy = i; fns.<span class="fn">Add</span>(() =&gt; copy); }  <span class="hlok">// fresh cell each iteration → 0,1,2</span></pre>
+        <p>Build three closures in a loop under each strategy, then invoke them. Capturing the shared loop variable makes all three return the final value; capturing a fresh copy per iteration gives each its own:</p>
+        <div class="lab" id="closureLab">
+          <div class="lab-head"><div><div class="pt">It captures the variable, not the value</div><div class="ps">shared cell · fresh cell</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="clBuild">build 3 closures</button>
+              <button class="ds-btn" id="clInvoke">invoke all ▸</button>
+              <button class="ds-btn" id="clReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">capture strategy</div><div class="seg" id="clSeg"><button class="seg-opt on" data-mode="shared">capture loop variable i</button><button class="seg-opt" data-mode="fresh">capture fresh copy</button></div></div>
+            <div class="cl-disp" id="clDisp">display class: not built yet</div>
+            <div class="dp-h">closure outputs</div>
+            <div class="cl-outputs" id="clOutputs"><span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-faint)">build, then invoke</span></div>
+            <div class="wlog" id="clLog"></div>
+          </div>
+          <div class="lab-foot" id="clFoot">Shared capture: one display cell, so all three closures read the final i = 3. Fresh capture: a new cell per iteration, so each closure keeps 0, 1, 2. The hoisted variable decides the result.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A closure captures a snapshot of the variable's value.</div><div class="truth">It captures the <b>variable</b> — a live shared cell. Change the variable after creating the lambda and the lambda sees the new value. This is why the loop-variable capture surprises people: the cell keeps mutating after the closures are made.</div></div>
+          <div class="mc"><div class="myth">Lambdas are free, lightweight function pointers.</div><div class="truth">A lambda that captures state compiles to a <b>heap-allocated display object</b> (and a delegate). In a tight loop that's real gen-0 pressure. A lambda that captures nothing can be cached as a static singleton — but the moment it closes over a variable, there's an allocation behind it.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--record);border-color:rgba(78,214,107,.4);background:var(--record-soft)">Types</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 05</span></div><h2>Records &amp; value equality</h2></div>
+        <p>A <code class="tok">record</code> is a class the compiler fills in for you with <strong>value semantics</strong>: a structural <code class="tok">Equals</code> and <code class="tok">GetHashCode</code> that compare every field, a readable <code class="tok">ToString</code>, and — most usefully — a <code class="tok">with</code> expression for non-destructive updates that copies the object with a few fields changed. Two records with equal fields are <em>equal</em> even though they're different instances; two plain classes never are, because a class compares by reference. Records are the idiomatic way to model immutable data, and they make "same value" mean what you'd expect.</p>
+        <span class="filetag">records.cs</span>
+        <pre><span class="kw">record</span> <span class="typ">Link</span>(<span class="kw">string</span> Code, <span class="kw">int</span> Hits);
+
+<span class="kw">var</span> a = <span class="kw">new</span> <span class="typ">Link</span>(<span class="str">"4C92"</span>, <span class="num">10</span>);
+<span class="kw">var</span> b = <span class="kw">new</span> <span class="typ">Link</span>(<span class="str">"4C92"</span>, <span class="num">10</span>);
+<span class="kw">bool</span> eq  = a == b;                 <span class="hlok">// True — value equality (all fields match)</span>
+<span class="kw">bool</span> rEq = <span class="typ">ReferenceEquals</span>(a, b);   <span class="cmt">// False — still two instances</span>
+<span class="kw">var</span> c = a <span class="kw">with</span> { Hits = <span class="num">99</span> };       <span class="cmt">// a copy; a is unchanged</span></pre>
+        <p>Two objects <code class="tok">a</code> and <code class="tok">b</code> hold identical field values. Compare them as a <strong>record</strong> and as a <strong>class</strong>, and use <code class="tok">with</code> to produce a modified copy — watching the original stay put:</p>
+        <div class="lab" id="recordLab">
+          <div class="lab-head"><div><div class="pt">Same fields, same value?</div><div class="ps">structural equality · with-copy</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="rdEquals">a == b</button>
+              <button class="ds-btn" id="rdWith">b = a with { Hits = 99 }</button>
+              <button class="ds-btn" id="rdReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">type of a and b</div><div class="seg" id="rdSeg"><button class="seg-opt on" data-type="record">record Link (value)</button><button class="seg-opt" data-type="class">class Link (reference)</button></div></div>
+            <div class="rd-eq" id="rdEq">press <b>a == b</b> to compare</div>
+            <div class="stat-row">
+              <div class="stat-box">a == b<b id="rdEqual">—</b></div>
+              <div class="stat-box">ReferenceEquals(a,b)<b id="rdRefEqual">—</b></div>
+              <div class="stat-box">a.Hits<b id="rdAVal">10</b></div>
+              <div class="stat-box">b.Hits<b id="rdBVal">10</b></div>
+            </div>
+            <div class="wlog" id="rdLog"></div>
+          </div>
+          <div class="lab-foot" id="rdFoot">Record: value equality → equal fields make a == b True (though they're distinct instances). Class: reference equality → False. with copies a and changes Hits, leaving a untouched.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (Structs) · OOP</span><div>Records give the value semantics of a struct without copying on every assignment, and finally deliver the equality-by-value the <i>OOP</i> course wanted. Combined with <code class="tok">init</code>-only setters, they're immutable data done right — the safe default the "prefer immutability" principle kept pointing at.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">record is just shorthand for a class with a constructor.</div><div class="truth">It generates a whole <b>value-equality</b> contract — <code class="tok">Equals</code>, <code class="tok">GetHashCode</code>, <code class="tok">==</code>, <code class="tok">ToString</code>, and a <code class="tok">with</code>-clone. Two records with matching fields are equal and hash the same, so they behave correctly as dictionary keys and in sets — a class does none of that for free.</div></div>
+          <div class="mc"><div class="myth">with mutates the object in place cheaply.</div><div class="truth">It's <b>non-destructive</b> — it allocates a new object copying all fields, then applies your changes. The original is untouched (that's the point for immutable data), but it is a real allocation, so <code class="tok">with</code> in a hot loop has a cost like any other object creation.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--nullr);border-color:rgba(251,113,133,.4);background:var(--nullr-soft)">Nullability</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 06</span></div><h2>Nullable reference types</h2></div>
+        <p>Nullable reference types are a pure <strong>compile-time flow analysis</strong> — zero runtime cost, no bit changes, nothing but the compiler tracking, at every point in your code, whether a reference could be null. A <code class="tok">string?</code> starts <em>maybe-null</em>; dereferencing it there earns a <code class="tok">CS8602</code> warning. But add a guard — <code class="tok">if (name is not null)</code> — and inside that branch the compiler <strong>narrows</strong> the state to not-null, and the dereference becomes safe. The whole feature is the compiler reasoning about null-state as it flows, turning a class of <code class="tok">NullReferenceException</code>s into build-time warnings.</p>
+        <span class="filetag">null-flow.cs</span>
+        <pre><span class="kw">string</span>? name = <span class="fn">GetName</span>();   <span class="cmt">// state: maybe-null</span>
+
+<span class="kw">int</span> n = name.Length;         <span class="hlbad">// CS8602 — dereference of a possibly-null reference</span>
+
+<span class="kw">if</span> (name <span class="kw">is not null</span>)          <span class="cmt">// guard narrows the flow-state...</span>
+    n = name.Length;         <span class="hlok">// ...to not-null here — safe, no warning</span></pre>
+        <p>Step through a method that gets a maybe-null value. Try dereferencing it (the compiler warns), then add a guard and watch the flow-state <strong>narrow to not-null</strong>, making the same dereference safe:</p>
+        <div class="lab" id="nullLab">
+          <div class="lab-head"><div><div class="pt">The compiler tracks null-state</div><div class="ps">maybe-null → narrowed by a guard</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="nlGet">name = GetName()</button>
+              <button class="ds-btn" id="nlGuard">add guard: is not null</button>
+              <button class="ds-btn" id="nlDeref">name.Length</button>
+              <button class="ds-btn" id="nlForgive">name!</button>
+              <button class="ds-btn" id="nlReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="nl-var" id="nlVar">string? name &nbsp;·&nbsp; flow-state: <span class="nl-state maybe" id="nlState">maybe-null</span></div>
+            <div class="stat-row">
+              <div class="stat-box">name.Length → <b id="nlSafe">—</b></div>
+            </div>
+            <div class="stateline" id="nlStatus">get a maybe-null value, then try to dereference it</div>
+            <div class="wlog" id="nlLog"></div>
+          </div>
+          <div class="lab-foot" id="nlFoot">Maybe-null → dereference warns (CS8602). A guard narrows the state to not-null inside the branch, so the dereference is proven safe. The null-forgiving ! overrides the compiler — on your word.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Nullable reference types add runtime null checks.</div><div class="truth">They add <b>nothing</b> at runtime — it's static analysis only. A <code class="tok">string?</code> and a <code class="tok">string</code> are the identical type to the CLR. The <code class="tok">?</code> and the warnings live entirely in the compiler's flow analysis; they change what it <i>tells</i> you, not what runs.</div></div>
+          <div class="mc"><div class="myth">The null-forgiving ! operator fixes a nullability problem.</div><div class="truth">It <b>silences</b> the warning by asserting you know better — it performs no check. If you're wrong, you get the exact <code class="tok">NullReferenceException</code> the analysis was warning about. Use it only where you can prove non-null by logic the compiler can't see; reach for a guard first.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--variance);border-color:rgba(86,199,255,.4);background:var(--variance-soft)">Type system</span><span class="lvl expert">Expert</span><span class="mod-num">Module 07</span></div><h2>Generic variance</h2></div>
+        <p>Why can you assign an <code class="tok">IEnumerable&lt;string&gt;</code> to an <code class="tok">IEnumerable&lt;object&gt;</code>, but not a <code class="tok">List&lt;string&gt;</code> to a <code class="tok">List&lt;object&gt;</code>? <strong>Variance.</strong> An interface marked <code class="tok">out T</code> is <em>covariant</em> — safe because it only ever <em>produces</em> T, so a producer of strings is a valid producer of objects. An interface marked <code class="tok">in T</code> is <em>contravariant</em> — safe because it only <em>consumes</em> T, so a consumer of objects can stand in for a consumer of strings. A type that both produces and consumes (like <code class="tok">List&lt;T&gt;</code>) must be <em>invariant</em>, or you could break type safety. The <code class="tok">in</code>/<code class="tok">out</code> annotations encode exactly which substitutions are sound.</p>
+        <span class="filetag">variance.cs</span>
+        <pre><span class="typ">IEnumerable</span>&lt;<span class="kw">out</span> T&gt;   <span class="cmt">// covariant — produces T</span>
+<span class="typ">Action</span>&lt;<span class="kw">in</span> T&gt;         <span class="cmt">// contravariant — consumes T</span>
+
+<span class="typ">IEnumerable</span>&lt;<span class="kw">object</span>&gt; a = strings;   <span class="hlok">// ✓ covariance (string → object)</span>
+<span class="typ">Action</span>&lt;<span class="kw">string</span>&gt; b = objAction;      <span class="hlok">// ✓ contravariance (object → string)</span>
+<span class="typ">List</span>&lt;<span class="kw">object</span>&gt; c = stringList;      <span class="hlbad">// ✗ invariant — would break type safety</span></pre>
+        <p>Each row is an assignment between related generic types. Click one to see whether the variance rules permit it — and why producing vs. consuming is the deciding factor:</p>
+        <div class="lab" id="varianceLab">
+          <div class="lab-head"><div><div class="pt">Which substitutions are sound?</div><div class="ps">covariance (out) · contravariance (in)</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="vrReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="vr-rows">
+              <div class="vr-row" id="vrR1"><span><span class="vr-ann">IEnumerable&lt;out T&gt;</span> &nbsp; <code class="tok">IEnumerable&lt;string&gt;</code> → <code class="tok">IEnumerable&lt;object&gt;</code></span><span class="vr-vd">test →</span></div>
+              <div class="vr-row" id="vrR2"><span><span class="vr-ann">IEnumerable&lt;out T&gt;</span> &nbsp; <code class="tok">IEnumerable&lt;object&gt;</code> → <code class="tok">IEnumerable&lt;string&gt;</code></span><span class="vr-vd">test →</span></div>
+              <div class="vr-row" id="vrR3"><span><span class="vr-ann">Action&lt;in T&gt;</span> &nbsp; <code class="tok">Action&lt;object&gt;</code> → <code class="tok">Action&lt;string&gt;</code></span><span class="vr-vd">test →</span></div>
+              <div class="vr-row" id="vrR4"><span><span class="vr-ann">Action&lt;in T&gt;</span> &nbsp; <code class="tok">Action&lt;string&gt;</code> → <code class="tok">Action&lt;object&gt;</code></span><span class="vr-vd">test →</span></div>
+              <div class="vr-row" id="vrR5"><span><span class="vr-ann">List&lt;T&gt;</span> &nbsp; <code class="tok">List&lt;string&gt;</code> → <code class="tok">List&lt;object&gt;</code></span><span class="vr-vd">test →</span></div>
+            </div>
+            <div class="stateline" id="vrStatus">click an assignment to test it against the variance rules</div>
+            <div class="wlog" id="vrLog"></div>
+          </div>
+          <div class="lab-foot" id="vrFoot">Covariant out allows string → object (producers). Contravariant in allows object → string (consumers). The reverse of each is unsound, and an invariant type like List permits neither.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ OOP &amp; Coding Principles · Data Structures</span><div>This is the Liskov Substitution Principle expressed in the type system: covariance is exactly when a <code class="tok">Sequence&lt;Derived&gt;</code> can safely stand in for a <code class="tok">Sequence&lt;Base&gt;</code>. The <code class="tok">in</code>/<code class="tok">out</code> keywords are the compiler encoding <i>which direction</i> substitution stays safe.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">If string is an object, then List&lt;string&gt; is a List&lt;object&gt;.</div><div class="truth">No — that would let you <code class="tok">Add</code> an <code class="tok">object</code> into a list of strings and blow up. <code class="tok">List&lt;T&gt;</code> is <b>invariant</b> precisely because it both reads and writes T. Variance is only safe for one-directional interfaces: produce-only (<code class="tok">out</code>) or consume-only (<code class="tok">in</code>).</div></div>
+          <div class="mc"><div class="myth">Variance is an obscure feature I'll never touch.</div><div class="truth">You use it constantly without naming it — passing an <code class="tok">IEnumerable&lt;Derived&gt;</code> where <code class="tok">IEnumerable&lt;Base&gt;</code> is expected, or a general <code class="tok">IComparer&lt;object&gt;</code> where a specific one is needed. The <code class="tok">out</code>/<code class="tok">in</code> on the framework interfaces is what makes those everyday assignments compile.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--dispose);border-color:rgba(242,151,60,.4);background:var(--dispose-soft)">Resources</span><span class="lvl expert">Expert</span><span class="mod-num">Module 08</span></div><h2>IDisposable &amp; finalization</h2></div>
+        <p>The GC reclaims <em>memory</em>, but it doesn't know or care about <em>resources</em> — file handles, sockets, database connections. Those need <strong>deterministic</strong> release, and that's what <code class="tok">IDisposable</code> plus <code class="tok">using</code> provide: <code class="tok">Dispose()</code> is called the instant control leaves the scope, in <strong>reverse</strong> (LIFO) order, <em>even if an exception is thrown</em>. Relying on a finalizer instead is a last-resort safety net — it runs on the GC's schedule, possibly much later, and stalls object cleanup. The rule is simple: own a resource, wrap it in <code class="tok">using</code>.</p>
+        <span class="filetag">disposal.cs</span>
+        <pre><span class="kw">using var</span> conn = <span class="fn">Open</span>();      <span class="cmt">// Dispose() called at scope exit...</span>
+<span class="kw">using var</span> cmd  = conn.<span class="fn">Command</span>();  <span class="cmt">// ...in reverse order: cmd, then conn</span>
+DoWork();                        <span class="hlok">// even if this throws, both are disposed on the way out</span>
+<span class="cmt">// no using → the handle leaks until a finalizer eventually runs (non-deterministic)</span></pre>
+        <p>Acquire resources inside a <code class="tok">using</code> scope and exit it (or throw) — watch <code class="tok">Dispose</code> fire deterministically in LIFO order. Then leak one without <code class="tok">using</code> and see it linger until a garbage collection finalizes it:</p>
+        <div class="lab" id="disposeLab">
+          <div class="lab-head"><div><div class="pt">Deterministic, or eventually</div><div class="ps">using · LIFO · finalizer fallback</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="dzAcquire">using var r = Acquire()</button>
+              <button class="ds-btn" id="dzExit">exit scope ▸</button>
+              <button class="ds-btn" id="dzThrow">throw in scope</button>
+              <button class="ds-btn" id="dzLeak">acquire (no using)</button>
+              <button class="ds-btn" id="dzGC">GC ▸ finalize</button>
+              <button class="ds-btn" id="dzReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">open resources</div>
+            <div class="dz-list" id="dzList"></div>
+            <div class="stat-row">
+              <div class="stat-box">open handles<b id="dzOpenN">0</b></div>
+              <div class="stat-box ok">disposed<b id="dzDisposed">0</b></div>
+            </div>
+            <div class="stateline" id="dzStatus">acquire resources in a using scope, then exit it</div>
+            <div class="wlog" id="dzLog"></div>
+          </div>
+          <div class="lab-foot" id="dzFoot">using disposes deterministically at scope exit, LIFO, exception or not. A resource acquired without using leaks until a finalizer runs on the GC's schedule — deterministic release is the whole reason using exists.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (the GC)</span><div>The GC from Vol. I frees memory but runs finalizers non-deterministically — which is exactly why resources need <code class="tok">using</code>. Deterministic disposal is the complement to generational collection: one handles managed memory automatically, the other releases unmanaged resources on time.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The garbage collector will clean up my file handles and connections.</div><div class="truth">The GC frees <b>memory</b>, not OS resources, and it runs whenever it decides to. A handle held until finalization can starve a connection pool or lock a file for far too long. Deterministic release via <code class="tok">using</code> is the only reliable way — the finalizer is a backstop, not a plan.</div></div>
+          <div class="mc"><div class="myth">If a Dispose throws or I forget one, the others are skipped.</div><div class="truth"><code class="tok">using</code> compiles to <code class="tok">try/finally</code>, so each disposal runs on the way out regardless of exceptions in the body — and nested usings unwind in reverse order. That LIFO, exception-safe guarantee is precisely why you prefer it over calling <code class="tok">Dispose</code> by hand.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--vtask);border-color:rgba(167,139,250,.4);background:var(--vtask-soft)">Async perf</span><span class="lvl expert">Expert</span><span class="mod-num">Module 09</span></div><h2>ValueTask &amp; async allocation</h2></div>
+        <p>Every <code class="tok">Task&lt;T&gt;</code> you return is a heap object. For a method that <em>usually completes synchronously</em> — a cache lookup that mostly hits — that allocation is pure waste, once per call, on your hottest path. <code class="tok">ValueTask&lt;T&gt;</code> fixes it: it's a <code class="tok">struct</code> that can wrap an already-available result with <strong>zero allocation</strong>, falling back to a real <code class="tok">Task</code> only when the operation genuinely runs asynchronously. Return <code class="tok">ValueTask</code> from hot, usually-synchronous methods and you delete an allocation from the common case while keeping full <code class="tok">await</code> support for the slow one.</p>
+        <span class="filetag">value-task.cs</span>
+        <pre><span class="kw">async</span> <span class="typ">ValueTask</span>&lt;<span class="typ">Link</span>&gt; <span class="fn">GetAsync</span>(<span class="kw">string</span> code) {
+    <span class="kw">if</span> (_cache.<span class="fn">TryGet</span>(code, <span class="kw">out var</span> hit))
+        <span class="kw">return</span> hit;                 <span class="hlok">// synchronous — wrapped in a struct · 0 allocation</span>
+    <span class="kw">return await</span> _db.<span class="fn">LoadAsync</span>(code);   <span class="cmt">// async miss — falls back to a Task</span>
+}   <span class="cmt">// Task&lt;Link&gt; here would allocate on EVERY call, hit or miss</span></pre>
+        <p>Call a cache lookup under each return type. On a hit (synchronous completion), <code class="tok">Task</code> still allocates while <code class="tok">ValueTask</code> allocates nothing; only a real async miss allocates for either:</p>
+        <div class="lab" id="valueTaskLab">
+          <div class="lab-head"><div><div class="pt">Zero allocation on the synchronous path</div><div class="ps">Task always allocates · ValueTask can skip it</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="vtHit">cache hit (sync)</button>
+              <button class="ds-btn" id="vtMiss">cache miss (async)</button>
+              <button class="ds-btn" id="vtReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div style="margin-bottom:12px"><div class="dp-h">return type</div><div class="seg" id="vtSeg"><button class="seg-opt on" data-type="valuetask">ValueTask&lt;Link&gt;</button><button class="seg-opt" data-type="task">Task&lt;Link&gt;</button></div></div>
+            <div class="vt-path" id="vtPath">call the method — a hit completes synchronously</div>
+            <div class="stat-row">
+              <div class="stat-box">heap allocations<b id="vtAllocs">0</b></div>
+            </div>
+            <div class="wlog" id="vtLog"></div>
+          </div>
+          <div class="lab-foot" id="vtFoot">ValueTask on a cache hit wraps the result in a struct — 0 allocations no matter how often you call. Task allocates every time. Only a genuine async miss forces an allocation for either.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (async · GC)</span><div>This is the async state machine from Vol. I meeting the allocation discipline of the Span module: when the machine completes without ever suspending, <code class="tok">ValueTask</code> lets it return without touching the heap — less gen-0 pressure on the exact paths that run most often.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Always return ValueTask instead of Task — it's strictly faster.</div><div class="truth">It's faster for <b>hot, usually-synchronous</b> methods and worse as a default: a <code class="tok">ValueTask</code> must not be awaited twice or stored, and misusing it is a real bug. Use it deliberately where you've measured a synchronous-completion hot path — not everywhere.</div></div>
+          <div class="mc"><div class="myth">await always involves an allocation and a thread hop.</div><div class="truth">When the awaited operation is already complete, <code class="tok">await</code> continues <b>synchronously</b>, no hop — and with <code class="tok">ValueTask</code>, no allocation either. The machinery only pays its full cost when the operation actually suspends. Fast paths stay fast.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--srcgen);border-color:rgba(124,156,255,.4);background:var(--srcgen-soft)">Metaprogramming</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Source generators</h2></div>
+        <p>The final rewrite is one you author yourself. A <strong>source generator</strong> is code that runs <em>inside the compiler</em>: it inspects your program as Roslyn compiles it and <strong>emits additional C# source</strong> into the same compilation. Mark a class with an attribute and a generator can produce its <code class="tok">ToString</code>, a JSON serializer, or strongly-typed config — all as real code, checked and compiled alongside yours, with <strong>zero runtime cost</strong>. It's the compile-time answer to reflection: instead of reading metadata on every call at runtime, you generate the exact code once at build time. Modern .NET uses this for high-performance JSON, logging, and regex.</p>
+        <span class="filetag">source-gen.cs</span>
+        <pre>[<span class="typ">GenerateToString</span>]
+<span class="kw">partial class</span> <span class="typ">Link</span> { <span class="kw">public string</span> Code; <span class="kw">public int</span> Hits; }
+
+<span class="cmt">// at compile time, the generator reads Link and emits:</span>
+<span class="hl">// partial class Link { public override string ToString()</span>
+<span class="hl">//   =&gt; $"Link {{ Code = {Code}, Hits = {Hits} }}"; }</span>
+<span class="cmt">// no reflection, no runtime scan — just code, compiled with yours</span></pre>
+        <p>Compile the project and watch the generator inspect the marked class and <strong>emit source</strong> into the build. Then do the same job the old way with runtime reflection, and compare when the work happens and what it costs:</p>
+        <div class="lab" id="sourceGenLab">
+          <div class="lab-head"><div><div class="pt">Code that writes code, at build time</div><div class="ps">compile-time emit vs. runtime reflection</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="sgCompile">compile ▸ run generator</button>
+              <button class="ds-btn" id="sgReflect">use reflection instead</button>
+              <button class="ds-btn" id="sgReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="dp-h">generated / resolved ToString()</div>
+            <div class="sg-out" id="sgOutput"><span class="sg-none">— nothing generated yet — compile to run the generator</span></div>
+            <div class="stat-row">
+              <div class="stat-box">runs<b id="sgWhen">—</b></div>
+              <div class="stat-box">per-call cost<b id="sgCost">—</b></div>
+            </div>
+            <div class="wlog" id="sgLog"></div>
+          </div>
+          <div class="lab-foot" id="sgFoot">The generator runs once at compile time and emits real C# — zero runtime cost, no reflection. Reflection does the same job by reading metadata on every call: slower and allocating. Same result, opposite trade-off.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I (Expression trees)</span><div>Two flavors of metaprogramming, mirror images in time: expression trees are built and compiled at <i>runtime</i> for flexibility; source generators emit code at <i>compile time</i> for speed. Together they bracket the trade space the Vol. I module opened — one buys adaptability, the other buys zero-overhead.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Source generators run when my program starts.</div><div class="truth">They run during <b>compilation</b>, as part of the build — their output is ordinary source compiled into your assembly. By the time the program starts, the generated code is just… code. There's no startup step and nothing to initialize.</div></div>
+          <div class="mc"><div class="myth">Reflection and source generation are interchangeable ways to do the same thing.</div><div class="truth">They trade runtime cost for build-time work. Reflection reads metadata <i>every call</i> and allocates; a generator emits the specialized code <i>once</i> at build. That's why .NET moved hot paths — JSON, logging, regex — onto generators: same capability, no per-call reflection tax.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>The whole language</h2></div>
+        <p>Step back and the volume has one shape. Nearly every feature you met is the <strong>compiler lowering a convenient surface into machinery</strong> that runs on the Volume I runtime. Iterators and async become state machines; closures become display classes; records become value-equality contracts; source generators emit whole files. Even the features with no emitted code — <code class="tok">ref</code> safety, ref-struct rules, nullable flow — are the compiler <em>reasoning</em> about your program so the runtime doesn't have to. The map:</p>
+        <span class="filetag">what you write → what the compiler makes of it</span>
+        <pre>  yield / async  ──▸  state machine (IEnumerator / MoveNext)     <span class="cmt">// m03</span>
+  lambda + capture ─▸  display class on the heap                 <span class="cmt">// m04</span>
+  record / with   ──▸  Equals · GetHashCode · clone              <span class="cmt">// m05</span>
+  [Generator]     ──▸  emitted .g.cs at compile time             <span class="cmt">// m10</span>
+  ref · ref struct ─▸  lifetime rules, checked (no emitted code) <span class="cmt">// m01–02</span>
+  string? · in/out ─▸  flow &amp; variance analysis (compile-time)   <span class="cmt">// m06–07</span></pre>
+        <p>And here is Snip's resolver once more — every line now a feature whose rewrite you can see, composed with Volume I's runtime tricks:</p>
+        <span class="filetag">snip-resolver.cs</span>
+        <pre><span class="kw">record</span> <span class="typ">Link</span>(<span class="kw">string</span> Code, <span class="kw">int</span> Hits, <span class="kw">bool</span> Active);   <span class="cmt">// m05 · immutable value</span>
+
+<span class="kw">async</span> <span class="typ">ValueTask</span>&lt;<span class="typ">Link</span>?&gt; <span class="fn">ResolveAsync</span>(<span class="kw">string</span> url) {
+  <span class="kw">using var</span> conn = _pool.<span class="fn">Rent</span>();                    <span class="cmt">// m08 · deterministic release</span>
+  <span class="typ">ReadOnlySpan</span>&lt;<span class="kw">char</span>&gt; code = url.<span class="fn">AsSpan</span>(<span class="num">5</span>, <span class="num">4</span>);       <span class="cmt">// ref struct (m02) · 0 alloc</span>
+  <span class="kw">if</span> (_cache.<span class="fn">TryGet</span>(code, <span class="kw">out var</span> hit)) {
+    <span class="kw">ref int</span> n = <span class="kw">ref</span> hit.HitCount;                    <span class="cmt">// m01 · alias, mutate in place</span>
+    n++;
+    <span class="kw">return</span> hit;                                       <span class="hlok">// m09 · sync path — ValueTask, 0 alloc</span>
+  }
+  <span class="kw">var</span> link = <span class="kw">await</span> conn.<span class="fn">LoadAsync</span>(code.<span class="fn">ToString</span>());
+  <span class="kw">return</span> link <span class="kw">is</span> { Active: <span class="kw">true</span> } ? link : <span class="kw">null</span>;      <span class="cmt">// m06 · pattern + nullable</span>
+}   <span class="cmt">// streamed to analytics by an iterator; serialized by a source generator</span></pre>
+        <div class="note key">
+          <div class="nh">The whole language, read as machine</div>
+          <p>The record is a generated value-equality type (m05). The <code class="tok">using</code> is exception-safe LIFO disposal (m08). <code class="tok">AsSpan</code> is a stack-only ref struct slicing with zero allocation (m02). The <code class="tok">ref</code> local aliases the counter and mutates it in place (m01). The <code class="tok">ValueTask</code> returns the cache hit without allocating (m09). The pattern and the nullable return are compile-time-checked (m06). Behind each keyword is a rewrite you've now watched happen. <strong>Two volumes in, C# has no unlit corners: the runtime beneath, and the compiler that lowers every feature onto it, are both things you can now read.</strong></p>
+        </div>
+        <div class="xref"><span class="xi">↳ Advanced C# · Vol. I · The Capstone</span><div>Volume I made Snip's hot path fast; Volume II makes its whole codebase expert — immutable records, safe references, deterministic resources, allocation-free async, generated serialization. The language, end to end, now reads as deliberate engineering rather than convenient magic.</div></div>
+        <div class="closing">
+          <h2>The language, mastered.</h2>
+          <p>You started Volume II with a promise: that the expert features are mostly the compiler rewriting your code, and that reading the rewrite makes them predictable. You stepped a <code class="tok">yield</code> method through its state machine, caught a closure capturing a shared cell, watched a <code class="tok">ref struct</code> get turned away from the heap, narrowed a nullable through a guard, and saw a generator write source at build time. None of it is magic anymore — it's lowering, and you can read the lowered form.</p>
+          <p>That's what the two volumes together give you: the runtime underneath (memory, async, generics, the GC) and the compiler above it (state machines, display classes, generated code, flow analysis) — the full stack from your keystrokes to the machine. C# will keep offering you convenient surfaces, and you'll keep being able to see the machinery each one becomes. Write the feature; read the machine; ship something that's both elegant and fast.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Advanced C# · Volume II — the second half of the C# deep dive, atop the whole curriculum: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, Advanced&nbsp;SQL&nbsp;&amp;&nbsp;PostgreSQL, Front-End&nbsp;Engineering, Mastering&nbsp;Angular, Angular&nbsp;Internals, Advanced&nbsp;C#&nbsp;(Vol.&nbsp;I), and the Capstone that built Snip. Volume I gave you the runtime; Volume II gave you the compiler above it.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/advanced-csharp-vol2.js"></script>
+</body>
+</html>

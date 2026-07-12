@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Growth Lab — Mastering Big O Complexity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-big-o-complexity.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a href="#top" class="brand" style="gap:9px">
+    <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21V3" stroke="#56C7FF" stroke-width="1.6" stroke-linecap="round"/><path d="M3 21H21" stroke="#56C7FF" stroke-width="1.6" stroke-linecap="round"/><path d="M4 18C8 18 9 5 20 5" stroke="#ED4E6E" stroke-width="1.6" stroke-linecap="round"/><path d="M4 19C10 19 14 13 20 13" stroke="#4ED66B" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    <span class="brand-text"><b>The Growth Lab</b></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open course menu">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a href="#top" class="brand">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21V3" stroke="#56C7FF" stroke-width="1.6" stroke-linecap="round"/><path d="M3 21H21" stroke="#56C7FF" stroke-width="1.6" stroke-linecap="round"/><path d="M4 18C8 18 9 5 20 5" stroke="#ED4E6E" stroke-width="1.6" stroke-linecap="round"/><path d="M4 19C10 19 14 13 20 13" stroke="#4ED66B" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Mastering Big O</span></span>
+      </a>
+    </div>
+    <div class="nav-scroll" id="navScroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Why complexity matters</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Counting operations</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Big O notation</span></a>
+      <div class="nav-group-label">Analysis · Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Reading code for complexity</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>The formal definitions</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Space complexity</span></a>
+      <div class="nav-group-label">Depth · Advanced</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Recursion &amp; the Master Theorem</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Amortized analysis</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Algorithms &amp; data structures</span></a>
+      <div class="nav-group-label">Mastery · Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Lower bounds, P vs NP &amp; reality</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Putting it together</span></a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+
+      <header class="hero">
+        <div class="eyebrow">A course · beginner → expert</div>
+        <h1>Complexity is just<br><span class="grad">the shape of growth.</span></h1>
+        <p class="lede">Two programs can return the same answer, yet one finishes before you blink and the other never finishes at all. The difference is <strong>how the work grows as the input grows</strong>. Master that, and you can predict performance from code you've never run. This is that mastery, built one idea at a time.</p>
+
+        <figure class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 760 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Six complexity curves diverging from a common origin">
+          </svg>
+          <figcaption class="hero-cap">
+            <span>input size  n  →</span>
+            <span id="heroLegend"></span>
+          </figcaption>
+        </figure>
+
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start the course
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#plotter">Open the live plotter</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div>
+          <h2>Why complexity matters</h2>
+        </div>
+
+        <p>Imagine two functions that both check whether a list contains any duplicate values. The first compares every pair of elements. The second sorts the list, then walks through it once looking for neighbours that are equal. On a list of 10 items, you'd never notice a difference. On a list of 100,000 items, the first takes minutes and the second takes a fraction of a second.</p>
+
+        <p>Same input, same output, same language, same machine. The only thing that changed is <strong>how the number of steps scales with the size of the input</strong>. That scaling behaviour is what we call <em>complexity</em>, and it is the single most reliable predictor of whether a program will hold up when the data gets big.</p>
+
+        <h3>Why not just time it with a stopwatch?</h3>
+        <p>Measuring wall-clock time is useful, but it answers a narrower question than you think. A stopwatch tells you how this code performed, on this machine, with this input, today. It can't tell you what happens when the input is ten times larger, or on a server twice as fast, or next year. Those factors change the absolute time but not the underlying <em>growth pattern</em>.</p>
+        <p>Complexity analysis strips away the hardware, the language, and the specific input, and asks the one question that survives all of them: <strong>as the input grows, how does the amount of work grow?</strong> The answer is a property of the algorithm itself, which is why it transfers across machines and lasts across years.</p>
+
+        <div class="note">
+          <div class="nh">The two resources we count</div>
+          <p><strong>Time complexity</strong> — how the number of operations grows with input size. <strong>Space complexity</strong> — how the amount of memory grows with input size. They are analysed the same way and often trade off against each other: you can frequently spend memory to save time, or vice versa.</p>
+        </div>
+
+        <h3>What "input size" means</h3>
+        <p>We measure growth against a number we call <code class="tok">n</code>: the size of the input. Usually that's obvious — the length of an array, the number of records, the count of nodes in a graph. Sometimes there are two independent sizes (say a graph with <code class="tok">V</code> vertices and <code class="tok">E</code> edges), and then complexity is expressed in terms of both. The discipline is always the same: pick what grows, call it <code class="tok">n</code>, and describe everything relative to it.</p>
+
+        <p>That's the whole game in one sentence. The rest of this course is about doing it precisely, for any code you encounter, all the way up to the subtle cases that trip up experienced engineers.</p>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div>
+          <h2>Counting operations</h2>
+        </div>
+
+        <p>Before any notation, build the intuition the notation is shorthand for. The core move is to count how many "basic steps" a piece of code performs as a function of <code class="tok">n</code> — then watch what that count does as <code class="tok">n</code> grows.</p>
+
+        <h3>A first count</h3>
+        <pre><span class="tag">python</span><span class="kw">def</span> <span class="fn">sum_list</span>(nums):
+    total <span class="op">=</span> <span class="num">0</span>            <span class="cmt"># 1 step</span>
+    <span class="kw">for</span> x <span class="kw">in</span> nums:        <span class="cmt"># the loop runs n times</span>
+        total <span class="op">+=</span> x         <span class="cmt"># 1 step, repeated n times</span>
+    <span class="kw">return</span> total         <span class="cmt"># 1 step</span></pre>
+        <p>Counting carefully: one step to initialise, <code class="tok">n</code> steps inside the loop, one step to return. Total work is <code class="tok">n + 2</code> steps. As <code class="tok">n</code> grows, that <code class="tok">+2</code> becomes irrelevant — at a million elements, the difference between <code class="tok">1,000,000</code> and <code class="tok">1,000,002</code> is noise. The work grows <em>in direct proportion</em> to <code class="tok">n</code>. That's the pattern we'll later name "linear".</p>
+
+        <h3>What counts as a "step"?</h3>
+        <p>A basic step is any operation that takes a fixed amount of time regardless of <code class="tok">n</code>: an arithmetic operation, a comparison, assigning a variable, accessing an array element by index, following a pointer. We deliberately treat them all as "roughly one unit" because we don't care about the exact constant — we care about how the <em>total</em> scales.</p>
+
+        <div class="note warn">
+          <div class="nh">A trap worth flagging early</div>
+          <p>Not every line that <em>looks</em> like one step is one step. In many languages, <code class="tok">x in some_list</code> secretly scans the whole list (that's <code class="tok">n</code> steps hiding inside one line), while <code class="tok">x in some_set</code> is a constant-time lookup. Reading complexity correctly means knowing what your operations actually cost underneath — a theme we'll return to constantly.</p>
+        </div>
+
+        <h3>When loops nest, counts multiply</h3>
+        <pre><span class="tag">python</span><span class="kw">def</span> <span class="fn">all_pairs</span>(nums):
+    <span class="kw">for</span> i <span class="kw">in</span> nums:        <span class="cmt"># runs n times ...</span>
+        <span class="kw">for</span> j <span class="kw">in</span> nums:    <span class="cmt"># ... and for each, runs n times</span>
+            <span class="fn">print</span>(i, j)   <span class="cmt"># n × n = n² steps total</span></pre>
+        <p>The inner work happens once for every combination of <code class="tok">i</code> and <code class="tok">j</code>, so the count is <code class="tok">n × n = n²</code>. Double the input and the work <em>quadruples</em>. This is the difference that makes the duplicate-checker from Module 00 fall over: pairwise comparison is this shape.</p>
+
+        <p>You now have the only mental model you need: count the steps as a function of <code class="tok">n</code>, then ask what dominates as <code class="tok">n</code> gets large. Big O, next, is simply a precise vocabulary for "what dominates".</p>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div>
+          <h2>Big O notation</h2>
+        </div>
+
+        <p>Big O is the language for describing how the step-count grows, with the irrelevant detail thrown away. Informally: <strong>Big O captures the dominant term of the growth and ignores constant factors.</strong> We'll make this formal in Module 04 — but the working intuition comes first, because that's what you'll actually use day to day.</p>
+
+        <h3>The two simplification rules</h3>
+        <p>To turn a raw step-count into a Big O expression, apply two rules until nothing changes:</p>
+        <ol>
+          <li><strong>Drop constant factors.</strong> <span class="bigo">5n</span>, <span class="bigo">n/2</span>, and <span class="bigo">100n</span> are all <span class="bigo">O(n)</span>. We're describing the <em>shape</em> of growth, not the exact slope. A constant factor shifts the line but doesn't change that it's a line.</li>
+          <li><strong>Keep only the fastest-growing term.</strong> In <span class="bigo">n² + n + 5</span>, the <span class="bigo">n²</span> term eventually dwarfs everything else, so the whole thing is <span class="bigo">O(n²)</span>. For large <code class="tok">n</code>, lower-order terms are rounding error.</li>
+        </ol>
+
+        <div class="note">
+          <div class="nh">Why we're allowed to throw so much away</div>
+          <p>Big O describes <em>asymptotic</em> behaviour — what happens as <code class="tok">n</code> heads toward infinity. The whole point is to compare how algorithms <em>scale</em>, and at scale the dominant term and only the dominant term decides the outcome. (This does not mean constants never matter in practice — they can. We'll treat that honestly in Module 09.)</p>
+        </div>
+
+        <h3>The complexity classes you'll meet constantly</h3>
+        <p>A handful of growth shapes cover the overwhelming majority of code. Learn these by feel — what each looks like, and a canonical example of each:</p>
+
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Class</th><th>Name</th><th>Feel</th><th>Canonical example</th></tr></thead>
+            <tbody>
+              <tr><td><span class="chip"><span class="dot" style="background:var(--c-const)"></span>O(1)</span></td><td>Constant</td><td>Doesn't grow at all</td><td>Array index; hash lookup</td></tr>
+              <tr><td><span class="chip"><span class="dot" style="background:var(--c-log)"></span>O(log n)</span></td><td>Logarithmic</td><td>Grows painfully slowly</td><td>Binary search</td></tr>
+              <tr><td><span class="chip"><span class="dot" style="background:var(--c-lin)"></span>O(n)</span></td><td>Linear</td><td>Grows in step with input</td><td>Scan a list once</td></tr>
+              <tr><td><span class="chip"><span class="dot" style="background:var(--c-linlog)"></span>O(n log n)</span></td><td>Linearithmic</td><td>A little worse than linear</td><td>Merge sort; good sorts</td></tr>
+              <tr><td><span class="chip"><span class="dot" style="background:var(--c-quad)"></span>O(n²)</span></td><td>Quadratic</td><td>Doubles input → 4× work</td><td>Nested loops; pairwise</td></tr>
+              <tr><td><span class="chip"><span class="dot" style="background:var(--c-exp)"></span>O(2ⁿ)</span></td><td>Exponential</td><td>One more item ≈ doubles work</td><td>Naïve subset enumeration</td></tr>
+              <tr><td><span class="chip"><span class="dot" style="background:var(--c-fact)"></span>O(n!)</span></td><td>Factorial</td><td>Hopeless past tiny n</td><td>Brute-force permutations</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The ordering from best to worst is worth memorising as a single chain:</p>
+        <div class="defcard">
+          <div class="dh">The hierarchy</div>
+          <div class="formula">O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(n³) &lt; O(2ⁿ) &lt; O(n!)</div>
+          <p style="margin-bottom:0">Anything left of <span class="bigo">O(n log n)</span> scales beautifully. <span class="bigo">O(n²)</span> is fine for modest inputs but a liability at scale. Everything from <span class="bigo">O(2ⁿ)</span> rightward is intractable beyond very small <code class="tok">n</code> and signals you need a fundamentally different approach.</p>
+        </div>
+
+        <h3 id="plotter">See the difference, don't just read it</h3>
+        <p>Numbers on a page undersell how violently these classes diverge. Drag the slider to set an input size <code class="tok">n</code>, toggle classes on and off, and switch the vertical axis between linear and logarithmic. Watch the readout: at <code class="tok">n = 1000</code>, logarithmic needs about ten operations while quadratic needs a million.</p>
+
+        <div class="plotter" id="plotterWidget">
+          <div class="plotter-head">
+            <div>
+              <div class="pt">Growth plotter</div>
+              <div class="ps">operations required vs. input size</div>
+            </div>
+            <div class="scale-toggle" id="scaleToggle">
+              <button data-scale="linear" class="on">linear y</button>
+              <button data-scale="log">log y</button>
+            </div>
+          </div>
+          <div class="plot-grid">
+            <div class="plot-canvas-cell">
+              <svg id="plotSvg" viewBox="0 0 460 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Interactive plot of complexity curves"></svg>
+            </div>
+            <div class="plot-side">
+              <div class="ctl-row">
+                <span class="ctl-label">input size n</span>
+                <span class="n-display"><span id="nVal">32</span><small> elements</small></span>
+              </div>
+              <input type="range" id="nSlider" min="1" max="64" value="32" step="1" aria-label="Input size n">
+              <div class="ctl-label" style="margin-top:4px">operations at this n &nbsp;<span style="color:var(--ink-faint)">(tap a row to hide its curve)</span></div>
+              <div class="readout" id="readout"></div>
+            </div>
+          </div>
+          <div class="plot-foot" id="plotFoot">at n = 32 · the gap between the best and worst class is already astronomical</div>
+        </div>
+
+        <div class="note key">
+          <div class="nh">The intuition to keep</div>
+          <p>On a <em>linear</em> axis, exponential and factorial shoot off the top almost immediately and flatten everything else against the floor — that visual <em>is</em> the lesson: those classes are in a different universe. Switch to a <em>log</em> axis and every class becomes a straight-ish line whose <strong>slope</strong> is its complexity. Steeper slope, worse scaling. This is exactly how engineers eyeball benchmark plots.</p>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Check yourself</div>
+          <p>An algorithm performs <span class="bigo">3n² + 200n + 5000</span> operations. What is its Big O, and roughly at what input size does the <span class="bigo">n²</span> term overtake the <span class="bigo">200n</span> term?</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p>The Big O is <span class="bigo">O(n²)</span> — drop the constant factor 3, and discard the lower-order <span class="bigo">200n</span> and <span class="bigo">5000</span> terms.</p>
+              <p>The <span class="bigo">n²</span> term overtakes <span class="bigo">200n</span> when <code class="tok">3n² &gt; 200n</code>, i.e. <code class="tok">n &gt; 200/3 ≈ 67</code>. Below that, the linear term actually dominates the real work — a concrete reminder that Big O describes <em>large-n</em> behaviour, and that for small inputs the "lower-order" terms and constants can be the ones that matter.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 03</span></div>
+          <h2>Reading code for complexity</h2>
+        </div>
+
+        <p>Now we turn intuition into a repeatable procedure. Given an arbitrary block of code, you should be able to read off its complexity with confidence. There are only a few combination rules, and everything else is applying them carefully.</p>
+
+        <h3>Rule 1 — Sequential code adds</h3>
+        <p>Two blocks that run one after the other have their costs <em>added</em>, and then the dominant term wins:</p>
+        <pre><span class="tag">python</span><span class="kw">for</span> x <span class="kw">in</span> nums:        <span class="cmt"># O(n)</span>
+    process(x)
+<span class="kw">for</span> i <span class="kw">in</span> nums:        <span class="cmt"># O(n²)</span>
+    <span class="kw">for</span> j <span class="kw">in</span> nums:
+        compare(i, j)
+<span class="cmt"># total: O(n) + O(n²) = O(n²)</span></pre>
+        <p>The first loop is real work, but it's swamped by the second. <span class="bigo">O(n) + O(n²)</span> collapses to <span class="bigo">O(n²)</span>.</p>
+
+        <h3>Rule 2 — Nested code multiplies</h3>
+        <p>When one loop runs <em>inside</em> another, multiply their counts. A loop of <code class="tok">n</code> wrapping a loop of <code class="tok">m</code> is <span class="bigo">O(n·m)</span>. If both are <code class="tok">n</code>, that's <span class="bigo">O(n²)</span>; three deep is <span class="bigo">O(n³)</span>.</p>
+
+        <h3>Rule 3 — Independent inputs stay separate</h3>
+        <p>If two loops range over <em>different</em> inputs, keep both variables — don't collapse them:</p>
+        <pre><span class="tag">python</span><span class="kw">def</span> <span class="fn">merge_reports</span>(users, orders):
+    <span class="kw">for</span> u <span class="kw">in</span> users:      <span class="cmt"># a = len(users)</span>
+        index(u)
+    <span class="kw">for</span> o <span class="kw">in</span> orders:     <span class="cmt"># b = len(orders)</span>
+        index(o)
+    <span class="cmt"># O(a + b) — NOT O(n). They grow independently.</span></pre>
+        <div class="note warn">
+          <div class="nh">A common and costly mistake</div>
+          <p>Calling both inputs "n" when they're independent hides real behaviour. If you process every user against every order, that's <span class="bigo">O(a·b)</span> — and if one is small and one is huge, knowing <em>which</em> drives the product is the difference between a fast feature and an outage.</p>
+        </div>
+
+        <h3>Rule 4 — A loop isn't always O(n): look at how the index moves</h3>
+        <p>The number of iterations depends entirely on how the loop variable changes. When it grows <em>multiplicatively</em>, you get a logarithm:</p>
+        <pre><span class="tag">python</span>i <span class="op">=</span> <span class="num">1</span>
+<span class="kw">while</span> i &lt; n:
+    do_work()
+    i <span class="op">*=</span> <span class="num">2</span>          <span class="cmt"># 1, 2, 4, 8, ... doubles each time</span>
+<span class="cmt"># reaches n after log₂(n) steps  →  O(log n)</span></pre>
+        <p>Why log? If you double from 1 and want to reach <code class="tok">n</code>, you need the number of doublings <code class="tok">k</code> such that <code class="tok">2ᵏ ≥ n</code>, which is <code class="tok">k ≥ log₂ n</code>. Halving a search space each step (binary search) has the identical structure for the identical reason.</p>
+
+        <div class="note">
+          <div class="nh">The base of the log is irrelevant in Big O</div>
+          <p>Whether you halve, third, or tenth the space each step, the result is <span class="bigo">O(log n)</span> — different log bases differ only by a constant factor (<code class="tok">log₂ n = log₁₀ n / log₁₀ 2</code>), and constant factors are dropped. That's why nobody writes the base.</p>
+        </div>
+
+        <h3>The subtle one — when nested loops are NOT n²</h3>
+        <p>This is where careful counting pays off. Look closely at the inner bound:</p>
+        <pre><span class="tag">python</span><span class="kw">for</span> i <span class="kw">in</span> range(n):       <span class="cmt"># outer: n times</span>
+    <span class="kw">for</span> j <span class="kw">in</span> range(i):   <span class="cmt"># inner: depends on i, not n!</span>
+        do_work()</pre>
+        <p>The inner loop runs 0 times, then 1, then 2, … up to n−1. The total is <code class="tok">0 + 1 + 2 + … + (n−1) = n(n−1)/2</code>. That has an <span class="bigo">n²</span> term, so it <em>is</em> <span class="bigo">O(n²)</span> — but notice you only learned that by summing the series, not by assuming "two nested loops means n²". The habit of actually counting is what separates reliable analysis from guessing.</p>
+
+        <div class="practice">
+          <div class="ph">Check yourself</div>
+          <p>What is the time complexity of this function?</p>
+          <pre style="margin-bottom:0"><span class="tag">python</span><span class="kw">def</span> <span class="fn">mystery</span>(n):
+    count <span class="op">=</span> <span class="num">0</span>
+    i <span class="op">=</span> n
+    <span class="kw">while</span> i &gt; <span class="num">1</span>:
+        <span class="kw">for</span> j <span class="kw">in</span> range(n):
+            count <span class="op">+=</span> <span class="num">1</span>
+        i <span class="op">=</span> i <span class="op">//</span> <span class="num">2</span>
+    <span class="kw">return</span> count</pre>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p><span class="bigo">O(n log n)</span>. The outer <code class="tok">while</code> halves <code class="tok">i</code> each pass, so it runs <span class="bigo">log n</span> times. The inner <code class="tok">for</code> runs <code class="tok">n</code> times on every pass. Nested, so multiply: <code class="tok">n × log n</code>.</p>
+              <p>This is the structure of an <span class="bigo">O(n log n)</span> algorithm in miniature — a linear amount of work repeated a logarithmic number of times. Recognising that shape will serve you well when we reach sorting.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div>
+          <h2>The formal definitions</h2>
+        </div>
+
+        <p>So far Big O has meant "the dominant term, constants dropped". That's the right working intuition, but the precise definition is what lets you reason rigorously and, crucially, understand why <span class="bigo">O</span>, <span class="bigo">Ω</span>, and <span class="bigo">Θ</span> are <em>three different things</em> that people routinely confuse.</p>
+
+        <h3>Big O — an upper bound</h3>
+        <div class="defcard">
+          <div class="dh">Definition · Big O</div>
+          <p style="margin-bottom:0"><span class="bigo">f(n) = O(g(n))</span> means there exist positive constants <code class="tok">c</code> and <code class="tok">n₀</code> such that:</p>
+          <div class="formula">0 ≤ f(n) ≤ c · g(n)   for all n ≥ n₀</div>
+          <p style="margin-bottom:0">In words: beyond some point <code class="tok">n₀</code>, <code class="tok">f</code> never exceeds <code class="tok">g</code> scaled by some constant. <span class="bigo">g</span> is a <strong>ceiling on the growth rate</strong>.</p>
+        </div>
+        <p>The two escape hatches — "some constant <code class="tok">c</code>" and "beyond some point <code class="tok">n₀</code>" — are precisely what formalise our two rules. The constant <code class="tok">c</code> is why constant factors don't matter. The threshold <code class="tok">n₀</code> is why lower-order terms don't matter: they only ever win for small <code class="tok">n</code>, and we're allowed to ignore small <code class="tok">n</code>.</p>
+
+        <h3>Big Omega and Big Theta — the other two bounds</h3>
+        <p>Big O alone only bounds from above. Two siblings complete the picture:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Notation</th><th>Bound</th><th>Means</th><th>Loose analogy</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">O(g)</td><td>Upper</td><td>grows no faster than g</td><td>≤</td></tr>
+              <tr><td class="mono">Ω(g)</td><td>Lower</td><td>grows no slower than g</td><td>≥</td></tr>
+              <tr><td class="mono">Θ(g)</td><td>Tight</td><td>grows exactly like g (both bounds)</td><td>=</td></tr>
+              <tr><td class="mono">o(g)</td><td>Strict upper</td><td>grows strictly slower than g</td><td>&lt;</td></tr>
+              <tr><td class="mono">ω(g)</td><td>Strict lower</td><td>grows strictly faster than g</td><td>&gt;</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span class="bigo">f(n) = Θ(g(n))</span> exactly when <code class="tok">f</code> is both <span class="bigo">O(g)</span> and <span class="bigo">Ω(g)</span>. Theta is the strongest, most informative claim: it pins the growth rate from both sides. When you can prove Theta, say Theta — it tells the reader far more than Big O does.</p>
+
+        <div class="note warn">
+          <div class="nh">The misuse everyone commits</div>
+          <p>In casual conversation people say "Big O" when they mean "Big Theta". Saying merge sort "is <span class="bigo">O(n log n)</span>" is technically a weaker statement than the truth — it's also, trivially, <span class="bigo">O(n²)</span> and <span class="bigo">O(2ⁿ)</span>, because Big O is only a ceiling. What people usually <em>mean</em> is <span class="bigo">Θ(n log n)</span>: that's its actual growth rate. The habit is so universal it's mostly harmless, but knowing the distinction is what makes you precise when precision matters.</p>
+        </div>
+
+        <h3>The distinction that actually trips up engineers: cases vs bounds</h3>
+        <p>Here is the single most important clarification in this module, and the one most people get subtly wrong. <strong>"Best / worst / average case" and "O / Ω / Θ" are completely independent ideas.</strong> They answer different questions:</p>
+        <ul>
+          <li><strong>Case</strong> selects <em>which input scenario</em> you're analysing — the luckiest input, the unluckiest, or the typical one. Each case is its own function of <code class="tok">n</code>.</li>
+          <li><strong>O / Ω / Θ</strong> describe <em>how you're bounding</em> whichever function you've chosen.</li>
+        </ul>
+        <p>So you can legitimately speak of the Big O of the best case, or the Big Theta of the worst case, and so on. They combine freely. Consider linear search for a target in an unsorted array:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Case</th><th>What happens</th><th>Tight bound</th></tr></thead>
+            <tbody>
+              <tr><td>Best</td><td>target is the first element</td><td class="mono">Θ(1)</td></tr>
+              <tr><td>Worst</td><td>target is last or absent — scan all</td><td class="mono">Θ(n)</td></tr>
+              <tr><td>Average</td><td>target equally likely anywhere → ~n/2 checks</td><td class="mono">Θ(n)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>When someone says linear search "is <span class="bigo">O(n)</span>" with no qualifier, the convention is that they mean the <strong>worst case</strong> — because that's the guarantee that matters for safety. But notice nothing forced that: the worst case has a best-case bound too (it's also <span class="bigo">Ω(n)</span>), and the best case is <span class="bigo">Θ(1)</span>. Keeping "which input" and "which bound" in separate mental boxes dissolves an enormous amount of confusion.</p>
+
+        <div class="practice">
+          <div class="ph">Check yourself</div>
+          <p>True or false: "Quicksort is <span class="bigo">O(n²)</span>." And separately: "Quicksort is <span class="bigo">O(n log n)</span>." Can both be defensible?</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p>Both can be defended because they describe different cases. Quicksort's <strong>worst case</strong> is <span class="bigo">Θ(n²)</span> (e.g. an already-sorted array with a naïve pivot), so "<span class="bigo">O(n²)</span>" is a true statement about the worst case. Its <strong>average / expected case</strong> is <span class="bigo">Θ(n log n)</span>, so "<span class="bigo">O(n log n)</span>" is a true statement about the typical case.</p>
+              <p>The lesson: an unqualified complexity claim is ambiguous until you state the case. Good engineers state it — "quicksort is <span class="bigo">O(n log n)</span> on average but <span class="bigo">O(n²)</span> in the worst case" — precisely because the bare number invites the confusion above.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div>
+          <h2>Space complexity</h2>
+        </div>
+
+        <p>Everything you've learned about counting operations applies identically to counting <em>memory</em>. Space complexity asks: as <code class="tok">n</code> grows, how does the amount of memory the algorithm needs grow? The same classes, the same rules, the same notation.</p>
+
+        <h3>Auxiliary space vs total space</h3>
+        <p>One distinction matters up front. <strong>Total space</strong> includes the input itself; <strong>auxiliary space</strong> is the extra memory the algorithm allocates beyond the input. Usually when people quote "space complexity" they mean auxiliary space, because the input is a fixed cost you're handed regardless of which algorithm you choose.</p>
+        <pre><span class="tag">python</span><span class="kw">def</span> <span class="fn">double_all</span>(nums):
+    result <span class="op">=</span> []           <span class="cmt"># grows to size n</span>
+    <span class="kw">for</span> x <span class="kw">in</span> nums:
+        result.append(x <span class="op">*</span> <span class="num">2</span>)
+    <span class="kw">return</span> result          <span class="cmt"># O(n) auxiliary space</span>
+
+<span class="kw">def</span> <span class="fn">double_in_place</span>(nums):
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(nums)):
+        nums[i] <span class="op">*=</span> <span class="num">2</span>       <span class="cmt"># reuses the input</span>
+    <span class="cmt"># O(1) auxiliary space — a few variables, regardless of n</span></pre>
+        <p>Both are <span class="bigo">O(n)</span> in time, but they differ in space: the first builds a new list of size <code class="tok">n</code>; the second mutates in place using only a counter. That gap is a textbook <strong>space–time tradeoff</strong> in reverse — here you save space at no time cost, but often you'll pay one resource to relieve the other.</p>
+
+        <h3>The sneaky source of space: the call stack</h3>
+        <p>Recursion costs memory even when you never explicitly allocate any. Every pending recursive call occupies a stack frame, and those frames pile up until the base case unwinds them. The <em>depth</em> of the recursion is your space cost.</p>
+        <pre><span class="tag">python</span><span class="kw">def</span> <span class="fn">sum_to</span>(n):
+    <span class="kw">if</span> n <span class="op">==</span> <span class="num">0</span>: <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> n <span class="op">+</span> <span class="fn">sum_to</span>(n <span class="op">-</span> <span class="num">1</span>)
+<span class="cmt"># O(n) TIME and O(n) SPACE — n stacked frames before any return</span></pre>
+        <p>This looks like it uses no memory, but it quietly holds <code class="tok">n</code> stack frames open simultaneously — which is why deep recursion can blow the stack on inputs an iterative version handles effortlessly. When analysing recursive code, always account for stack depth as space.</p>
+
+        <div class="note key">
+          <div class="nh">Contrast worth internalising</div>
+          <p>Merge sort is <span class="bigo">O(n log n)</span> time and <span class="bigo">O(n)</span> auxiliary space (it needs scratch arrays to merge). Heapsort is also <span class="bigo">O(n log n)</span> time but <span class="bigo">O(1)</span> auxiliary space (it sorts in place). Same time class, different space — and in a memory-constrained environment that difference decides which one you ship.</p>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Check yourself</div>
+          <p>What is the auxiliary space complexity of a recursive function that computes Fibonacci numbers by branching into <code class="tok">fib(n-1) + fib(n-2)</code>? (Hint: think about the <em>maximum depth</em> of the call stack at any one moment, not the total number of calls.)</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p><span class="bigo">O(n)</span> space, even though the <em>time</em> is <span class="bigo">O(2ⁿ)</span>. The key insight is that the call stack only holds the calls along <em>one</em> path from root to base case at any instant — the recursion explores the tree depth-first, so the deepest the stack ever gets is the height of the tree, which is <code class="tok">n</code>.</p>
+              <p>This is a beautiful example of time and space diverging: exponentially many calls happen <em>over time</em>, but they're never all alive <em>at once</em>. Counting peak simultaneous memory, not cumulative work, is the whole skill of space analysis.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 06</span></div>
+          <h2>Recursion &amp; the Master Theorem</h2>
+        </div>
+
+        <p>Recursive algorithms resist the loop-counting method, because the work is defined in terms of itself. The tool for them is a <strong>recurrence relation</strong>: an equation that expresses the cost on size <code class="tok">n</code> in terms of the cost on smaller sizes. Solving the recurrence gives the complexity.</p>
+
+        <h3>Writing a recurrence</h3>
+        <p>Take merge sort. On an input of size <code class="tok">n</code> it does three things: split into two halves, recursively sort each half, then merge the sorted halves in linear time. As a recurrence:</p>
+        <div class="defcard">
+          <div class="dh">Merge sort's recurrence</div>
+          <div class="formula">T(n) = 2 · T(n/2) + Θ(n)</div>
+          <p style="margin-bottom:0">Two subproblems (<code class="tok">2</code>), each half the size (<code class="tok">n/2</code>), plus linear merge work (<code class="tok">Θ(n)</code>). Read every divide-and-conquer recurrence this way: <em>how many</em> subproblems, <em>how much smaller</em>, and <em>how much work</em> to combine.</p>
+        </div>
+
+        <h3>The recursion-tree intuition</h3>
+        <p>Before any theorem, you can solve recurrences by drawing the tree of calls and summing the work level by level. For merge sort, every level does a total of <code class="tok">Θ(n)</code> work (the subproblems shrink but there are proportionally more of them), and there are <code class="tok">log₂ n</code> levels until the pieces are size 1:</p>
+
+        <div class="figbox">
+          <svg id="treeSvg" viewBox="0 0 660 326" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Recursion tree for merge sort showing n work per level across log n levels">
+          </svg>
+          <div class="figcap">each level totals Θ(n) work · there are log₂ n levels · total = Θ(n log n)</div>
+        </div>
+
+        <p>Work per level (<code class="tok">n</code>) multiplied by number of levels (<code class="tok">log n</code>) gives <span class="bigo">Θ(n log n)</span>. The recursion tree is the most intuitive way to see <em>why</em> the good sorts land where they do, and it works for any recurrence you can draw.</p>
+
+        <h3>The Master Theorem — a formula for the common shape</h3>
+        <p>Most divide-and-conquer recurrences fit one mould, and the Master Theorem solves that mould directly, no tree-drawing required. It applies to:</p>
+        <div class="defcard">
+          <div class="dh">Master Theorem form</div>
+          <div class="formula">T(n) = a · T(n/b) + f(n)     with a ≥ 1,  b &gt; 1</div>
+          <p>Here <code class="tok">a</code> is the number of subproblems, <code class="tok">b</code> is the factor each subproblem shrinks by, and <code class="tok">f(n)</code> is the work done outside the recursion (dividing and combining). Everything hinges on comparing <code class="tok">f(n)</code> against the special quantity <span class="bigo">n^(log_b a)</span> — the total cost of all the leaf-level work.</p>
+        </div>
+
+        <p>Compare <code class="tok">f(n)</code> with <span class="bigo">n^(log_b a)</span> and one of three cases applies:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Case</th><th>Condition</th><th>Result</th><th>Who wins</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td class="mono">f(n) = O(n^(log_b a − ε))</td><td class="mono">Θ(n^(log_b a))</td><td>leaves dominate</td></tr>
+              <tr><td>2</td><td class="mono">f(n) = Θ(n^(log_b a))</td><td class="mono">Θ(n^(log_b a) · log n)</td><td>balanced (tie)</td></tr>
+              <tr><td>3</td><td class="mono">f(n) = Ω(n^(log_b a + ε))</td><td class="mono">Θ(f(n))</td><td>root work dominates</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The idea behind the three cases is genuinely simple once named: either the bulk of the work is at the <em>bottom</em> of the tree (many tiny subproblems — case 1), spread <em>evenly</em> across all levels (case 2), or concentrated at the <em>top</em> in the divide/combine step (case 3). Case 3 carries a technical "regularity" side-condition (<code class="tok">a·f(n/b) ≤ c·f(n)</code> for some <code class="tok">c &lt; 1</code>), which essentially every natural <code class="tok">f</code> satisfies.</p>
+
+        <h4>Worked applications</h4>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Recurrence</th><th>a, b, f</th><th>Case → Result</th></tr></thead>
+            <tbody>
+              <tr><td>Merge sort</td><td class="mono">2T(n/2)+Θ(n)</td><td class="mono">n^log₂2 = n; f=n</td><td>2 → <b>Θ(n log n)</b></td></tr>
+              <tr><td>Binary search</td><td class="mono">T(n/2)+Θ(1)</td><td class="mono">n^log₂1 = 1; f=1</td><td>2 → <b>Θ(log n)</b></td></tr>
+              <tr><td>Naïve traversal</td><td class="mono">2T(n/2)+Θ(1)</td><td class="mono">n^log₂2 = n; f=1</td><td>1 → <b>Θ(n)</b></td></tr>
+              <tr><td>Karatsuba mult.</td><td class="mono">3T(n/2)+Θ(n)</td><td class="mono">n^log₂3 ≈ n^1.585</td><td>1 → <b>Θ(n^1.585)</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          <div class="nh">Scope check</div>
+          <p>The Master Theorem only covers recurrences of this exact divide-by-a-constant-factor form with equal subproblem sizes. Recurrences like <code class="tok">T(n) = T(n−1) + Θ(n)</code> (which gives <span class="bigo">Θ(n²)</span>) or unequal splits need the recursion-tree or substitution methods instead. Reach for the theorem when it fits, and fall back to drawing the tree when it doesn't.</p>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Check yourself</div>
+          <p>Use the Master Theorem on <span class="bigo">T(n) = 4T(n/2) + Θ(n)</span>. (This is the recurrence for naïve matrix multiplication's structure.)</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p>Here <code class="tok">a = 4</code>, <code class="tok">b = 2</code>, so the critical exponent is <code class="tok">log₂ 4 = 2</code>, giving <span class="bigo">n^(log_b a) = n²</span>. The combine work is <code class="tok">f(n) = Θ(n)</code>.</p>
+              <p>Since <code class="tok">n</code> grows strictly slower than <code class="tok">n²</code> (specifically <code class="tok">f(n) = O(n^(2−ε))</code> with <code class="tok">ε = 1</code>), we're in <strong>Case 1</strong>: the leaves dominate. The answer is <span class="bigo">Θ(n²)</span>. The recursion does so much branching that the work piles up at the bottom of the tree, and the linear combine step is negligible by comparison.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div>
+          <h2>Amortized analysis</h2>
+        </div>
+
+        <p>Some operations are usually cheap but occasionally expensive, and quoting the expensive case as their complexity badly overstates the real cost. <strong>Amortized analysis</strong> measures the average cost per operation across a worst-case <em>sequence</em>, capturing the truth that the rare expensive step is "paid for" by the many cheap ones around it.</p>
+
+        <div class="note warn">
+          <div class="nh">Amortized is NOT average-case</div>
+          <p>This distinction is essential. <strong>Average-case</strong> averages over a probability distribution of <em>inputs</em> and can be unlucky. <strong>Amortized</strong> averages over a <em>sequence of operations</em> and is a worst-case guarantee — it makes no assumption about randomness. An amortized <span class="bigo">O(1)</span> operation is genuinely cheap on average <em>no matter what</em>, not just on typical inputs.</p>
+        </div>
+
+        <h3>The canonical example: a growing array</h3>
+        <p>A dynamic array (Python's <code class="tok">list</code>, C++'s <code class="tok">vector</code>, Java's <code class="tok">ArrayList</code>) appends in <span class="bigo">O(1)</span> — usually. But when it runs out of capacity, it must allocate a bigger block and copy every existing element, an <span class="bigo">O(n)</span> operation. So how can we honestly call append "constant time"?</p>
+        <p>The trick is that implementations grow capacity <em>multiplicatively</em> — typically doubling. Because of that, the expensive copies happen exponentially rarely. Consider <code class="tok">n</code> appends starting from capacity 1:</p>
+        <ul>
+          <li>Resizes happen at sizes 1, 2, 4, 8, …, up to <code class="tok">n</code> — copying that many elements each time.</li>
+          <li>Total copying across <em>all</em> resizes is <code class="tok">1 + 2 + 4 + … + n &lt; 2n</code>. (A doubling geometric series sums to less than twice its last term.)</li>
+          <li>So <code class="tok">n</code> appends cost under <code class="tok">2n + n = O(n)</code> work in total — which is <span class="bigo">O(1)</span> <em>amortized</em> per append.</li>
+        </ul>
+
+        <div class="defcard">
+          <div class="dh">The geometric series that makes it work</div>
+          <div class="formula">1 + 2 + 4 + 8 + ⋯ + n  =  2n − 1  &lt;  2n  =  O(n)</div>
+          <p style="margin-bottom:0">The total cost of every resize combined is only linear, so spread across <code class="tok">n</code> appends each one pays a constant share. Had the array grown by a fixed <em>amount</em> each time instead of doubling, resizes would be frequent and the same analysis would give <span class="bigo">O(n)</span> amortized — disastrously worse. The multiplicative growth is the whole reason it works.</p>
+        </div>
+
+        <h3>Three lenses on the same truth</h3>
+        <p>There are three standard methods, and they always agree — they're different bookkeeping for the same fact:</p>
+        <ul>
+          <li><strong>Aggregate method.</strong> Bound the total cost of any sequence of <code class="tok">n</code> operations, then divide by <code class="tok">n</code>. (That's exactly what we did above.)</li>
+          <li><strong>Accounting method.</strong> "Overcharge" cheap operations and store the surplus as credit, then spend that credit to pay for expensive ones. Charge each append 3 units: 1 to insert, 2 saved to later fund a future copy. The credit never goes negative, so the true average is at most 3 = <span class="bigo">O(1)</span>.</li>
+          <li><strong>Potential method.</strong> Define a "potential" function on the data structure's state that rises during cheap operations and is released to pay for expensive ones. The most formal of the three, and the one used to analyse sophisticated structures like Fibonacci heaps and splay trees.</li>
+        </ul>
+
+        <div class="note key">
+          <div class="nh">Where this shows up in real life</div>
+          <p>Amortized bounds are why everyday operations you treat as free actually are: appending to a list, inserting into a hash table (which periodically rehashes everything), and incrementing a binary counter are all amortized <span class="bigo">O(1)</span> despite occasional expensive steps. When a data structure's docs promise "amortized constant time", this is the kind of reasoning behind it.</p>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Check yourself</div>
+          <p>Suppose a dynamic array grew by adding a fixed <strong>100 slots</strong> each time it filled, rather than doubling. What would the amortized cost of append become, and why is it so much worse?</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p>It degrades to <span class="bigo">O(n)</span> amortized. With fixed-increment growth, a resize happens every 100 appends, and the <code class="tok">k</code>-th resize copies about <code class="tok">100k</code> elements. Over <code class="tok">n</code> appends there are <code class="tok">n/100</code> resizes, and the copy costs form an <em>arithmetic</em> series: <code class="tok">100 + 200 + 300 + …</code>, which sums to <span class="bigo">Θ(n²)</span> total work. Divided across <code class="tok">n</code> appends, that's <span class="bigo">Θ(n)</span> each.</p>
+              <p>The contrast is the entire point of amortized analysis: doubling produces a <em>geometric</em> series (total <span class="bigo">O(n)</span>), fixed increments produce an <em>arithmetic</em> series (total <span class="bigo">O(n²)</span>). The growth <em>policy</em>, invisible in any single append, determines the amortized cost.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 08</span></div>
+          <h2>Algorithms &amp; data structures, by the numbers</h2>
+        </div>
+
+        <p>With the analysis toolkit complete, the payoff is fluency with the complexities of the building blocks you use every day — and, more importantly, <em>why</em> they are what they are. Memorising the tables is useful; understanding them is mastery.</p>
+
+        <h3>Common data structure operations</h3>
+        <p>These are the bounds you reason with when choosing a structure. Note how often the right choice trades one operation's speed for another's:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Structure</th><th>Access</th><th>Search</th><th>Insert</th><th>Delete</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr><td>Array (dynamic)</td><td class="mono">O(1)</td><td class="mono">O(n)</td><td class="mono">O(n)*</td><td class="mono">O(n)</td><td>*O(1) amortized at end</td></tr>
+              <tr><td>Linked list</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono">O(1)</td><td>O(1) given the node</td></tr>
+              <tr><td>Hash table</td><td>—</td><td class="mono">O(1)</td><td class="mono">O(1)</td><td class="mono">O(1)</td><td>expected; O(n) worst</td></tr>
+              <tr><td>Balanced BST</td><td>—</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td>keeps sorted order</td></tr>
+              <tr><td>Binary heap</td><td>—</td><td class="mono">O(n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td>O(1) peek min/max</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The story these numbers tell: hash tables buy <span class="bigo">O(1)</span> lookup but lose ordering and offer only <em>expected</em> guarantees; balanced trees keep order at a <span class="bigo">log n</span> price; arrays give instant indexed access but pay <span class="bigo">O(n)</span> to insert in the middle; linked lists invert that. There is no universally best structure — only the best fit for the operations you'll perform most.</p>
+
+        <h3>Sorting algorithms</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th></tr></thead>
+            <tbody>
+              <tr><td>Merge sort</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n log n)</td><td class="mono">O(n)</td><td>Yes</td></tr>
+              <tr><td>Quicksort</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n²)</td><td class="mono">O(log n)</td><td>No</td></tr>
+              <tr><td>Heapsort</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n log n)</td><td class="mono">O(1)</td><td>No</td></tr>
+              <tr><td>Insertion sort</td><td class="mono">Θ(n)</td><td class="mono">Θ(n²)</td><td class="mono">Θ(n²)</td><td class="mono">O(1)</td><td>Yes</td></tr>
+              <tr><td>Counting sort</td><td class="mono">Θ(n+k)</td><td class="mono">Θ(n+k)</td><td class="mono">Θ(n+k)</td><td class="mono">O(n+k)</td><td>Yes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <div class="nh">Reading the table like an expert</div>
+          <p>Quicksort's worst case is <span class="bigo">Θ(n²)</span>, yet it's the default sort in many libraries — because its <em>average</em> case has small constant factors and excellent cache behaviour, and random pivots make the worst case astronomically unlikely. Insertion sort is <span class="bigo">Θ(n²)</span> but beats the fancy sorts on tiny or nearly-sorted inputs, which is why real implementations switch to it for small subarrays. And counting sort's <span class="bigo">Θ(n+k)</span> beats the <span class="bigo">Ω(n log n)</span> comparison-sort barrier — by not comparing elements at all (more on that barrier next module). <strong>The complexity class is the start of the decision, not the end.</strong></p>
+        </div>
+
+        <h3>Graph algorithms</h3>
+        <p>Graphs are sized by two quantities — vertices <code class="tok">V</code> and edges <code class="tok">E</code> — and their complexities are expressed in both, a direct application of the "independent inputs stay separate" rule from Module 03:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Algorithm</th><th>Complexity</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>BFS / DFS</td><td class="mono">O(V + E)</td><td>traverse / reachability</td></tr>
+              <tr><td>Dijkstra (binary heap)</td><td class="mono">O((V + E) log V)</td><td>shortest paths, non-negative weights</td></tr>
+              <tr><td>Bellman–Ford</td><td class="mono">O(V · E)</td><td>shortest paths, negative weights allowed</td></tr>
+              <tr><td>Floyd–Warshall</td><td class="mono">O(V³)</td><td>all-pairs shortest paths</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Traversal visiting every vertex and every edge exactly once is the origin of the ubiquitous <span class="bigo">O(V + E)</span> — perhaps the most important complexity in all of graph work. Everything more sophisticated builds on it.</p>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 09</span></div>
+          <h2>Lower bounds, P vs NP &amp; the gap with reality</h2>
+        </div>
+
+        <p>Expert-level complexity is about three deeper questions: not just how fast a given algorithm is, but how fast <em>any possible</em> algorithm could be (lower bounds), which problems are fundamentally hard (complexity classes), and where the clean theory diverges from the messy machine (practical reality).</p>
+
+        <h3>Lower bounds — proving you can't do better</h3>
+        <p>Big O describes an algorithm. A <strong>lower bound</strong> describes a <em>problem</em>: the minimum work any correct algorithm must do, no matter how clever. The most famous result of this kind is that comparison-based sorting cannot beat <span class="bigo">Ω(n log n)</span>.</p>
+        <div class="defcard">
+          <div class="dh">Why comparison sorting needs Ω(n log n)</div>
+          <p>Any sort that works only by comparing pairs of elements can be modelled as a decision tree: each internal node is a comparison, each leaf is one possible ordering of the input. To sort correctly, the tree must have a distinct leaf for every one of the <code class="tok">n!</code> possible permutations.</p>
+          <div class="formula">tree height ≥ log₂(n!) = Θ(n log n)</div>
+          <p style="margin-bottom:0">A binary tree with <code class="tok">n!</code> leaves must be at least <code class="tok">log₂(n!)</code> deep, and the height is the worst-case number of comparisons. Since <code class="tok">log₂(n!) = Θ(n log n)</code> (by Stirling's approximation), no comparison sort can do better. This is why merge sort and heapsort are, in a precise sense, <em>optimal</em> — and why counting sort can only beat the bound by abandoning comparisons entirely.</p>
+        </div>
+        <p>When an algorithm's upper bound matches the problem's lower bound, the algorithm is asymptotically optimal — you have provably hit the floor. Recognising that ceiling-meets-floor moment is a hallmark of mature analysis.</p>
+
+        <h3>P, NP, and NP-completeness — done correctly</h3>
+        <p>This is the most misunderstood topic in all of complexity, so precision matters. These classes concern <em>decision problems</em> (yes/no questions) and how they scale:</p>
+        <ul>
+          <li><strong>P</strong> — problems <em>solvable</em> in polynomial time (<span class="bigo">O(n^k)</span> for some constant <code class="tok">k</code>). These are the tractable problems.</li>
+          <li><strong>NP</strong> — problems whose proposed solutions can be <em>verified</em> in polynomial time. <strong>NP does not stand for "non-polynomial"</strong> — a near-universal error. It stands for <em>nondeterministic polynomial</em>: solvable in polynomial time by a hypothetical machine that can explore all options at once, which is equivalent to "a correct answer can be checked quickly".</li>
+          <li><strong>NP-complete</strong> — the hardest problems in NP, with a remarkable property: if any single one had a polynomial-time algorithm, <em>all</em> of NP would, and P would equal NP. Examples include boolean satisfiability (SAT), the travelling salesman decision problem, and graph colouring.</li>
+          <li><strong>NP-hard</strong> — at least as hard as the hardest NP problems, but not necessarily in NP themselves (they may not even be decision problems).</li>
+        </ul>
+        <div class="note key">
+          <div class="nh">The million-dollar question</div>
+          <p>Every problem in P is in NP (if you can solve it quickly, you can certainly verify it quickly). Whether the reverse holds — <strong>does P = NP?</strong> — is the most important open problem in computer science and one of the Clay Millennium Prize Problems. Almost everyone believes P ≠ NP (that some problems are fundamentally harder to solve than to check), but no one has proved it. If it were false, modern cryptography, which relies on certain problems being hard to solve, would collapse.</p>
+        </div>
+
+        <h3>Pseudo-polynomial time — a subtle trap</h3>
+        <p>The dynamic-programming solution to the knapsack problem runs in <span class="bigo">O(n·W)</span> time, where <code class="tok">W</code> is the capacity. That looks polynomial — but it's <strong>pseudo-polynomial</strong>, and the distinction is genuinely expert territory. Complexity is measured against the <em>size of the input in bits</em>, and a number <code class="tok">W</code> takes only <code class="tok">log W</code> bits to write down. So <code class="tok">W</code> is exponential in its own bit-length, making the algorithm exponential in the true input size. Knapsack is NP-complete, and this is exactly why <span class="bigo">O(n·W)</span> doesn't contradict that.</p>
+
+        <h3>The gap between Big O and the stopwatch</h3>
+        <p>Asymptotic analysis is indispensable, but treating it as the whole story is itself a kind of mistake. Several realities live in the constants and lower-order terms that Big O discards on purpose:</p>
+        <ul>
+          <li><strong>Constants are real.</strong> An <span class="bigo">O(n)</span> algorithm with a huge constant can lose to an <span class="bigo">O(n log n)</span> one across the entire range of inputs you'll ever see. Big O tells you who wins <em>eventually</em>; "eventually" might be larger than any input you'll encounter.</li>
+          <li><strong>Memory hierarchy matters enormously.</strong> Two <span class="bigo">O(n)</span> algorithms can differ by 10× because one streams through memory cache-friendly and the other jumps around. This is why a contiguous array often crushes a linked list in practice despite identical Big O — the constant hidden in "one memory access" varies by orders of magnitude depending on caching.</li>
+          <li><strong>The crossover point.</strong> A "worse" complexity can be the right choice below some input threshold — exactly why production sorts use insertion sort for small subarrays. Mastery means knowing <em>where</em> the asymptotically better algorithm actually overtakes the simpler one.</li>
+        </ul>
+        <div class="note">
+          <div class="nh">Holding both truths at once</div>
+          <p>Big O is the correct tool for the question "how will this scale?" and a misleading one for "which is faster on my actual data?" Experts use asymptotic analysis to <em>rule out</em> algorithms that won't scale, and benchmarking to <em>choose</em> among those that will. Neither replaces the other.</p>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head">
+          <div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div>
+          <h2>Putting it together</h2>
+        </div>
+
+        <p>You now have every piece. This final module consolidates them into a repeatable method, names the misconceptions that survive even in experienced engineers, and leaves you with graduated problems to cement the skill.</p>
+
+        <h3>A framework for analysing any code</h3>
+        <ol>
+          <li><strong>Identify <code class="tok">n</code>.</strong> What grows? If several things grow independently, name them all (<code class="tok">n</code>, <code class="tok">m</code>, <code class="tok">V</code>, <code class="tok">E</code>).</li>
+          <li><strong>Find the dominant structure.</strong> Locate the loops and recursion. Apply the rules: sequential adds, nested multiplies, independent inputs stay separate.</li>
+          <li><strong>Watch how indices move.</strong> Multiplicative steps give logs; additive steps give linear. Don't assume a loop runs <code class="tok">n</code> times — verify it.</li>
+          <li><strong>Look beneath each line.</strong> Account for hidden costs — a membership test on a list, a sort inside a loop, a string concatenation that copies.</li>
+          <li><strong>For recursion, write the recurrence</strong> and solve it (Master Theorem if it fits, recursion tree otherwise). Don't forget stack depth as space.</li>
+          <li><strong>State the case.</strong> Is this best, worst, or average? Default to worst case unless told otherwise, and say which you mean.</li>
+          <li><strong>Check for amortization.</strong> If a rare operation is expensive but cheap-on-average over a sequence, the amortized bound is the honest one.</li>
+          <li><strong>Sanity-check against reality.</strong> Does the Big O match what you'd observe? Remember constants and caching for the final practical call.</li>
+        </ol>
+
+        <h3>Misconceptions that survive to senior level</h3>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Big O measures speed</div><div class="truth">It measures <b>growth rate</b>, not absolute time. An O(n²) algorithm can be faster than an O(n) one on real inputs.</div></div>
+          <div class="mc"><div class="myth">Lower-order terms never matter</div><div class="truth">They dominate at <b>small n</b>. Big O is an asymptotic claim about large inputs only.</div></div>
+          <div class="mc"><div class="myth">Worst case = Big O</div><div class="truth">Case and bound are <b>independent</b>. You can take the Big O of any case; people just default to worst case.</div></div>
+          <div class="mc"><div class="myth">Amortized means average-case</div><div class="truth">Amortized is a <b>worst-case</b> guarantee over a sequence, with no probability assumptions.</div></div>
+          <div class="mc"><div class="myth">NP means non-polynomial</div><div class="truth">It means <b>nondeterministic polynomial</b> — verifiable quickly. P ⊆ NP.</div></div>
+          <div class="mc"><div class="truth" style="color:var(--c-quad);font-weight:600">O(2n), O(n+5), O(n/2)</div><div class="truth">All of these are just <b>O(n)</b>. Constants and lower-order terms are always dropped.</div></div>
+        </div>
+
+        <h3>Capstone problems</h3>
+        <p>Work these without revealing the answer first. If you can reason through all four, you have the analysis skill this course set out to build.</p>
+
+        <div class="practice">
+          <div class="ph">Problem 1 · warm-up</div>
+          <p>What is the time complexity of checking whether two strings of length <code class="tok">n</code> are anagrams, if you do it by sorting both and comparing?</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p><span class="bigo">O(n log n)</span> — dominated by sorting the two strings (each <span class="bigo">O(n log n)</span>); the final comparison is only <span class="bigo">O(n)</span>, so the sorts win. As a bonus: a counting-based approach (tally character frequencies, then compare tallies) does it in <span class="bigo">O(n)</span> time, beating the sort by avoiding comparisons — the same trick that lets counting sort beat the <span class="bigo">Ω(n log n)</span> barrier.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Problem 2 · hidden cost</div>
+          <p>A developer builds a string by concatenating <code class="tok">n</code> single characters in a loop: <code class="tok">s = s + c</code> each iteration, in a language where strings are immutable. They expect <span class="bigo">O(n)</span>. What's the real complexity, and why?</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p><span class="bigo">O(n²)</span>. Because strings are immutable, each <code class="tok">s = s + c</code> builds a brand-new string by copying all characters accumulated so far. The copies cost <code class="tok">1 + 2 + 3 + … + n = n(n−1)/2 = Θ(n²)</code>. This is the Module 03 "look beneath each line" lesson and the Module 07 arithmetic-series pattern combined — the innocent-looking <code class="tok">+</code> hides a linear copy, turning a loop into quadratic work. The fix is a mutable builder or joining a list, restoring <span class="bigo">O(n)</span>.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Problem 3 · recurrence</div>
+          <p>An algorithm splits its input into three pieces of one-third size, recurses on all three, and does <span class="bigo">Θ(n²)</span> work to combine. Give its complexity.</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p>The recurrence is <span class="bigo">T(n) = 3T(n/3) + Θ(n²)</span>, so <code class="tok">a = 3</code>, <code class="tok">b = 3</code>, and <code class="tok">n^(log_b a) = n^(log₃3) = n¹ = n</code>. The combine work <code class="tok">f(n) = Θ(n²)</code> grows strictly faster than <code class="tok">n</code> (<code class="tok">f(n) = Ω(n^(1+ε))</code>), so this is <strong>Master Theorem Case 3</strong>: the root work dominates. The answer is <span class="bigo">Θ(n²)</span>. The expensive combine step at the top of the tree swamps everything below it.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Problem 4 · the full picture</div>
+          <p>You must repeatedly look up items by key and also frequently retrieve them in sorted order. A colleague proposes a hash table for its <span class="bigo">O(1)</span> lookups. What's the catch, and what would you actually choose?</p>
+          <details class="sol"><summary><span class="arr">▶</span> Reveal answer</summary>
+            <div class="sol-body">
+              <p>The catch is that a hash table has no order — retrieving items sorted requires extracting all <code class="tok">n</code> keys and sorting them, an <span class="bigo">O(n log n)</span> operation <em>every time</em> you need sorted output. If sorted retrieval is frequent, that swamps the <span class="bigo">O(1)</span> lookups.</p>
+              <p>A <strong>balanced binary search tree</strong> gives <span class="bigo">O(log n)</span> lookups (slightly worse than the hash table) but maintains sorted order intrinsically, so in-order retrieval is <span class="bigo">O(n)</span> with no sort needed. Which wins depends on the <em>ratio</em> of lookups to sorted retrievals — and reasoning about that tradeoff, rather than reflexively reaching for the lowest single-operation complexity, is exactly the judgement this whole course was building toward.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="closing">
+          <h2>You can read growth now.</h2>
+          <p>You started with two programs that behaved differently for reasons that felt invisible. You can now look at code you've never run and predict how it scales, prove when an algorithm is optimal, recognise the traps that fool senior engineers, and know when the clean theory yields to the messy machine.</p>
+          <p style="color:var(--ink-muted);font-size:.95rem;margin-top:18px">Mastery from here is repetition: analyse the complexity of everything you write and read, until it becomes the silent background sense it's meant to be.</p>
+        </div>
+
+        <div class="foot-rule">THE GROWTH LAB · a complete course in algorithmic complexity · O(1) → O(n!) and everything between</div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/mastering-big-o-complexity.js"></script>
+</body>
+</html>

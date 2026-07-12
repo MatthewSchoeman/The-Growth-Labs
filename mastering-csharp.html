@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering C# · The Growth Lab</title>
+<meta name="description" content="An interactive course taking you from your first C# program to intermediate fluency — types, classes, generics, LINQ, null safety, and async — the on-ramp to ASP.NET and Entity Framework.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-csharp.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.6 7.7 A5.6 5.6 0 1 0 14.6 16.3" stroke="#A78BFA" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+        <path d="M15.4 8.2 L14.1 16" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M18.7 8.2 L17.4 16" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M13.5 10.8 L19.2 10.8" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M12.9 13.4 L18.6 13.4" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>C# Fundamentals</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.6 7.7 A5.6 5.6 0 1 0 14.6 16.3" stroke="#A78BFA" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+            <path d="M15.4 8.2 L14.1 16" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M18.7 8.2 L17.4 16" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M13.5 10.8 L19.2 10.8" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M12.9 13.4 L18.6 13.4" stroke="#56C7FF" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>C# Fundamentals</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Hello, C# &amp; .NET</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Types, variables &amp; values</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Control flow &amp; methods</span></a>
+      <div class="nav-group-label">Objects · Beginner → Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Classes &amp; objects</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Inheritance &amp; interfaces</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Collections &amp; generics</span></a>
+      <div class="nav-group-label">Working with Data · Intermediate</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>LINQ</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Exceptions &amp; handling</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Null safety</span></a>
+      <div class="nav-group-label">Modern C# · Intermediate</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Delegates &amp; lambdas</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Async &amp; await</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Putting it together</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Intermediate</div>
+        <h1>The compiler<br><span class="grad">has your back.</span></h1>
+        <p class="lede">C# is statically typed, thoroughly object-oriented, and runs on the managed .NET runtime. Its whole character — a rich <strong>type system</strong>, generics, null safety, LINQ, and async/await — exists to catch mistakes <em>before</em> your code runs and to let you say exactly what you mean. This course takes you from your first program to writing idiomatic, intermediate C#, revisiting ideas from across the series in their C# form — and setting up the road to <strong>ASP.NET</strong> and <strong>Entity Framework</strong>.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="An idiomatic C# snippet: a record type, a generic list, and a typed LINQ query, with the language's pillars annotated"></svg>
+          <div class="hero-cap"><span style="color:var(--type)">strong types</span> · <span style="color:var(--oop)">objects</span> · <span style="color:var(--gen)">generics</span> · <span style="color:var(--linq)">LINQ over anything</span> · <span style="color:var(--asyncc)">async without the mess</span></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Write your first C# →</a>
+          <a class="btn btn-ghost" href="#m6">Jump to LINQ</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>Hello, C# &amp; .NET</h2></div>
+        <p><strong>C#</strong> is a statically typed, object-oriented language created by Microsoft and now thoroughly cross-platform and open-source. <strong>.NET</strong> is the platform it runs on — the runtime that executes your code, plus an enormous standard library. The two are often spoken of together, but they're distinct: C# is the <em>language</em> you write, .NET is the <em>engine and toolbox</em> it runs against. The same .NET also runs F# and Visual Basic.</p>
+        <p>When you build, the C# compiler turns your source into a portable <strong>intermediate language</strong> (IL), which the runtime compiles to native machine code <em>just in time</em> as the program runs. Two ideas matter from day one. First, C# is <strong>compiled and type-checked</strong> before it ever executes — whole categories of mistakes are caught at build time, not in production. Second, it's <strong>managed</strong>: a garbage collector handles memory for you, so there's no manual <code class="tok">free</code> (though, as the series' bits course showed, knowing what's underneath still pays off).</p>
+        <p>Here's a complete modern C# program. Recent versions allow <strong>top-level statements</strong>, so the ceremony of a class and a <code class="tok">Main</code> method is optional for simple cases:</p>
+        <pre><span class="tag">Program.cs</span><span class="kw2">var</span> name = <span class="str">"world"</span>;
+<span class="typ">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Hello, {name}!"</span>);   <span class="cmt">// $ = string interpolation</span>
+
+<span class="kw2">int</span> a = <span class="num">7</span>, b = <span class="num">5</span>;
+<span class="typ">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"{a} + {b} = {a + b}"</span>);    <span class="cmt">// Hello, world!  /  7 + 5 = 12</span></pre>
+        <p>That <code class="tok">$"..."</code> is an <strong>interpolated string</strong> — expressions inside <code class="tok">{}</code> are evaluated and spliced in, type-checked like everything else. Try misspelling a type or passing the wrong kind of value and the program won't compile; the error arrives at your desk, not your users'. That's the promise this whole course builds on: <strong>the compiler is on your side.</strong></p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">C# only runs on Windows.</div><div class="truth">Not since .NET Core. Modern C# runs on <b>Windows, Linux, and macOS</b>, in containers and the cloud, and compiles to WebAssembly for the browser. The Windows-only era ended years ago — it's now a mainstream cross-platform language.</div></div>
+          <div class="mc"><div class="myth">C# and .NET are the same thing.</div><div class="truth">C# is the <b>language</b>; .NET is the <b>runtime and library</b> it executes on. You write C#, it compiles to IL, and .NET runs that IL. The distinction matters because the same .NET hosts other languages, and .NET versions evolve independently of C# versions.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--type);border-color:rgba(167,139,250,.4);background:var(--type-soft)">Types</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Types, variables &amp; values</h2></div>
+        <p>Every variable in C# has a <strong>type known at compile time</strong>, and that type is a contract the compiler enforces on every use. You can write the type explicitly or let the compiler infer it with <code class="tok">var</code> — but make no mistake, <code class="tok">var</code> is still fully static. <code class="tok">var n = 5;</code> makes <code class="tok">n</code> an <code class="tok">int</code> forever, not a dynamic free-for-all.</p>
+        <pre><span class="tag">c#</span><span class="kw2">int</span> count = <span class="num">42</span>;            <span class="cmt">// 32-bit integer</span>
+<span class="kw2">double</span> price = <span class="num">9.99</span>;       <span class="cmt">// 64-bit float — fine for math</span>
+<span class="kw2">decimal</span> total = <span class="num">9.99m</span>;     <span class="cmt">// exact base-10 — use this for money</span>
+<span class="kw2">bool</span> ok = <span class="kw">true</span>;
+<span class="kw2">string</span> who = <span class="str">"Ada"</span>;
+<span class="kw2">var</span> list = <span class="kw">new</span> <span class="typ">List&lt;int&gt;</span>();  <span class="cmt">// inferred as List&lt;int&gt; — still static</span></pre>
+        <p>The deepest divide in C#'s type system is <strong>value types versus reference types</strong>. A <span class="concept type">value type</span> (the numbers, <code class="tok">bool</code>, <code class="tok">char</code>, and any <code class="tok">struct</code>) holds its data <em>directly</em> in the variable's box. A <span class="concept oop">reference type</span> (<code class="tok">class</code> objects, arrays, and <code class="tok">string</code>) holds a <em>reference</em> — an address pointing to the data, which lives on the heap. This single distinction decides what happens when you copy or pass a variable.</p>
+        <div class="xref"><span class="xi">↳ Bits course</span><div>This is exactly the <b>value-vs-reference</b> and <b>stack-vs-heap</b> story from <i>Bits, Pointers &amp; Overflow</i>, now wearing C# syntax. A <code class="tok">struct</code> is a value living in its own box; a <code class="tok">class</code> is a reference to a box on the heap. C# just makes the choice explicit in how you declare the type.</div></div>
+        <p>Assign or pass a <strong>value type</strong> and you get an independent <strong>copy</strong>; the original is untouched by later changes. Assign or pass a <strong>reference type</strong> and you copy the <em>reference</em> — both variables now point at the <em>same</em> object, so a change through one is visible through the other. Below, the same <code class="tok">b = a; a.X = 99;</code> behaves completely differently depending on whether <code class="tok">Point</code> is a <code class="tok">struct</code> or a <code class="tok">class</code>:</p>
+        <div class="lab" id="valLab">
+          <div class="lab-head"><div><div class="pt">struct vs class</div><div class="ps">value types copy · reference types share</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-vk="struct">struct Point</button>
+              <button class="ds-btn" data-vk="class">class Point</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="vt-row" id="valBoxes"></div>
+            <div class="vt-arrow" id="valArrow"></div>
+            <div class="ds-controls" style="justify-content:center;margin-top:16px">
+              <button class="ds-btn" id="valAssign">Point b = a;</button>
+              <button class="ds-btn primary" id="valMutate">a.X = 99;</button>
+              <button class="ds-btn" id="valReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-foot" id="valFoot">A struct copies its data; a class copies only the reference to shared data.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth"><code class="tok">var</code> makes a variable dynamic, like in JavaScript.</div><div class="truth"><code class="tok">var</code> is pure <b>type inference</b> — the compiler picks the exact static type from the right-hand side and locks it in. <code class="tok">var x = 5</code> is identical to <code class="tok">int x = 5</code>. For genuinely dynamic typing you'd opt in with the separate <code class="tok">dynamic</code> keyword, which is rarely needed.</div></div>
+          <div class="mc"><div class="myth">Strings are value types because they feel like simple values.</div><div class="truth"><code class="tok">string</code> is a <b>reference type</b> — but an <b>immutable</b> one. You can't change a string in place; every "modification" makes a new string. That immutability is why it <i>behaves</i> like a value even though it's a reference under the hood.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--c-where);border-color:rgba(124,156,255,.4);background:var(--c-where-soft)">Control flow</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Control flow &amp; methods</h2></div>
+        <p>The basics are familiar: <code class="tok">if</code>/<code class="tok">else</code>, <code class="tok">while</code>, <code class="tok">do</code>/<code class="tok">while</code>, the C-style <code class="tok">for</code>, and <code class="tok">foreach</code> for iterating a collection without managing an index. What sets modern C# apart is the <strong>switch expression</strong> and <strong>pattern matching</strong> — a far more powerful relative of the old switch statement that <em>returns a value</em> and matches on shape, type, and condition, not just constants.</p>
+        <pre><span class="tag">c#</span><span class="kw2">string</span> Describe(<span class="kw2">int</span> n) => n <span class="kw">switch</span>
+{
+    <span class="num">0</span>            => <span class="str">"zero"</span>,
+    &lt; <span class="num">0</span>         => <span class="str">"negative"</span>,        <span class="cmt">// relational pattern</span>
+    &lt; <span class="num">10</span>        => <span class="str">"small"</span>,
+    &gt;= <span class="num">100</span>      => <span class="str">"large"</span>,
+    _            => <span class="str">"medium"</span>          <span class="cmt">// _ is the catch-all (discard)</span>
+};</pre>
+        <p>That single <code class="tok">switch</code> expression replaces a tangle of <code class="tok">if/else if</code>, reads top-to-bottom as a table of cases, and — because it's an expression — hands back a value the compiler guarantees every path produces. Pattern matching also works on <em>types</em> (<code class="tok">obj is string s</code>), on properties (<code class="tok">{ Age: &gt;= 18 }</code>), and on tuples, which makes it a workhorse you'll meet everywhere in modern C#.</p>
+        <p>Pick a value and watch the switch expression test each arm in order, top to bottom, and stop at the <strong>first pattern that matches</strong>:</p>
+        <div class="lab" id="switchLab">
+          <div class="lab-head"><div><div class="pt">Pattern matching, arm by arm</div><div class="ps">the first matching pattern wins</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls" style="justify-content:center">
+              <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--ink-muted)">Describe(</span>
+              <button class="ds-btn sw-in" data-sv="0">0</button>
+              <button class="ds-btn sw-in" data-sv="-4">−4</button>
+              <button class="ds-btn sw-in primary" data-sv="7">7</button>
+              <button class="ds-btn sw-in" data-sv="42">42</button>
+              <button class="ds-btn sw-in" data-sv="250">250</button>
+              <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--ink-muted)">)</span>
+            </div>
+            <div class="sw-arms" id="swArms"></div>
+          </div>
+          <div class="lab-foot" id="swFoot">Each arm is a pattern. Evaluation stops at the first one that matches the input.</div>
+        </div>
+        <p>Logic gets packaged into <strong>methods</strong> — a name, typed parameters, and a return type. C# supports overloading (same name, different parameter lists), default and named arguments, and <strong>expression-bodied</strong> members with <code class="tok">=&gt;</code> for one-liners (as in <code class="tok">Describe</code> above). A method's signature is itself a small contract: the types in and the type out are checked at every call site.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A <code class="tok">switch</code> can only compare against constant values.</div><div class="truth">The old statement mostly did, but C#'s modern <b>switch expression</b> matches <b>relational</b> patterns (<code class="tok">&lt; 10</code>), <b>type</b> patterns, <b>property</b> patterns, and combinations with <code class="tok">and</code>/<code class="tok">or</code>. It's closer to a typed, exhaustive decision table than a C-style switch.</div></div>
+          <div class="mc"><div class="myth">Expression-bodied methods (<code class="tok">=&gt;</code>) are lambdas.</div><div class="truth">They look alike but differ. <code class="tok">=&gt;</code> on a <i>member</i> is just concise syntax for a method with one expression. A <b>lambda</b> is an anonymous function value you can store and pass around (Module 09). Same arrow, different roles.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--oop);border-color:rgba(86,199,255,.4);background:var(--oop-soft)">Objects</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 03</span></div><h2>Classes &amp; objects</h2></div>
+        <p>A <strong>class</strong> is a blueprint that bundles <strong>state</strong> (data) with <strong>behavior</strong> (methods) and controls who may touch what. You create <strong>objects</strong> (instances) from it with <code class="tok">new</code>. The headline C# feature here is the <strong>property</strong>: it looks like a field from the outside but is really a pair of <code class="tok">get</code>/<code class="tok">set</code> methods, so reading or writing it can run code — validate, compute, log, or simply forbid.</p>
+        <pre><span class="tag">c#</span><span class="kw2">class</span> <span class="typ">BankAccount</span>
+{
+    <span class="kw2">public string</span> Owner { <span class="kw2">get</span>; <span class="kw2">init</span>; }        <span class="cmt">// set once, at creation</span>
+    <span class="kw2">public decimal</span> Balance { <span class="kw2">get</span>; <span class="kw2">private set</span>; } <span class="cmt">// readable; only this class writes it</span>
+
+    <span class="kw2">public void</span> <span class="fn">Deposit</span>(<span class="kw2">decimal</span> amount)
+    {
+        <span class="kw">if</span> (amount &lt;= <span class="num">0</span>) <span class="kw">throw new</span> <span class="typ">ArgumentException</span>(<span class="str">"Must be positive"</span>);
+        Balance += amount;                       <span class="hlok">// the ONLY way balance grows</span>
+    }
+}
+
+<span class="kw2">var</span> acct = <span class="kw">new</span> <span class="typ">BankAccount</span> { Owner = <span class="str">"Ada"</span> };  <span class="cmt">// object initializer</span>
+acct.<span class="fn">Deposit</span>(<span class="num">100</span>);
+<span class="cmt">// acct.Balance = 999;  ← compile error: no public setter</span></pre>
+        <div class="xref"><span class="xi">↳ OOP course</span><div>This is <b>encapsulation</b> from <i>OOP &amp; Coding Principles</i>, expressed in C#. The <code class="tok">private set</code> and the validating <code class="tok">Deposit</code> method are how C# guarantees an invariant — balance never goes negative, and state changes only through approved operations. Properties make "hide the data, expose operations" the path of least resistance.</div></div>
+        <p>Try to break the account below. The balance has no public setter, so the only way to change it is through methods that <strong>check the rules first</strong> — exactly the guarantee a raw public field could never give:</p>
+        <div class="lab" id="propLab">
+          <div class="lab-head"><div><div class="pt">Properties enforce the rules</div><div class="ps">state changes only through validated methods</div></div></div>
+          <div class="lab-body">
+            <div class="prop-card" id="propCard">
+              <div class="pc-h">BankAccount { Owner = "Ada" }</div>
+              <div class="prop-row"><span class="pr-k">Owner</span><span class="pr-v">"Ada"</span></div>
+              <div class="prop-row" id="propBalRow"><span class="pr-k">Balance <span style="color:var(--ink-faint)">{ get; private set; }</span></span><span class="pr-v" id="propBal">$0</span></div>
+            </div>
+            <div class="prop-status" id="propStatus">&nbsp;</div>
+            <div class="ds-controls" style="justify-content:center">
+              <input class="ds-input" id="propAmt" value="50" style="width:84px">
+              <button class="ds-btn primary" id="propDep">Deposit</button>
+              <button class="ds-btn" id="propWd">Withdraw</button>
+              <button class="ds-btn" id="propReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-foot" id="propFoot">Deposit and Withdraw validate before touching Balance — the invariant can't be broken from outside.</div>
+        </div>
+        <p>When you want a simple, immutable data holder, C# offers the <strong>record</strong> — a class with value-based equality and concise syntax generated for you: <code class="tok">record Person(string Name, int Age);</code> declares a whole type in one line, with a constructor, read-only properties, and sensible <code class="tok">Equals</code> and <code class="tok">ToString</code> baked in.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A property is just a fancy public field.</div><div class="truth">A property is a pair of <b>methods</b> dressed up as a field. That's the whole point: it can validate, compute on the fly, raise events, or be read-only — none of which a bare field can do. Public fields give up all control; properties keep it while staying ergonomic.</div></div>
+          <div class="mc"><div class="myth">Records are just classes with less typing.</div><div class="truth">They default to <b>value-based equality</b> (two records are equal if their contents match, not their references) and encourage <b>immutability</b> with <code class="tok">with</code>-expressions for copies. Use a record for data; a class for an entity with identity and mutable, behavior-rich state.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--oop);border-color:rgba(86,199,255,.4);background:var(--oop-soft)">Objects</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Inheritance &amp; interfaces</h2></div>
+        <p>C# gives you two ways for types to relate. <strong>Inheritance</strong> (<code class="tok">class Dog : Animal</code>) is an <em>is-a</em> relationship where a derived class gains the base's members and can <strong>override</strong> marked-<code class="tok">virtual</code> behavior. An <strong>abstract</strong> class can't be instantiated and may leave methods unimplemented for subclasses to fill in. The companion idea is the <strong>interface</strong> — a pure contract of members with no implementation, a promise that "whoever implements me provides these."</p>
+        <pre><span class="tag">c#</span><span class="kw2">abstract class</span> <span class="typ">Shape</span>
+{
+    <span class="kw2">public abstract double</span> <span class="fn">Area</span>();        <span class="cmt">// no body — subclasses must supply one</span>
+}
+
+<span class="kw2">class</span> <span class="typ">Circle</span> : <span class="typ">Shape</span>
+{
+    <span class="kw2">public double</span> Radius { <span class="kw2">get</span>; <span class="kw2">init</span>; }
+    <span class="kw2">public override double</span> <span class="fn">Area</span>() => <span class="typ">Math</span>.PI * Radius * Radius;
+}
+
+<span class="typ">Shape</span> s = <span class="kw">new</span> <span class="typ">Circle</span> { Radius = <span class="num">2</span> };  <span class="cmt">// hold a Circle as a Shape</span>
+<span class="kw2">double</span> a = s.<span class="fn">Area</span>();                  <span class="hlok">// runs Circle.Area — chosen at runtime</span></pre>
+        <p>That last line is <strong>polymorphism</strong>: the variable's type is <code class="tok">Shape</code>, but the <em>object</em> is a <code class="tok">Circle</code>, so <code class="tok">Area()</code> dispatches to <code class="tok">Circle</code>'s override at runtime. Code written against the base type or interface works with any implementation — present or future — without change.</p>
+        <div class="xref"><span class="xi">↳ OOP course</span><div>This is <b>polymorphic dispatch</b> from <i>OOP &amp; Coding Principles</i>. One <code class="tok">Area()</code> call, many implementations, each object answering for itself. It's also the engine behind the Open/Closed Principle: add a new <code class="tok">Shape</code> and existing code that loops over shapes never changes.</div></div>
+        <p>Send the same <code class="tok">Area()</code> message to a list of different shapes and watch each one run its <em>own</em> override:</p>
+        <div class="lab" id="polyLab">
+          <div class="lab-head"><div><div class="pt">One call, many implementations</div><div class="ps">foreach (Shape s in shapes) s.Area();</div></div>
+            <button class="ds-btn primary" id="polyRun" style="margin:0">▸ run Area() on all</button>
+          </div>
+          <div class="lab-body">
+            <div class="disp-grid" id="polyGrid"></div>
+            <div style="text-align:center;font-family:var(--font-mono);font-size:13px;color:var(--ink-soft);margin-top:14px" id="polyTotal">Press run — each shape computes its own area through the same call.</div>
+          </div>
+          <div class="lab-foot" id="polyFoot">The variable is a Shape; the object decides which Area() actually runs.</div>
+        </div>
+        <p>When should you reach for which? Use an <strong>interface</strong> to describe a <em>capability</em> many unrelated types can have (<code class="tok">IComparable</code>, <code class="tok">IDisposable</code>) — a class can implement many. Use an <strong>abstract class</strong> to share <em>common implementation</em> among closely related types. A type inherits from one class but can implement any number of interfaces.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Inheritance is the main tool for reusing code.</div><div class="truth">Often <b>composition</b> (holding an object) reuses better than inheritance (being a subtype), because deep hierarchies are rigid and fragile. Reach for inheritance when there's a genuine, stable <i>is-a</i>; reach for interfaces and composition far more often.</div></div>
+          <div class="mc"><div class="myth">Interfaces and abstract classes are interchangeable.</div><div class="truth">An <b>interface</b> is a contract a type can adopt alongside many others; an <b>abstract class</b> is a partial base you can only have one of. Interfaces model "can do"; abstract classes model "is a kind of, with shared guts."</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--gen);border-color:rgba(91,214,194,.4);background:var(--gen-soft)">Generics</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Collections &amp; generics</h2></div>
+        <p>Real programs juggle <em>many</em> values, and C#'s collections — backed by <strong>generics</strong> — are how. A <strong>generic</strong> type is parameterized by another type: <code class="tok">List&lt;T&gt;</code> is "a list of <em>some</em> type <code class="tok">T</code>," and <code class="tok">List&lt;int&gt;</code> fixes <code class="tok">T</code> to <code class="tok">int</code>. The payoff is type safety with zero casting: the compiler knows a <code class="tok">List&lt;int&gt;</code> yields <code class="tok">int</code>s, so you can't accidentally put a <code class="tok">string</code> in or pull the wrong type out.</p>
+        <pre><span class="tag">c#</span><span class="typ">List&lt;int&gt;</span> nums = [ <span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span> ];     <span class="cmt">// dynamic array, type-safe</span>
+nums.<span class="fn">Add</span>(<span class="num">9</span>);
+<span class="kw2">int</span> first = nums[<span class="num">0</span>];                       <span class="cmt">// indexing is O(1)</span>
+
+<span class="typ">Dictionary&lt;string, int&gt;</span> ages = <span class="kw">new</span>()
+{
+    [<span class="str">"Ada"</span>] = <span class="num">36</span>, [<span class="str">"Alan"</span>] = <span class="num">41</span>      <span class="cmt">// key → value lookup</span>
+};
+<span class="kw2">int</span> a = ages[<span class="str">"Ada"</span>];                     <span class="hlok">// hashed lookup — O(1) average</span></pre>
+        <p>Each collection makes different performance trade-offs, and choosing well is the difference between a snappy program and a slow one. A <code class="tok">List&lt;T&gt;</code> is a dynamic array: instant by index, but searching its contents is linear. A <code class="tok">Dictionary&lt;K,V&gt;</code> and a <code class="tok">HashSet&lt;T&gt;</code> are hash-based: near-instant lookup by key, at the cost of order.</p>
+        <div class="xref"><span class="xi">↳ Data Structures + Big O</span><div>The collection you pick <i>is</i> a data structure decision from earlier in the series. <code class="tok">List&lt;T&gt;</code> is a dynamic array; <code class="tok">Dictionary</code> and <code class="tok">HashSet</code> are hash tables; there's a <code class="tok">LinkedList&lt;T&gt;</code> too. The lab below shows the <b>Big O</b> of each operation — the same complexity analysis, now as a day-to-day C# choice.</div></div>
+        <p>Pick a collection and an operation, and see how it works under the hood — and what it costs:</p>
+        <div class="lab" id="collLab">
+          <div class="lab-head"><div><div class="pt">Pick the right collection</div><div class="ps">structure decides the cost</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-ct="list">List&lt;T&gt;</button>
+              <button class="ds-btn" data-ct="dict">Dictionary</button>
+              <button class="ds-btn" data-ct="set">HashSet</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="coll-viz" id="collViz"></div>
+            <div class="ds-controls" style="justify-content:center;margin-top:6px">
+              <button class="ds-btn" id="collFind">find a value</button>
+              <button class="ds-btn" id="collIndex">get by index / key</button>
+            </div>
+            <div class="coll-bigo" id="collBigo"></div>
+          </div>
+          <div class="lab-foot" id="collFoot">A List scans to find a value; a Dictionary and HashSet jump straight to it by hashing.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth"><code class="tok">List&lt;T&gt;</code> is a linked list.</div><div class="truth">It's a <b>dynamic array</b> — contiguous storage that grows as needed. That's why indexing is O(1) and why it's the right default. C# does have a real <code class="tok">LinkedList&lt;T&gt;</code>, but you reach for it rarely, only when you need cheap insertion in the middle.</div></div>
+          <div class="mc"><div class="myth">Generics are just to save you from writing casts.</div><div class="truth">They also deliver <b>real performance</b>: a <code class="tok">List&lt;int&gt;</code> stores ints directly, with no boxing into objects and no runtime type checks. Generics give you one implementation that's both type-safe <i>and</i> efficient for every <code class="tok">T</code> — the old <code class="tok">object</code>-based collections were neither.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--linq);border-color:rgba(78,214,107,.4);background:var(--linq-soft)">Data</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>LINQ — querying in the language</h2></div>
+        <p><strong>LINQ</strong> (Language Integrated Query) is one of C#'s defining features: a single, typed, composable way to query data — whether it's an in-memory list, an XML document, or a database table. Instead of hand-writing loops, you describe <em>what</em> you want as a pipeline of operations, and LINQ produces it. The same query you'll write over a <code class="tok">List</code> below is, with Entity Framework, translated into SQL and run on a database.</p>
+        <pre><span class="tag">c#</span><span class="kw2">var</span> result = products
+    .<span class="fn">Where</span>(p => p.Price &lt; <span class="num">50</span>)          <span class="cmt">// filter — keep cheap items</span>
+    .<span class="fn">OrderBy</span>(p => p.Price)             <span class="cmt">// sort ascending by price</span>
+    .<span class="fn">Select</span>(p => p.Name);             <span class="hlok">// project — just the names</span>
+
+<span class="cmt">// p => ... is a lambda: an inline function. result is IEnumerable&lt;string&gt;.</span></pre>
+        <p>Each step takes a sequence and returns a new sequence, so they chain. The <code class="tok">p =&gt; p.Price &lt; 50</code> bits are <strong>lambdas</strong> — small anonymous functions passed as arguments (much more on those in Module 09). And LINQ is <strong>lazily evaluated</strong>: building the query does no work; the pipeline runs only when you actually iterate it (with <code class="tok">foreach</code>, <code class="tok">.ToList()</code>, etc.). That deferral is what lets the database provider rewrite the whole chain into one efficient query.</p>
+        <div class="xref"><span class="xi">↳ SQL course → EF</span><div>If <code class="tok">Where</code>/<code class="tok">OrderBy</code>/<code class="tok">Select</code>/<code class="tok">GroupBy</code> feel like <code class="tok">WHERE</code>/<code class="tok">ORDER BY</code>/<code class="tok">SELECT</code>/<code class="tok">GROUP BY</code> from <i>SQL &amp; PostgreSQL</i> — that's the point. LINQ is set-based querying brought into C# with full type-checking. <b>Entity Framework</b> turns this exact syntax into SQL, which is where this track is headed next.</div></div>
+        <p>Build a query by toggling clauses. Watch the C# update as you go, and the results recompute live against a small product catalog:</p>
+        <div class="lab" id="linqLab">
+          <div class="lab-head"><div><div class="pt">The LINQ query builder</div><div class="ps">compose a typed query, see it run</div></div></div>
+          <div class="lab-body">
+            <div class="linq-clauses" id="linqClauses"></div>
+            <div class="linq-code" id="linqCode"></div>
+            <div class="linq-results-h"><span>results</span><span id="linqCount"></span></div>
+            <div class="tbl-wrap" style="margin-bottom:0"><table id="linqTable"><thead id="linqHead"></thead><tbody id="linqBody"></tbody></table></div>
+          </div>
+          <div class="lab-foot" id="linqFoot">Each clause is one operator in the pipeline. Nothing runs until the results are read.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A LINQ query runs the moment you write it.</div><div class="truth">Most LINQ is <b>deferred</b> — defining the query builds a recipe; it executes only when enumerated. That's why you can keep composing, and why a database provider can fold the whole chain into a single round-trip. Methods like <code class="tok">.ToList()</code> or <code class="tok">.Count()</code> force it to run.</div></div>
+          <div class="mc"><div class="myth">LINQ is just for databases.</div><div class="truth">LINQ works on <b>any</b> <code class="tok">IEnumerable&lt;T&gt;</code> — lists, arrays, dictionaries, files, even your own types. The <i>same</i> operators query in-memory objects (LINQ to Objects) and remote data (LINQ to Entities). One query language, many sources.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--nullc);border-color:rgba(242,151,60,.4);background:var(--nullc-soft)">Robustness</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 07</span></div><h2>Exceptions &amp; error handling</h2></div>
+        <p>When a method hits a situation it can't handle — a missing file, a bad argument, a failed network call — it <strong>throws</strong> an <strong>exception</strong>: an object describing what went wrong that travels up the call stack until something <strong>catches</strong> it. This separates the error path from the happy path, so normal code stays readable and failures can't be silently ignored.</p>
+        <pre><span class="tag">c#</span><span class="kw">try</span>
+{
+    <span class="kw2">var</span> text = <span class="typ">File</span>.<span class="fn">ReadAllText</span>(path);   <span class="cmt">// might throw</span>
+    <span class="typ">Console</span>.<span class="fn">WriteLine</span>(text);
+}
+<span class="kw">catch</span> (<span class="typ">FileNotFoundException</span> ex)         <span class="cmt">// catch a SPECIFIC type</span>
+{
+    <span class="typ">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Missing: {ex.FileName}"</span>);
+}
+<span class="kw">catch</span> (<span class="typ">IOException</span> ex) <span class="kw">when</span> (ex.HResult != <span class="num">0</span>)  <span class="cmt">// filtered catch</span>
+{
+    <span class="typ">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"I/O problem"</span>);
+}
+<span class="kw">finally</span>
+{
+    <span class="cmt">// always runs — cleanup, whether or not we threw</span>
+}</pre>
+        <div class="cmp2" style="margin:24px 0">
+          <div class="cmp-col" style="border-left:3px solid var(--st-ok)"><div class="cmph" style="color:var(--st-ok)">✓ try succeeds</div><div style="font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);line-height:1.9">run the <b>try</b> block<br>→ skip every <b>catch</b><br>→ run <b>finally</b><br>→ carry on</div></div>
+          <div class="cmp-col" style="border-left:3px solid var(--st-bad)"><div class="cmph" style="color:var(--st-bad)">✕ try throws</div><div style="font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);line-height:1.9">stop the <b>try</b> block<br>→ find the first matching <b>catch</b><br>→ run <b>finally</b> (always)<br>→ if none match, propagate up</div></div>
+        </div>
+        <p>Catch the <strong>most specific</strong> exception types you can actually do something about, and let the rest propagate to a place that can. For deterministic cleanup of resources — files, connections, locks — C# pairs exceptions with <code class="tok">IDisposable</code> and the <code class="tok">using</code> statement, which guarantees disposal even if an exception unwinds the stack:</p>
+        <pre><span class="tag">c#</span><span class="kw">using</span> <span class="kw2">var</span> conn = <span class="kw">new</span> <span class="typ">SqlConnection</span>(cs);  <span class="hlok">// disposed automatically at scope end</span>
+conn.<span class="fn">Open</span>();
+<span class="cmt">// ... conn.Dispose() runs even if the next line throws</span></pre>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A good program catches every exception so it never crashes.</div><div class="truth">Catching what you can't handle just <b>hides bugs</b>. Catch only what you can meaningfully recover from, close to where it happens; let truly unexpected failures surface (and get logged) rather than swallowing them into a corrupt, silent state.</div></div>
+          <div class="mc"><div class="myth">Exceptions are a fine way to handle ordinary control flow.</div><div class="truth">They're for the <b>exceptional</b> — they're relatively costly and obscure intent when used as <code class="tok">goto</code>. For expected outcomes (a lookup that may miss), prefer return values like <code class="tok">TryParse</code>'s <code class="tok">bool</code>, nullable results, or a result type.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--nullc);border-color:rgba(242,151,60,.4);background:var(--nullc-soft)">Robustness</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 08</span></div><h2>Null safety</h2></div>
+        <p>A <code class="tok">null</code> reference — a variable that points at no object — is the source of the dreaded <code class="tok">NullReferenceException</code>, so common its inventor called it his "billion-dollar mistake." Modern C# fights back with <strong>nullable reference types</strong>: with the feature on, reference types are <strong>non-null by default</strong>, and you must explicitly opt into null with a <code class="tok">?</code>. The compiler then <em>warns</em> you wherever a possibly-null value is used unsafely.</p>
+        <pre><span class="tag">c#</span><span class="kw2">string</span>  name  = <span class="kw">null</span>;   <span class="hlbad">// warning: name is non-nullable</span>
+<span class="kw2">string?</span> maybe = <span class="kw">null</span>;   <span class="hlok">// fine: explicitly nullable</span>
+<span class="kw2">int?</span>    count = <span class="kw">null</span>;   <span class="cmt">// nullable value type too</span></pre>
+        <p>A family of <strong>null operators</strong> makes working with maybe-null values safe and concise. The <strong>null-conditional</strong> <code class="tok">?.</code> stops a chain the moment it hits null (returning null instead of throwing), and the <strong>null-coalescing</strong> <code class="tok">??</code> supplies a fallback. Together they turn a minefield into a one-liner:</p>
+        <pre><span class="tag">c#</span><span class="kw2">string</span> city = person?.Address?.City ?? <span class="str">"unknown"</span>;
+<span class="cmt">//            ^ if person or Address is null, the whole chain is null,</span>
+<span class="cmt">//              and ?? supplies "unknown" — no exception, ever.</span></pre>
+        <p>Toggle parts of the chain to null and watch how <code class="tok">?.</code> short-circuits and <code class="tok">??</code> catches the result. Click a box to flip it between a value and null:</p>
+        <div class="lab" id="nullLab">
+          <div class="lab-head"><div><div class="pt">The null-safe chain</div><div class="ps">person?.Address?.City ?? "unknown"</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-nm="safe">with ?. and ??</button>
+              <button class="ds-btn" data-nm="unsafe">without (plain .)</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="null-chain" id="nullChain"></div>
+            <div class="null-out" id="nullOut"></div>
+          </div>
+          <div class="lab-foot" id="nullFoot">Click person or Address to toggle null. ?. stops the chain safely; plain . would throw.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Nullable reference types make null errors impossible at runtime.</div><div class="truth">They're a <b>compile-time</b> aid — warnings, not airtight guarantees. Old libraries, reflection, and the null-forgiving <code class="tok">!</code> operator can still smuggle nulls in. They catch the <i>vast majority</i> of cases early, which is huge, but you still write defensively at the edges.</div></div>
+          <div class="mc"><div class="myth"><code class="tok">?.</code> and <code class="tok">??</code> do the same thing.</div><div class="truth">Different jobs. <code class="tok">?.</code> <b>guards a member access</b> — "only call <code class="tok">.City</code> if the left side isn't null." <code class="tok">??</code> <b>supplies a fallback</b> — "use this value if the left side is null." They team up constantly: safely navigate with <code class="tok">?.</code>, then default with <code class="tok">??</code>.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--func);border-color:rgba(237,110,158,.4);background:var(--func-soft)">Functional</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 09</span></div><h2>Delegates, lambdas &amp; events</h2></div>
+        <p>In C#, <em>functions are values</em> you can store, pass, and return. A <strong>delegate</strong> is the type of such a value — a type-safe reference to a method with a particular signature. You rarely declare delegate types by hand anymore, because the library provides two generic families: <code class="tok">Func&lt;...,TResult&gt;</code> for functions that return a value, and <code class="tok">Action&lt;...&gt;</code> for ones that return <code class="tok">void</code>.</p>
+        <pre><span class="tag">c#</span><span class="typ">Func&lt;int, int&gt;</span> square = x => x * x;        <span class="cmt">// a function value</span>
+<span class="typ">Action&lt;string&gt;</span>  log    = msg => <span class="typ">Console</span>.<span class="fn">WriteLine</span>(msg);
+
+<span class="kw2">int</span> nine = square(<span class="num">3</span>);                       <span class="cmt">// call it like any method → 9</span>
+
+<span class="cmt">// pass behavior as an argument:</span>
+<span class="kw2">var</span> evens = numbers.<span class="fn">Where</span>(n => n % <span class="num">2</span> == <span class="num">0</span>);   <span class="hlok">// the lambda IS a delegate</span></pre>
+        <p>The <code class="tok">x =&gt; x * x</code> is a <strong>lambda</strong> — an anonymous function written inline. Every lambda you passed to LINQ was really a delegate instance. Lambdas can <strong>capture</strong> variables from their surrounding scope (a <strong>closure</strong>), remembering them even after that scope returns — which is what makes them so expressive for callbacks and pipelines.</p>
+        <div class="xref"><span class="xi">↳ Design Patterns</span><div>Passing a function as a parameter is the <b>Strategy pattern</b> from <i>Design Patterns</i>, made lightweight. Where classic OOP would define a strategy interface and a class per behavior, a C# lambda often expresses the same idea in a single line — the pattern dissolves into a language feature.</div></div>
+        <p>Built on delegates are <strong>events</strong> — the publisher/subscriber mechanism where an object notifies interested listeners that something happened (<code class="tok">button.Click += OnClick;</code>). The publisher exposes an event; subscribers attach handlers with <code class="tok">+=</code>; when the event is raised, every handler runs. It's the backbone of UI frameworks and message-driven code.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Lambdas replaced delegates; delegates are legacy.</div><div class="truth">A lambda <b>is</b> a delegate — the concise way to create one. The delegate type (<code class="tok">Func</code>, <code class="tok">Action</code>, or a custom one) is still what the lambda's value <i>is</i>. They're two halves of the same feature, not old versus new.</div></div>
+          <div class="mc"><div class="myth">A closure copies the variables it captures.</div><div class="truth">It captures them <b>by reference</b> — the lambda sees later changes to the captured variable, and keeps it alive. Powerful, but a classic trap when capturing a loop variable: be deliberate about what a closure closes over.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--asyncc);border-color:rgba(232,179,65,.4);background:var(--asyncc-soft)">Async</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 10</span></div><h2>Async &amp; await</h2></div>
+        <p>Most real work waits — on a database, a web request, a disk. Blocking a thread while it waits is wasteful, and in a server it caps how many requests you can serve. C#'s <strong>async/await</strong> lets you write code that <em>looks</em> sequential but <em>releases the thread</em> while waiting, picking up exactly where it left off when the result arrives. An <code class="tok">async</code> method returns a <code class="tok">Task</code> (a promise of future work); <code class="tok">await</code> unwraps it without blocking.</p>
+        <pre><span class="tag">c#</span><span class="kw2">async Task&lt;string&gt;</span> <span class="fn">FetchUserAsync</span>(<span class="kw2">int</span> id)
+{
+    <span class="kw2">var</span> response = <span class="kw">await</span> http.<span class="fn">GetAsync</span>(<span class="str">$"/users/{id}"</span>);  <span class="hlok">// thread is free while waiting</span>
+    <span class="kw">return</span> <span class="kw">await</span> response.Content.<span class="fn">ReadAsStringAsync</span>();
+}</pre>
+        <p>The real payoff appears when work can <strong>overlap</strong>. Run three independent I/O calls sequentially and you wait for the sum of their times; start them together and <code class="tok">await</code> them as a group, and you wait only for the <em>longest</em>. Watch the difference:</p>
+        <div class="lab" id="asyncLab">
+          <div class="lab-head"><div><div class="pt">Sequential vs overlapping</div><div class="ps">three I/O calls — one after another, or together</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" data-am="sync">sequential</button>
+              <button class="ds-btn" data-am="async">await together</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="async-stage" id="asyncStage"></div>
+            <div class="async-total" id="asyncTotal"></div>
+            <div class="ds-controls" style="justify-content:center;margin-top:8px"><button class="ds-btn" id="asyncRun">▸ run again</button></div>
+          </div>
+          <div class="lab-foot" id="asyncFoot">Sequential waits for the sum of the calls; awaiting them together waits for the longest one.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Async means multithreading — it runs my code in parallel.</div><div class="truth">Async is about <b>not blocking</b> while waiting, not about running your code on many cores. A single thread can juggle thousands of in-flight awaits. That's <i>concurrency</i> (managing many things at once), distinct from <i>parallelism</i> (doing many things at once on multiple cores).</div></div>
+          <div class="mc"><div class="myth">It's fine to call <code class="tok">.Result</code> or <code class="tok">.Wait()</code> to get an async value.</div><div class="truth">Blocking on async code can <b>deadlock</b> and squanders the benefit. Go <b>async all the way</b>: <code class="tok">await</code> up the call chain. This matters enormously in ASP.NET, where blocking a request thread throttles the whole server.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 11</span></div><h2>Putting it together</h2></div>
+        <p>You now have the working vocabulary of C#. The pieces aren't separate tricks — they compose into a single idiom. A typical feature defines a few <strong>types</strong> (often records for data, classes for behavior), stores them in <strong>generic collections</strong>, queries them with <strong>LINQ</strong>, guards the edges with <strong>null operators</strong> and <strong>exceptions</strong>, passes behavior around as <strong>lambdas</strong>, and does its I/O with <strong>async/await</strong> — all under a compiler that checks every join.</p>
+        <p>Code is organized into <strong>namespaces</strong> (logical groupings) across files, compiled into <strong>projects</strong> and <strong>assemblies</strong>. Two habits carry the most weight as programs grow: <strong>program to interfaces</strong>, so pieces can be swapped and tested in isolation, and <strong>let the types document intent</strong>, so a signature tells the reader (and the compiler) exactly what's expected. Both are the through-line of this whole course — say what you mean, and let the compiler hold you to it.</p>
+        <div class="note key">
+          <div class="nh">Where this leads — ASP.NET &amp; Entity Framework</div>
+          <p>Everything here is the foundation for the rest of the track. <strong>ASP.NET</strong> builds web apps and APIs out of plain C# <em>classes</em>, wires them together by <em>interface</em> through dependency injection, and is <em>async</em> from top to bottom. <strong>Entity Framework</strong> maps your <em>classes</em> to database tables and lets you query them with the very same <em>LINQ</em> you just learned — your C# becomes SQL without you writing it. The fundamentals you built here are exactly what those frameworks expect you to bring.</p>
+        </div>
+        <p>The fastest way to grow from here is to build. Write small programs, lean on the compiler's errors as a teacher rather than an obstacle, and reach for the feature that says your intent most directly. When something won't compile, the type system isn't in your way — it's catching a mistake you'd otherwise ship.</p>
+
+        <div class="closing">
+          <h2>The compiler has your back</h2>
+          <p>From your first <code class="tok">Console.WriteLine</code> to LINQ pipelines and async I/O, one idea ran through all of it: C# lets you state your intent precisely, and checks it before your code ever runs. Types, generics, null-awareness, and the rest aren't ceremony — they're the language catching mistakes on your behalf.</p>
+          <p>You're now ready for the frameworks that made C# a mainstay of the backend. The same fluency you built here — types, objects, generics, LINQ, async — is what ASP.NET and Entity Framework are written in and built around. Next stop: the web.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering C# — the start of the C# → ASP.NET → Entity Framework track, and a companion to Big&nbsp;O Complexity, Data Structures, Design Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, and Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow. Built to be poked at.</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="js/mastering-csharp.js"></script>
+</body>
+</html>

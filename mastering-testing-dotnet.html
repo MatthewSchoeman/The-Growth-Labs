@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering Testing in .NET · The Growth Lab</title>
+<meta name="description" content="An interactive course on testing in .NET — xUnit, assertions, parameterized tests, test doubles and mocking, testing EF and ASP.NET, and test-driven development. The discipline that lets you change the C# → ASP.NET → EF stack without fear.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-testing-dotnet.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" stroke="#A78BFA" stroke-width="1.5"/>
+        <path d="M8 12.4 L11 15.2 L16.4 8.8" stroke="#4ED66B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Testing</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" stroke="#A78BFA" stroke-width="1.5"/>
+            <path d="M8 12.4 L11 15.2 L16.4 8.8" stroke="#4ED66B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Testing</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Why we test</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Your first test</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Assertions</span></a>
+      <div class="nav-group-label">Writing Good Tests · Beginner → Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>What makes a good test</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Parameterized tests</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Test doubles</span></a>
+      <div class="nav-group-label">Isolation &amp; Integration · Intermediate</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Mocking &amp; dependencies</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Testing data access</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Integration testing</span></a>
+      <div class="nav-group-label">Discipline &amp; Practice · Intermediate → Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Test-driven development</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Coverage, flakiness &amp; pitfalls</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Putting it together</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert</div>
+        <h1>Change the code.<br><span class="grad">Trust the tests.</span></h1>
+        <p class="lede">A test suite is an <strong>executable specification</strong> — it pins down what your code should do, and shouts the moment a change breaks it. That safety net is what lets you refactor, extend, and ship without fear. This course covers writing tests with <strong>xUnit</strong>, asserting behavior, isolating a unit with <strong>test doubles</strong>, testing the EF and ASP.NET layers you built, and the rhythm of <strong>test-driven development</strong> — <span style="color:var(--fail)">red</span>, <span style="color:var(--pass)">green</span>, refactor. It's the discipline that turns the C# stack into code you can change with confidence.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The red-green-refactor cycle: write a failing test, make it pass, refactor; a small suite of tests turns from red to green"></svg>
+          <div class="hero-cap"><span style="color:var(--fail)">red</span> → <span style="color:var(--pass)">green</span> → <span style="color:var(--assert)">refactor</span> · assertions · test doubles · the testing pyramid · confidence to change</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Why we test →</a>
+          <a class="btn btn-ghost" href="#m9">Jump to red-green-refactor</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>Why we test</h2></div>
+        <p>It's tempting to think tests exist to catch bugs. They do — but that undersells them badly. The real payoff of a test suite is <strong>confidence to change code</strong>. A good suite is an <strong>executable specification</strong>: it states what your code is supposed to do, and the instant a change breaks that, it tells you — automatically, in seconds, before the bug reaches anyone. Without it, every edit is a gamble and every refactor is scary.</p>
+        <p>Think about the alternative. With no tests, the only way to know you didn't break something is to re-check it by hand, every time, forever. That cost makes people afraid to touch working code, so it rots. Tests flip that: they make change <em>cheap and safe</em>, which is exactly why teams that test well move <strong>faster</strong> over the life of a project, not slower.</p>
+        <p>A test is just ordinary code that runs your code and checks the result. You'll write them in the same language, run them with one command, and get back a wall of <span style="color:var(--pass)">green</span> when all is well or a precise <span style="color:var(--fail)">red</span> failure when it isn't. This course builds from that first <code class="tok">[Fact]</code> up to test-driven development, using the very C#, ASP.NET, and EF code the rest of the track produced.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Testing is QA's job — developers write code, testers test it.</div><div class="truth">The tests this course covers are a <b>developer</b> tool, written alongside the code. They're about design and change-safety, not a separate QA phase. Manual QA still has a place, but it can't give you the fast, automatic regression net that unit tests do.</div></div>
+          <div class="mc"><div class="myth">Writing tests slows me down.</div><div class="truth">They cost time up front and <b>repay it many times over</b> — every future change is verified in seconds instead of re-checked by hand. The slow projects are usually the untested ones, where nobody dares refactor and bugs reappear endlessly.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--test);border-color:rgba(167,139,250,.4);background:var(--test-soft)">Anatomy</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Your first test</h2></div>
+        <p>In .NET you write tests in a separate <strong>test project</strong> using a framework like <strong>xUnit</strong>. A test is a method marked <code class="tok">[Fact]</code>, and the convention that keeps tests readable is <strong>Arrange-Act-Assert</strong>: set up what you need, perform the one action you're testing, then check the outcome. Three phases, in order, every time.</p>
+        <pre><span class="tag">c#</span><span class="attr">[Fact]</span>
+<span class="kw2">public void</span> <span class="fn">Discount_reduces_price_by_the_given_percent</span>()
+{
+    <span class="cmt">// Arrange</span>
+    <span class="kw2">var</span> cart = <span class="kw2">new</span> <span class="typ">Cart</span>(price: <span class="num">100</span>m);
+    <span class="cmt">// Act</span>
+    <span class="kw2">var</span> total = cart.<span class="fn">ApplyDiscount</span>(percent: <span class="num">20</span>);
+    <span class="cmt">// Assert</span>
+    <span class="typ">Assert</span>.<span class="fn">Equal</span>(<span class="num">80</span>m, total);
+}</pre>
+        <p>Step through the three phases below — each does one job, and keeping them separate is what makes a test easy to read and easy to trust:</p>
+        <div class="lab" id="aaaLab">
+          <div class="lab-head"><div><div class="pt">Arrange · Act · Assert</div><div class="ps">the shape of nearly every test</div></div></div>
+          <div class="lab-body">
+            <div class="aaa-code" id="aaaCode"></div>
+            <div class="aaa-steps" id="aaaSteps"></div>
+          </div>
+          <div class="lab-foot" id="aaaFoot">Most tests follow this rhythm: arrange the inputs, act once, assert the outcome.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A real test needs a lot of setup and ceremony.</div><div class="truth">Start tiny. A <code class="tok">[Fact]</code>, three lines, one assertion is a complete, valuable test. If a test needs heavy setup, that's often a hint the code under test has too many dependencies — a design smell the test just surfaced.</div></div>
+          <div class="mc"><div class="myth">One test method can verify a whole feature at once.</div><div class="truth">Aim for <b>one behavior per test</b>. When a focused test fails, its name tells you exactly what broke. A sprawling test that checks ten things gives you a vague failure and a puzzle instead of an answer.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--assert);border-color:rgba(86,199,255,.4);background:var(--assert-soft)">Assertions</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Assertions</h2></div>
+        <p>The <code class="tok">Assert</code> phase is where a test actually decides pass or fail. xUnit gives you a focused vocabulary — <code class="tok">Assert.Equal</code>, <code class="tok">Assert.True</code>, <code class="tok">Assert.Throws</code>, <code class="tok">Assert.Contains</code>, <code class="tok">Assert.Null</code>, and more. The art is asserting the <strong>outcome you actually care about</strong>, and picking the assertion that produces the clearest failure message when it's wrong.</p>
+        <p>Try different assertions below — change the expected or actual value and watch it pass or fail, with the message xUnit would print:</p>
+        <div class="lab" id="assertLab">
+          <div class="lab-head"><div><div class="pt">What an assertion checks</div><div class="ps">pick one, then make it pass or fail</div></div></div>
+          <div class="lab-body">
+            <div class="assert-grid">
+              <div class="assert-pickrow" id="assertControls"></div>
+              <div class="assert-call" id="assertCall"></div>
+              <div class="assert-result" id="assertResult"></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="assertFoot">A passing assertion is silent; a failing one prints expected-vs-actual so you can see what went wrong.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">More assertions per test is more thorough.</div><div class="truth">A test should make <b>one logical assertion</b>. Cramming many unrelated checks in means the first failure hides the rest, and the test name can't describe what it verifies. Split distinct expectations into distinct, well-named tests.</div></div>
+          <div class="mc"><div class="myth"><code class="tok">Assert.True(a == b)</code> is just as good as <code class="tok">Assert.Equal(a, b)</code>.</div><div class="truth">They behave the same until they fail. <code class="tok">Assert.True</code> can only say "expected true, got false"; <code class="tok">Assert.Equal</code> prints <b>both values</b>, so you see <code class="tok">Expected: 80, Actual: 75</code> at a glance. Pick the assertion that fails most informatively.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--test);border-color:rgba(167,139,250,.4);background:var(--test-soft)">Quality</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 03</span></div><h2>What makes a good test</h2></div>
+        <p>A useful shorthand for a good unit test is <strong>FIRST</strong>: <strong>Fast</strong> (milliseconds, so you run thousands without thinking), <strong>Isolated</strong> (independent of other tests and of order), <strong>Repeatable</strong> (same result every run, on any machine), <strong>Self-validating</strong> (it asserts pass/fail itself — no reading output by eye), and <strong>Timely</strong> (written close to the code, ideally first). Tests that violate these turn into a liability you stop trusting.</p>
+        <p>The deepest principle, though, is to test <strong>behavior, not implementation</strong>. Assert on what the code <em>does</em> from the outside — its return values, its observable effects — not on how it does it internally. Behavior-focused tests keep passing when you refactor the internals; implementation-coupled tests break every time you tidy the code, which trains people to delete them.</p>
+        <pre><span class="tag">c#</span><span class="cmt">// ✗ couples to implementation — breaks on any refactor</span>
+<span class="typ">Assert</span>.<span class="fn">Equal</span>(<span class="num">1</span>, cart._internalDiscountCallCount);   <span class="hlbad">// who cares?</span>
+
+<span class="cmt">// ✓ asserts behavior — survives refactors</span>
+<span class="typ">Assert</span>.<span class="fn">Equal</span>(<span class="num">80</span>m, cart.<span class="fn">ApplyDiscount</span>(<span class="num">20</span>));    <span class="hlok">// the outcome that matters</span></pre>
+        <div class="xref"><span class="xi">↳ OOP course</span><div>This is encapsulation from <i>OOP &amp; Coding Principles</i> applied to tests: assert against the <b>public contract</b>, not the private internals. A test that reaches into private state is as coupled as code that does — and just as painful to change.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Tests can share state and run in a set order.</div><div class="truth">Each test must be <b>independent</b> — runnable alone, in any order, in parallel. Shared mutable state between tests creates failures that appear and vanish depending on run order, the most maddening kind to debug (Module 10).</div></div>
+          <div class="mc"><div class="myth">100% code coverage means the code is well tested.</div><div class="truth">Coverage measures which lines <i>ran</i>, not whether you <b>asserted</b> anything meaningful about them. You can execute every line and verify nothing. Coverage is a useful gap-finder, a useless quality target (Module 10).</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--test);border-color:rgba(167,139,250,.4);background:var(--test-soft)">Cases</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Parameterized tests</h2></div>
+        <p>When the same logic should hold across many inputs, you don't copy-paste the test. xUnit's <code class="tok">[Theory]</code> runs one test method once per data row, supplied by <code class="tok">[InlineData]</code> (or <code class="tok">[MemberData]</code> for richer sets). This is your best tool for hammering <strong>boundaries and edge cases</strong> — and boundaries are exactly where bugs hide.</p>
+        <p>Below, a <code class="tok">[Theory]</code> checks an <code class="tok">IsAdult</code> rule across several ages. The implementation has a subtle off-by-one — run the cases and see which one catches it:</p>
+        <div class="lab" id="theoryLab">
+          <div class="lab-head"><div><div class="pt">One test, many cases</div><div class="ps">boundaries are where bugs live</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="theoryRun">▸ run all cases</button>
+              <button class="ds-btn" id="theoryFix">fix the bug</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="theory-head" id="theoryHead"></div>
+            <div class="theory-cases" id="theoryCases"></div>
+            <div class="theory-summary" id="theorySummary"></div>
+          </div>
+          <div class="lab-foot" id="theoryFoot">Each row is a separate run of the same test. The boundary case is the one that earns its keep.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Big O &amp; Data Structures</span><div>The off-by-one at the boundary is the same hazard from <i>Data Structures</i> and <i>Big O</i> — the bug that lives at <code class="tok">==</code>, the first index, the empty case. Parameterized tests let you pin every boundary cheaply, so an off-by-one can't slip through unnoticed.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Just write one test for a typical input.</div><div class="truth">The typical input is the one least likely to break. The value comes from the <b>edges</b>: zero, empty, the boundary, the max, the negative. A <code class="tok">[Theory]</code> lets you cover them all without ten near-identical test methods.</div></div>
+          <div class="mc"><div class="myth">If the happy path passes, the feature works.</div><div class="truth">Most real bugs live off the happy path — at limits, on bad input, in the empty case. Testing only the obvious scenario gives a green suite and a fragile feature. Make the edges first-class test cases.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--double);border-color:rgba(237,110,158,.4);background:var(--double-soft)">Doubles</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Test doubles</h2></div>
+        <p>To test a unit in isolation, you replace its real collaborators with stand-ins called <strong>test doubles</strong>. This keeps a test fast and deterministic — no real database, no real email, no clock you can't control — and lets you set up exactly the situation you want to verify. The doubles have names worth knowing because they do different jobs.</p>
+        <p>A <strong>stub</strong> returns canned answers to feed the unit input (you check the unit's resulting <em>state</em>). A <strong>mock</strong> carries expectations about <em>interactions</em> — you assert it was called, how, and how often. A <strong>fake</strong> is a real but lightweight working implementation (an in-memory list standing in for a database). Dummies and spies round out the family, but stub-vs-mock is the distinction that matters most: <strong>state verification versus interaction verification</strong>.</p>
+        <pre><span class="tag">c#</span><span class="cmt">// the unit depends on an abstraction, not a concrete service</span>
+<span class="kw2">public class</span> <span class="typ">Checkout</span>(<span class="typ">IInventory</span> inventory, <span class="typ">IEmailSender</span> email)
+{
+    <span class="kw2">public</span> <span class="typ">Result</span> <span class="fn">Place</span>(<span class="typ">Order</span> o)
+    {
+        <span class="kw2">if</span> (!inventory.<span class="fn">InStock</span>(o.Sku)) <span class="kw2">return</span> <span class="typ">Result</span>.OutOfStock;
+        email.<span class="fn">SendReceipt</span>(o);            <span class="cmt">// an interaction we may want to verify</span>
+        <span class="kw2">return</span> <span class="typ">Result</span>.Placed;
+    }
+}</pre>
+        <div class="xref"><span class="xi">↳ Design Patterns + OOP</span><div>Doubles only work because <code class="tok">Checkout</code> depends on <b>interfaces</b>, not concrete classes — the Dependency Inversion principle from <i>OOP</i>, enabling the injection you saw in <i>Design Patterns</i> and ASP.NET. Testable code and well-decoupled code turn out to be the same thing.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Stubs and mocks are two words for the same thing.</div><div class="truth">A <b>stub</b> feeds input and you assert on the unit's <b>state</b>; a <b>mock</b> records calls and you assert on the <b>interaction</b>. "Did the total come out right?" wants a stub; "was the receipt actually sent?" wants a mock. Mixing them up leads to muddled tests.</div></div>
+          <div class="mc"><div class="myth">Replace every dependency with a double.</div><div class="truth">Over-mocking produces tests that mirror the implementation and break on every change. Use a real collaborator when it's fast and deterministic; reach for a double when the real thing is slow, external, or non-deterministic. Fewer doubles, sturdier tests.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--double);border-color:rgba(237,110,158,.4);background:var(--double-soft)">Mocking</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>Mocking &amp; dependencies</h2></div>
+        <p>Hand-writing doubles gets tedious, so .NET has mocking libraries — <strong>Moq</strong>, <strong>NSubstitute</strong>, <strong>FakeItEasy</strong> — that build a stub or mock of an interface in a line or two. You configure what a method returns, inject the double where the real collaborator would go, run the unit, and then <strong>verify the interactions</strong> you care about. Because the code already takes its dependencies through constructor injection, swapping in a double is trivial.</p>
+        <p>The <code class="tok">Checkout</code> from the last module takes an inventory and an email sender. Stub the inventory to set up the scenario, then verify whether the receipt email was sent — watch the state assertion and the interaction check:</p>
+        <div class="lab" id="mockLab">
+          <div class="lab-head"><div><div class="pt">Isolate, then verify</div><div class="ps">stub the input, mock the interaction</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn primary" id="mockRun">▸ run test</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="mock-stage">
+              <div class="sut-box"><div class="sut-h">▸ Checkout.Place(order)</div><div class="sut-sub">the unit under test — real code, doubled dependencies</div></div>
+              <div class="dep-row" id="depInventory">
+                <span class="dep-name">IInventory <span class="dn-sub">stub — feeds input to the unit</span></span>
+                <div class="dep-toggle" id="invToggle">
+                  <span class="dep-opt on" data-inv="true">InStock → true</span>
+                  <span class="dep-opt" data-inv="false">InStock → false</span>
+                </div>
+              </div>
+              <div class="dep-row" id="depEmail">
+                <span class="dep-name">IEmailSender <span class="dn-sub">mock — records calls so we can verify</span></span>
+                <span class="t-badge pend" id="emailBadge">awaiting run</span>
+              </div>
+            </div>
+            <div class="mock-verify" id="mockVerify"></div>
+          </div>
+          <div class="lab-foot" id="mockFoot">The stub controls the scenario; the mock lets you assert whether SendReceipt was actually called.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ ASP.NET course</span><div>The constructor injection that makes this testable is the very same <code class="tok">AddScoped</code>/<code class="tok">AddSingleton</code> wiring from <i>ASP.NET Core</i>. Code built for dependency injection is, for free, code built for testing — the double slots into the exact seam the DI container uses.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">You need a mocking framework to write tests.</div><div class="truth">A framework just removes boilerplate. A hand-written class implementing the interface is a perfectly good double, and is sometimes <b>clearer</b> than a pile of mock-setup calls. Reach for Moq when it saves real effort, not by reflex.</div></div>
+          <div class="mc"><div class="myth">Verify every call the unit makes.</div><div class="truth">Verifying incidental calls couples the test to implementation detail and makes it brittle. Verify the interactions that are part of the <b>contract</b> — "a receipt is sent on success" — and ignore the rest. Over-verification is over-mocking by another name.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--isolate);border-color:rgba(91,214,194,.4);background:var(--isolate-soft)">Data</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 07</span></div><h2>Testing data access</h2></div>
+        <p>Testing EF code forces a choice about <strong>fidelity versus speed</strong>. You have three broad options. The <strong>in-memory provider</strong> is fastest but isn't a relational database — it skips real SQL, constraints, and transactions, so it can pass on code a real database would reject. <strong>SQLite in-memory</strong> runs genuine SQL in-process and catches far more, a strong default for repository tests. A <strong>real test database</strong> is the most faithful and the slowest, best reserved for true integration coverage.</p>
+        <pre><span class="tag">c#</span><span class="cmt">// SQLite in-memory: real SQL, real constraints, still fast</span>
+<span class="kw2">var</span> conn = <span class="kw2">new</span> <span class="typ">SqliteConnection</span>(<span class="str">"DataSource=:memory:"</span>);
+conn.<span class="fn">Open</span>();
+<span class="kw2">var</span> options = <span class="kw2">new</span> <span class="typ">DbContextOptionsBuilder</span>&lt;<span class="typ">ShopContext</span>&gt;()
+    .<span class="fn">UseSqlite</span>(conn).<span class="fn">Options</span>;
+
+<span class="kw2">using var</span> db = <span class="kw2">new</span> <span class="typ">ShopContext</span>(options);
+db.<span class="fn">Database</span>.<span class="fn">EnsureCreated</span>();
+db.Products.<span class="fn">Add</span>(<span class="kw2">new</span> <span class="typ">Product</span> { Name = <span class="str">"Lamp"</span>, Price = <span class="num">35</span> });
+db.<span class="fn">SaveChanges</span>();
+
+<span class="typ">Assert</span>.<span class="fn">Equal</span>(<span class="num">1</span>, db.Products.<span class="fn">Count</span>(p => p.Price &lt; <span class="num">50</span>));   <span class="hlok">// real query</span></pre>
+        <div class="xref"><span class="xi">↳ EF Core course</span><div>This is the <code class="tok">DbContextOptions</code> and provider-swapping from <i>EF Core</i> put to work: the same context, pointed at SQLite for tests instead of your production database. And the repository seam EF debates is exactly what lets a test substitute one cleanly.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The in-memory provider tests my real database behavior.</div><div class="truth">It doesn't run SQL or enforce relational rules, so unique constraints, foreign keys, and transaction semantics all go untested. It's convenient for simple logic, but a query that works in-memory can still fail against a real database. Prefer SQLite when fidelity matters.</div></div>
+          <div class="mc"><div class="myth">Every data test must hit a real database.</div><div class="truth">That's slow and brittle for the bulk of cases. Use the <b>cheapest fidelity that catches the bugs you care about</b> — SQLite for most repository tests, a real database for a focused set of integration tests. Match the tool to the risk.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--integration);border-color:rgba(242,151,60,.4);background:var(--integration-soft)">Integration</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 08</span></div><h2>Integration testing</h2></div>
+        <p>Unit tests check pieces in isolation; <strong>integration tests</strong> check that the pieces work <em>together</em>. For ASP.NET Core, <code class="tok">WebApplicationFactory&lt;T&gt;</code> boots your whole app in-memory and lets you send real HTTP requests through it — exercising routing, the middleware pipeline, model binding, dependency injection, and EF, all in one test. No network, no deployed server, but the real wiring end to end.</p>
+        <pre><span class="tag">c#</span><span class="kw2">public class</span> <span class="typ">TodoApiTests</span>(<span class="typ">WebApplicationFactory</span>&lt;<span class="typ">Program</span>&gt; factory)
+    : <span class="typ">IClassFixture</span>&lt;<span class="typ">WebApplicationFactory</span>&lt;<span class="typ">Program</span>&gt;&gt;
+{
+    <span class="attr">[Fact]</span>
+    <span class="kw2">public async</span> <span class="typ">Task</span> <span class="fn">Get_todos_returns_200_and_a_list</span>()
+    {
+        <span class="kw2">var</span> client = factory.<span class="fn">CreateClient</span>();          <span class="cmt">// the app, in-memory</span>
+        <span class="kw2">var</span> res = <span class="kw2">await</span> client.<span class="fn">GetAsync</span>(<span class="str">"/todos"</span>);    <span class="cmt">// a real request</span>
+        res.<span class="fn">EnsureSuccessStatusCode</span>();                  <span class="hlok">// 200</span>
+        <span class="kw2">var</span> todos = <span class="kw2">await</span> res.<span class="fn">Content</span>.<span class="fn">ReadFromJsonAsync</span>&lt;<span class="typ">Todo</span>[]&gt;();
+        <span class="typ">Assert</span>.<span class="fn">NotEmpty</span>(todos);
+    }
+}</pre>
+        <div class="xref"><span class="xi">↳ ASP.NET + EF</span><div>This one test drives everything the C# track built: the <i>ASP.NET</i> request pipeline and routing, the endpoint's C# logic, and the <i>EF</i> query behind it. Integration tests are where the whole stack is verified as one working system.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Integration tests can replace unit tests.</div><div class="truth">They answer a different question — "do the parts connect?" not "is this piece correct?". Integration tests are slower and pinpoint failures less precisely, so you want <b>many</b> fast unit tests and <b>fewer</b> integration tests: the testing pyramid (Module 11).</div></div>
+          <div class="mc"><div class="myth">An integration test should use all the real external services.</div><div class="truth">Boot the real <i>app</i>, but swap the truly external edges — third-party APIs, email, payment gateways — for test doubles or in-memory equivalents. Otherwise tests become slow, flaky, and dependent on systems you don't control.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--tdd);border-color:rgba(78,214,107,.4);background:var(--tdd-soft)">TDD</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>Test-driven development</h2></div>
+        <p>Test-driven development inverts the usual order: you write the test <em>first</em>, then the code to satisfy it. The loop is three beats — <span style="color:var(--fail)"><strong>Red</strong></span>: write a small failing test for the next bit of behavior. <span style="color:var(--pass)"><strong>Green</strong></span>: write the <em>minimum</em> code to make it pass. <strong style="color:var(--assert)">Refactor</strong>: clean up now that the tests have your back. Then repeat, in tiny increments.</p>
+        <p>TDD is as much a <strong>design</strong> technique as a testing one. Writing the test first means you're the first user of your own API, so awkward, hard-to-call designs get felt and fixed immediately — and the code is testable by construction, because it was literally built to a test. Step through a full cycle building FizzBuzz one failing test at a time:</p>
+        <div class="lab" id="tddLab">
+          <div class="lab-head"><div><div class="pt">Red · Green · Refactor</div><div class="ps">one failing test at a time drives the code</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="tddStep">▸ next step</button>
+              <button class="ds-btn" id="tddReset">restart</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="tdd-cycle" id="tddCycle">
+              <div class="tdd-node red">RED</div>
+              <div class="tdd-node green">GREEN</div>
+              <div class="tdd-node refactor">REFACTOR</div>
+            </div>
+            <div class="tdd-panes">
+              <div class="tdd-pane"><div class="tp-h"><span>tests</span><span id="tddTestCount"></span></div><div class="tdd-code" id="tddTest"></div></div>
+              <div class="tdd-pane"><div class="tp-h"><span>implementation</span><span style="color:var(--ink-faint)">FizzBuzz(n)</span></div><div class="tdd-code" id="tddImpl"></div></div>
+            </div>
+            <div class="tdd-status" id="tddStatus"></div>
+          </div>
+          <div class="lab-foot" id="tddFoot">Each step writes a failing test or the minimal code to pass it — the tests pull the implementation into existence.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ OOP &amp; Design Patterns</span><div>Because you call your API before it exists, TDD pressures you toward the small, focused, dependency-injected designs that <i>OOP</i> and <i>Design Patterns</i> argue for. Hard-to-test usually means hard-to-use — TDD makes that pain immediate instead of letting it accumulate.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">TDD means writing every test before any code.</div><div class="truth">It's the opposite of big up-front test-writing — it's <b>tiny</b> red-green cycles, one small behavior at a time, with code and tests growing together in minutes-long loops. You're never far from a green bar.</div></div>
+          <div class="mc"><div class="myth">TDD is purely a testing practice.</div><div class="truth">Its biggest payoff is <b>design feedback</b>. Writing the test first forces good seams and small units; the comprehensive test suite is almost a side effect. Teams adopt TDD as much for the designs it produces as for the safety net.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--quality);border-color:rgba(232,179,65,.4);background:var(--quality-soft)">Pitfalls</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Coverage, flakiness &amp; pitfalls</h2></div>
+        <p>Two traps catch experienced teams. The first is treating <strong>code coverage</strong> as a goal. Coverage tells you which lines executed during the tests — useful for spotting code nothing touches — but it says nothing about whether you <em>asserted</em> anything. Chase a coverage number and you get tests that run everything and verify little: green theater.</p>
+        <p>The second, more corrosive trap is the <strong>flaky test</strong> — one that passes or fails non-deterministically. The usual culprits are reading the real clock (<code class="tok">DateTime.Now</code>), unseeded randomness, shared mutable state across tests, and timing in async code. A flaky test is worse than no test, because it trains the team to ignore red. Toggle the causes below and run the suite a few times:</p>
+        <div class="lab" id="flakyLab">
+          <div class="lab-head"><div><div class="pt">Why a test goes flaky</div><div class="ps">non-determinism makes red meaningless</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn primary" id="flakyRun">▸ run 5 times</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="flaky-toggles" id="flakyToggles"></div>
+            <div class="flaky-runs" id="flakyRuns"></div>
+            <div class="flaky-verdict" id="flakyVerdict"></div>
+          </div>
+          <div class="lab-foot" id="flakyFoot">Remove every source of non-determinism — inject a clock, seed the RNG, isolate state — and the test passes every single run.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A test that passes most of the time is fine.</div><div class="truth">An intermittently failing test is <b>broken</b>. People learn to re-run until green and stop reading failures — so the one real regression hides among the noise. Fix flakiness immediately or quarantine the test; never normalize ignoring red.</div></div>
+          <div class="mc"><div class="myth">Aim for 100% coverage.</div><div class="truth">The last stretch costs the most and buys the least — testing trivial getters and unreachable branches. Target <b>meaningful</b> tests on logic that matters; let coverage be a map of gaps, not a score to max out.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>Putting it together</h2></div>
+        <p>A healthy strategy balances the kinds of tests by their cost and breadth — the <strong>testing pyramid</strong>. A wide base of <strong>unit tests</strong> (many, fast, precise) sits under a smaller band of <strong>integration tests</strong> (fewer, slower, broader), topped by a thin slice of <strong>end-to-end tests</strong> (few, slowest, most realistic). Invert that — mostly slow end-to-end tests, few units — and you get the "ice-cream cone": slow feedback, flaky runs, and failures that don't tell you where the bug is.</p>
+        <div class="lab" id="pyramidLab">
+          <div class="lab-head"><div><div class="pt">The testing pyramid</div><div class="ps">shape your suite for fast, precise feedback</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="pyrHealthy">healthy pyramid</button>
+              <button class="ds-btn" id="pyrInverted">ice-cream cone</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="pyr-wrap">
+              <div class="pyr-stack" id="pyrStack"></div>
+              <div class="pyr-meta" id="pyrMeta"></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="pyrFoot">Most tests should be fast unit tests; reserve slow, broad tests for the few things only they can check.</div>
+        </div>
+        <div class="note key">
+          <div class="nh">The whole track, made changeable</div>
+          <p>Step back and the four courses form a complete engineering loop. <strong>C#</strong> gave you the language; <strong>ASP.NET Core</strong> turned it into a web server; <strong>EF Core</strong> backed that server with a database; and <strong>testing</strong> is what lets you change all of it without fear. A unit test pins your C# logic, a mock isolates a service, a SQLite test exercises your EF queries, and a <code class="tok">WebApplicationFactory</code> drives a real request through the whole pipeline. Build it, then build the tests that let you keep building.</p>
+        </div>
+        <div class="closing">
+          <h2>Change the code. Trust the tests.</h2>
+          <p>From your first <code class="tok">[Fact]</code> through assertions, doubles, integration tests, and the red-green-refactor loop, one idea ran underneath: tests aren't a tax on shipping — they're what makes shipping <em>safe</em>. A good suite is a specification that runs, a safety net that catches regressions in seconds, and a design force that pushes your code toward small, decoupled, callable units.</p>
+          <p>That's the quiet superpower behind every codebase people enjoy working in. Not the absence of bugs, but the freedom to change things and find out instantly if you were wrong. Write the test, watch it fail, make it pass — and keep the code yours.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering Testing in .NET — the discipline layer over the C# → ASP.NET → Entity Framework track, and a companion to Big&nbsp;O Complexity, Data Structures, Design Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, and Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core. Built to be poked at — and tested.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/mastering-testing-dotnet.js"></script>
+</body>
+</html>

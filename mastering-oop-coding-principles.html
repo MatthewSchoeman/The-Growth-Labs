@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Growth Lab — Mastering OOP &amp; Coding Principles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-oop-coding-principles.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="#56C7FF" stroke-width="1.5"/>
+        <line x1="3.5" y1="10" x2="20.5" y2="10" stroke="#E8B341" stroke-width="1.4"/>
+        <circle cx="11" cy="6.9" r="1.3" fill="#56C7FF"/>
+        <circle cx="8.6" cy="14.9" r="1.5" fill="#4ED66B"/>
+        <circle cx="13.6" cy="14.9" r="1.5" fill="#A78BFA"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>OOP &amp; Principles</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="#56C7FF" stroke-width="1.5"/>
+            <line x1="3.5" y1="10" x2="20.5" y2="10" stroke="#E8B341" stroke-width="1.4"/>
+            <circle cx="11" cy="6.9" r="1.3" fill="#56C7FF"/>
+            <circle cx="8.6" cy="14.9" r="1.5" fill="#4ED66B"/>
+            <circle cx="13.6" cy="14.9" r="1.5" fill="#A78BFA"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>OOP &amp; Principles</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>Objects &amp; classes</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Encapsulation</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Abstraction</span></a>
+      <div class="nav-group-label">The Pillars · Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Inheritance</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Polymorphism</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Composition over inheritance</span></a>
+      <div class="nav-group-label">Design Principles · Advanced</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Coupling &amp; cohesion</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>The SOLID principles</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>DRY, KISS &amp; YAGNI</span></a>
+      <div class="nav-group-label">The Craft · Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Heuristics &amp; guidelines</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Code smells &amp; refactoring</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Pragmatic OOP</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert</div>
+        <h1>Good code is<br><span class="grad">easy to change.</span></h1>
+        <p class="lede">Object-oriented programming and the timeless coding principles all serve one master goal: software that's easy to understand and <strong>safe to change</strong>. This course builds from the four pillars — encapsulation, abstraction, inheritance, polymorphism — up through SOLID, coupling, and the heuristics that separate code you can live with from code you dread. Every idea here is something you can <strong>poke at right on the page</strong>.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="An object hiding its state behind a public interface, receiving messages from other objects"></svg>
+          <div class="hero-cap">an object hides its <span style="color:var(--encap)">state</span> behind an <span style="color:var(--abstract)">interface</span> — change the inside freely, the outside never notices</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start with objects →</a>
+          <a class="btn btn-ghost" href="#m7">Jump to SOLID</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>Objects: state and behavior, together</h2></div>
+        <p>Before any principle, one idea. Object-oriented programming organizes a program around <strong>objects</strong>: self-contained bundles that hold some <strong>data</strong> and the <strong>operations</strong> that act on that data. The data is the object's <strong>state</strong> (its fields); the operations are its <strong>behavior</strong> (its methods). That pairing — state and the behavior that guards it living in one place — is the atom everything else is built from.</p>
+        <p>A <strong>class</strong> is the blueprint; an <strong>object</strong> is one thing built from it. <code class="tok">class Player</code> describes what every player <em>is</em> and can <em>do</em>; <code class="tok">new Player("Aria")</code> creates one specific player with its own state. You can stamp out a thousand players from one class, each carrying its own name, health, and level.</p>
+        <pre><span class="tag">js</span><span class="kw">class</span> <span class="cls">Player</span> {
+  <span class="kw2">constructor</span>(name) {
+    <span class="kw2">this</span>.name  = name;   <span class="cmt">// state: this player's own data</span>
+    <span class="kw2">this</span>.hp    = <span class="num">100</span>;
+    <span class="kw2">this</span>.level = <span class="num">1</span>;
+  }
+  <span class="fn">takeDamage</span>(amount) {        <span class="cmt">// behavior: an operation on that state</span>
+    <span class="kw2">this</span>.hp = Math.<span class="fn">max</span>(<span class="num">0</span>, <span class="kw2">this</span>.hp - amount);
+  }
+  <span class="fn">heal</span>(amount) { <span class="kw2">this</span>.hp = Math.<span class="fn">min</span>(<span class="num">100</span>, <span class="kw2">this</span>.hp + amount); }
+}
+
+<span class="kw">const</span> aria = <span class="kw">new</span> <span class="cls">Player</span>(<span class="str">"Aria"</span>);   <span class="cmt">// an object — one instance</span>
+aria.<span class="fn">takeDamage</span>(<span class="num">30</span>);                <span class="cmt">// send it a message</span></pre>
+        <p>The crucial mental model is the <strong>capsule</strong>. Picture the object as a container with an inside and an outside. The <span class="concept abstract">public interface</span> — its methods — is the outside: the set of messages other code is allowed to send. The <span class="concept encap">private state</span> is the inside, and ideally nobody reaches in directly; they ask the object to do something, and the object changes its own state. Hold that picture — every pillar in this course is a different way of drawing or respecting that boundary.</p>
+        <p>Here's a live one. This <code class="tok">Player</code> object exposes a few methods on its surface and keeps its state inside. Press a method and watch the object act on itself — the state never changes except through the behavior the class defined:</p>
+
+        <div class="lab" id="objLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">Object inspector</div><div class="ps">one object = bundled state + behavior — call a method, watch its state change</div></div></div>
+          <div class="lab-body">
+            <div class="cap-wrap">
+              <div class="capsule" id="objCapsule">
+                <div class="cap-name">Player <span class="tagk">instance</span></div>
+                <div class="cap-sect cap-iface">
+                  <div class="cap-label pub">▸ public interface — what others may call</div>
+                  <div id="objMethods"></div>
+                </div>
+                <div class="cap-sect cap-state">
+                  <div class="cap-label priv">▦ internal state — hidden inside</div>
+                  <div id="objFields"></div>
+                </div>
+              </div>
+              <div class="obj-log" id="objLog"></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="objFoot">Methods are the only way in. The state changes only through behavior the class defines.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">An object is just a struct — a bag of fields.</div><div class="truth">A struct is only the <b>state</b> half. What makes it an <i>object</i> is that the behavior lives with the data and is responsible for keeping it valid. Data without its guarding behavior is exactly the design OOP tries to avoid.</div></div>
+          <div class="mc"><div class="myth">Classes and objects are the same thing.</div><div class="truth">A class is the <b>blueprint</b> written once; an object is an <b>instance</b> created from it at runtime. One <code class="tok">Player</code> class, many player objects — each with independent state.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--encap);border-color:rgba(232,179,65,.4);background:var(--encap-soft)">Pillar 1</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Encapsulation — guarding the inside</h2></div>
+        <p>The first pillar, <span class="concept encap">encapsulation</span>, is the discipline of hiding an object's state behind a controlled interface, so the object alone decides how its data changes. The point isn't secrecy for its own sake — it's protecting <strong>invariants</strong>: rules that must always be true. A bank balance must never go negative past an overdraft limit; a thermostat must never be set beyond its safe range. If outside code can write the field directly, nothing can guarantee those rules.</p>
+        <p>The mechanism is access control: fields are made <strong>private</strong>, and the only way to read or change them is through <strong>public methods</strong> that enforce the rules. <code class="tok">deposit()</code> and <code class="tok">withdraw()</code> become the gatekeepers; they can reject a bad operation before it corrupts the object.</p>
+        <pre><span class="tag">js</span><span class="kw">class</span> <span class="cls">BankAccount</span> {
+  #balance = <span class="num">0</span>;                 <span class="cmt">// # = private: unreachable from outside</span>
+
+  <span class="fn">deposit</span>(amount) {
+    <span class="kw">if</span> (amount &lt;= <span class="num">0</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="cls">Error</span>(<span class="str">"must be positive"</span>);
+    <span class="kw2">this</span>.#balance += amount;       <span class="cmt">// the object guards its own state</span>
+  }
+  <span class="fn">withdraw</span>(amount) {
+    <span class="kw">if</span> (amount &gt; <span class="kw2">this</span>.#balance) <span class="kw">throw</span> <span class="kw">new</span> <span class="cls">Error</span>(<span class="str">"insufficient funds"</span>);
+    <span class="kw2">this</span>.#balance -= amount;
+  }
+  <span class="kw">get</span> <span class="fn">balance</span>() { <span class="kw">return</span> <span class="kw2">this</span>.#balance; }  <span class="cmt">// read-only window</span>
+}</pre>
+        <div class="note key">
+          <div class="nh">Invariant</div>
+          <p>An <strong>invariant</strong> is a condition an object promises to keep true for its whole life — here, "the balance is never negative." Encapsulation is what lets the object <em>keep</em> that promise: because every path that changes the balance runs through a method, every change can be checked. Expose the field and the promise is void — any line anywhere can break it.</p>
+        </div>
+        <p>This is easiest to feel by trying to break it. Below are two versions of the same account. On the left, the balance field is <strong>exposed</strong> — you can write any value straight into it, including ones that violate the rules. On the right, it's <strong>encapsulated</strong> — the same operations must go through <code class="tok">deposit</code>/<code class="tok">withdraw</code>, which refuse anything illegal. Try to drive each one negative:</p>
+
+        <div class="lab" id="encLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">The encapsulation breaker</div><div class="ps">try to corrupt each account — only one can defend itself</div></div></div>
+          <div class="lab-body">
+            <div class="enc-stage">
+              <div class="enc-panel">
+                <div class="eph" style="color:var(--st-bad)">✕ exposed — balance is a public field</div>
+                <div class="enc-acct" id="encBadAcct">
+                  <div class="enc-bal" id="encBadBal">$100</div>
+                  <div class="enc-status" id="encBadStatus">— direct field access —</div>
+                </div>
+                <div class="ds-controls" style="margin-bottom:8px">
+                  <input class="ds-input" id="encBadInput" value="-500" style="width:90px">
+                  <button class="ds-btn" id="encBadSet">balance = </button>
+                </div>
+                <div class="enc-note" id="encBadNote">Anyone can assign straight to <code class="tok">acct.balance</code>. No rule can stop them.</div>
+              </div>
+              <div class="enc-panel">
+                <div class="eph" style="color:var(--st-ok)">✓ encapsulated — balance is private</div>
+                <div class="enc-acct ok" id="encGoodAcct">
+                  <div class="enc-bal" id="encGoodBal">$100</div>
+                  <div class="enc-status ok" id="encGoodStatus">invariant holds</div>
+                </div>
+                <div class="ds-controls" style="margin-bottom:8px">
+                  <input class="ds-input" id="encGoodInput" value="500" style="width:70px">
+                  <button class="ds-btn primary" id="encDeposit">deposit</button>
+                  <button class="ds-btn" id="encWithdraw">withdraw</button>
+                </div>
+                <div class="enc-note" id="encGoodNote">Every change runs through a method that checks the rules first.</div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-foot" id="encFoot">The exposed account can be put into any state, valid or not. The encapsulated one rejects illegal operations and stays consistent.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Encapsulation means adding a getter and setter for every field.</div><div class="truth">Thoughtless <code class="tok">get</code>/<code class="tok">set</code> pairs just re-expose the field with extra typing. Real encapsulation means exposing <b>operations</b> (<code class="tok">withdraw</code>), not raw data — and often <i>not</i> offering a setter at all.</div></div>
+          <div class="mc"><div class="myth">Private fields are about hiding secrets from other programmers.</div><div class="truth">They're about <b>protecting invariants</b> and shrinking the surface that can break them. Fewer ways to change state means fewer places a bug can come from. It's a correctness tool, not a privacy one.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--abstract);border-color:rgba(86,199,255,.4);background:var(--abstract-soft)">Pillar 2</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Abstraction — programming to a contract</h2></div>
+        <p>If encapsulation hides an object's <em>data</em>, <span class="concept abstract">abstraction</span> hides its <em>implementation</em>. It lets you work with <strong>what</strong> something does while ignoring <strong>how</strong> it does it. You use a <code class="tok">List</code> without knowing it's an array or a linked structure; you call <code class="tok">save()</code> without knowing whether it writes a file or a database. The "what" is a <strong>contract</strong> — usually expressed as an <strong>interface</strong> — and the "how" is some concrete class that fulfills it.</p>
+        <p>The payoff is <strong>substitutability</strong>. When your code depends only on the contract, any implementation that honors it can be dropped in without the calling code changing a line. This single idea — <em>program to an interface, not an implementation</em> — is the seam along which flexible systems are built.</p>
+        <pre><span class="tag">js</span><span class="cmt">// the contract: what a payment method must be able to do</span>
+<span class="kw">class</span> <span class="cls">PaymentMethod</span> {
+  <span class="fn">pay</span>(amount) { <span class="kw">throw</span> <span class="kw">new</span> <span class="cls">Error</span>(<span class="str">"not implemented"</span>); }
+}
+
+<span class="cmt">// interchangeable implementations — each its own "how"</span>
+<span class="kw">class</span> <span class="cls">CreditCard</span> <span class="kw">extends</span> <span class="cls">PaymentMethod</span> { <span class="fn">pay</span>(a){ <span class="cmt">/* call card network */</span> } }
+<span class="kw">class</span> <span class="cls">PayPal</span>     <span class="kw">extends</span> <span class="cls">PaymentMethod</span> { <span class="fn">pay</span>(a){ <span class="cmt">/* call PayPal API */</span> } }
+
+<span class="cmt">// the caller depends on the contract, not the concrete type</span>
+<span class="kw">function</span> <span class="fn">checkout</span>(method, total) { method.<span class="fn">pay</span>(total); }</pre>
+        <p>Notice that <code class="tok">checkout</code> never mentions <code class="tok">CreditCard</code> or <code class="tok">PayPal</code>. It speaks only the contract — "something I can call <code class="tok">pay</code> on." Add <code class="tok">ApplePay</code> tomorrow and <code class="tok">checkout</code> doesn't change. The interface is a stable boundary that lets the two sides evolve independently.</p>
+        <p>Watch the swap happen. The caller below is fixed; it only knows the <code class="tok">PaymentMethod</code> contract. Choose which concrete implementation sits behind the interface and call it — the same line of calling code drives completely different machinery:</p>
+
+        <div class="lab" id="ifaceLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">Swap behind the interface</div><div class="ps">one contract, interchangeable implementations — the caller never changes</div></div></div>
+          <div class="lab-body">
+            <div class="iface-diagram">
+              <div class="iface-contract">
+                <div class="ic-name">«interface» PaymentMethod</div>
+                <div class="ic-sig">pay(amount) → Receipt</div>
+              </div>
+              <div class="iface-stem"></div>
+              <div class="iface-impls" id="ifaceImpls"></div>
+            </div>
+            <div class="ds-controls" style="justify-content:center;margin:18px 0 4px">
+              <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--ink-muted)">checkout(method, <span style="color:var(--c-select)">$60</span>) →</span>
+              <button class="ds-btn primary" id="ifaceRun">call pay()</button>
+            </div>
+            <div class="obj-log" id="ifaceLog" style="max-height:150px"></div>
+          </div>
+          <div class="lab-foot" id="ifaceFoot">The calling code speaks only the contract. Any implementation that honors it slots in unchanged.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Abstraction means making things abstract and complicated.</div><div class="truth">The opposite — it <b>removes</b> detail so you can reason at a higher level. A good abstraction is <i>simpler</i> to use than the thing it hides, exposing intent and concealing mechanism.</div></div>
+          <div class="mc"><div class="myth">An interface is just an extra file to maintain.</div><div class="truth">It's the <b>seam</b> that makes parts swappable and testable. Depend on a concrete class and you weld your code to one implementation; depend on a contract and you can replace, mock, or extend it freely.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--inherit);border-color:rgba(167,139,250,.4);background:var(--inherit-soft)">Pillar 3</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 03</span></div><h2>Inheritance — the is-a relationship</h2></div>
+        <p><span class="concept inherit">Inheritance</span> lets one class build on another. A <strong>subclass</strong> (or child) extends a <strong>superclass</strong> (parent), automatically receiving its state and behavior, and can add new members or <strong>override</strong> existing ones. The relationship it models is <strong>is-a</strong>: a <code class="tok">Dog</code> <em>is an</em> <code class="tok">Animal</code>, so it inherits everything an animal can do and specializes the parts that differ.</p>
+        <p>When you call a method on an object, the runtime performs <strong>method resolution</strong>: it looks for that method on the object's own class first, and if it isn't there, walks <em>up</em> the inheritance chain until it finds one. This is how an overridden <code class="tok">speak()</code> on <code class="tok">Puppy</code> wins over the one on <code class="tok">Dog</code>, while an un-overridden <code class="tok">breathe()</code> falls through to <code class="tok">Animal</code>.</p>
+        <pre><span class="tag">js</span><span class="kw">class</span> <span class="cls">Animal</span> {
+  <span class="fn">breathe</span>()  { <span class="kw">return</span> <span class="str">"…breathing"</span>; }
+  <span class="fn">describe</span>() { <span class="kw">return</span> <span class="str">"an animal"</span>; }
+}
+<span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {
+  <span class="fn">speak</span>()    { <span class="kw">return</span> <span class="str">"Woof"</span>; }
+  <span class="fn">describe</span>() { <span class="kw">return</span> <span class="str">"a dog"</span>; }   <span class="cmt">// override</span>
+}
+<span class="kw">class</span> <span class="cls">Puppy</span> <span class="kw">extends</span> <span class="cls">Dog</span> {
+  <span class="fn">speak</span>() { <span class="kw">return</span> <span class="str">"Yip!"</span>; }     <span class="cmt">// override again</span>
+}</pre>
+        <p>Trace it yourself. Call a method on a <code class="tok">Puppy</code> below and watch resolution start at <code class="tok">Puppy</code> and climb the chain until it lands on the class that actually defines the method:</p>
+
+        <div class="lab" id="inhLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">Method resolution</div><div class="ps">call a method on a Puppy — watch the lookup walk up the chain</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls" style="justify-content:center">
+              <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--ink-muted)">puppy.</span>
+              <button class="ds-btn primary" data-im="speak">speak()</button>
+              <button class="ds-btn" data-im="fetch">fetch()</button>
+              <button class="ds-btn" data-im="breathe">breathe()</button>
+              <button class="ds-btn" data-im="describe">describe()</button>
+            </div>
+            <div class="chain" id="inhChain"></div>
+          </div>
+          <div class="lab-foot" id="inhFoot">Resolution starts at the object's own class and climbs until it finds the method. The first match wins — that's how overriding works.</div>
+        </div>
+
+        <div class="note warn">
+          <div class="nh">Inheritance is the tightest coupling there is</div>
+          <p>A subclass depends on its parent's internals, not just its interface. Change the base class and every descendant can break in surprising ways — the <strong>fragile base class</strong> problem. Inheritance also locks a type into one axis of variation forever. These costs are exactly why the next two modules push you toward <code class="tok">interfaces</code> and <strong>composition</strong> for most reuse, reserving inheritance for genuine, stable is-a hierarchies.</p>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Inheritance is the main way to reuse code in OOP.</div><div class="truth">It's one way, and often the worst. It couples child to parent permanently. Most reuse is better served by <b>composition</b> (Module 05) — assembling behavior from parts you can swap.</div></div>
+          <div class="mc"><div class="myth">Deep inheritance hierarchies are a sign of good design.</div><div class="truth">Usually the reverse. Each level adds coupling and cognitive load; behavior gets smeared across many files. Favor <b>shallow</b> hierarchies — most well-designed ones are one or two levels deep.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--poly);border-color:rgba(78,214,107,.4);background:var(--poly-soft)">Pillar 4</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Polymorphism — one message, many forms</h2></div>
+        <p><span class="concept poly">Polymorphism</span> — literally "many forms" — is the ability to send the <strong>same message</strong> to different objects and have each respond in its own way. You call <code class="tok">.area()</code> on a shape; a circle computes <code class="tok">πr²</code> and a square computes <code class="tok">s²</code>, but the calling code issues one identical call. The runtime picks the right method based on the object's actual type. This is <strong>dynamic dispatch</strong>, and it's the feature that makes abstraction pay off.</p>
+        <p>The power is what it lets you <em>delete</em>: the giant <code class="tok">switch</code>. Without polymorphism, code that handles many types is riddled with <code class="tok">if (shape.type === "circle") … else if (…) …</code>, and every new type means editing every such block. With polymorphism, each type carries its own behavior, and the caller just says <code class="tok">shape.area()</code>. Adding a new shape touches <em>nothing</em> in the existing code.</p>
+        <pre><span class="tag">js</span><span class="cmt">// WITHOUT polymorphism — the caller must know every type</span>
+<span class="kw">function</span> <span class="fn">area</span>(s) {
+  <span class="kw">if</span> (s.type === <span class="str">"circle"</span>)   <span class="kw">return</span> <span class="hl">Math.PI * s.r * s.r</span>;
+  <span class="kw">if</span> (s.type === <span class="str">"square"</span>)   <span class="kw">return</span> <span class="hl">s.side * s.side</span>;
+  <span class="cmt">// …edit this function for every new shape, forever</span>
+}
+
+<span class="cmt">// WITH polymorphism — each type owns its behavior</span>
+<span class="kw">class</span> <span class="cls">Circle</span> { <span class="fn">area</span>(){ <span class="kw">return</span> <span class="hlok">Math.PI*this.r**<span class="num">2</span></span>; } }
+<span class="kw">class</span> <span class="cls">Square</span> { <span class="fn">area</span>(){ <span class="kw">return</span> <span class="hlok">this.side**<span class="num">2</span></span>; } }
+total += shape.<span class="fn">area</span>();    <span class="cmt">// one call dispatches to the right method</span></pre>
+        <p>Here is dynamic dispatch made visible. The loop below issues a single call — <code class="tok">shape.area()</code> — to a collection of different shape objects. Watch the very same message resolve to each type's own implementation, one after another:</p>
+
+        <div class="lab" id="polyLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">Polymorphic dispatch</div><div class="ps">the same call, sent to different types, runs different code</div></div></div>
+          <div class="lab-body">
+            <div class="poly-call">for (const shape of shapes) result = shape.<span class="pc-msg" id="polyMsg">area()</span>;</div>
+            <div class="ds-controls" style="justify-content:center">
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted)">send message:</span>
+              <button class="ds-btn primary" data-pm="area">.area()</button>
+              <button class="ds-btn" data-pm="perimeter">.perimeter()</button>
+              <button class="ds-btn" data-pm="name">.name()</button>
+            </div>
+            <div class="poly-grid" id="polyGrid"></div>
+            <div style="text-align:center;margin-top:16px;font-family:var(--font-mono);font-size:13px;color:var(--ink-muted)" id="polyTotal"></div>
+          </div>
+          <div class="lab-foot" id="polyFoot">One line of calling code, four different implementations. Add a fifth shape and this loop never changes.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Polymorphism is just method overriding.</div><div class="truth">Overriding is the mechanism; polymorphism is the <b>payoff</b> — that a caller can treat many types uniformly through a shared interface and let each supply its own behavior. The win is code that's open to new types without modification.</div></div>
+          <div class="mc"><div class="myth">A big type-switch and polymorphism are equivalent.</div><div class="truth">They produce the same output but differ in change cost. The switch is a <b>single choke point</b> every new type must edit; polymorphism distributes behavior so new types are purely additive. That difference is the Open/Closed Principle (Module 07).</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--compose);border-color:rgba(91,214,194,.4);background:var(--compose-soft)">Core principle</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Composition over inheritance</h2></div>
+        <p>The most repeated piece of design advice in all of OOP: <strong>favor composition over inheritance</strong>. Where inheritance models <strong>is-a</strong>, <span class="concept compose">composition</span> models <strong>has-a</strong> — an object gains abilities by <em>holding</em> other objects that provide them, rather than by being a subtype. A <code class="tok">Car</code> <em>has an</em> <code class="tok">Engine</code>; a game character <em>has</em> a set of capabilities. You build behavior by assembling parts.</p>
+        <p>Why prefer it? Because inheritance forces every variation onto a single tree, and trees explode. Suppose characters can <em>walk</em>, <em>fly</em>, and <em>swim</em> in any combination. With inheritance you need a class for each combination — <code class="tok">WalkingFlyer</code>, <code class="tok">SwimmingFlyer</code>, <code class="tok">WalkingSwimmingFlyer</code> — and the count doubles with every new ability. With composition, each ability is a component you mix in freely, and three abilities are just three small, independent parts.</p>
+        <pre><span class="tag">js</span><span class="cmt">// inheritance: a rigid tree, one class per combination — it explodes</span>
+<span class="kw">class</span> <span class="cls">Walker</span> {} <span class="kw">class</span> <span class="cls">Flyer</span> {} <span class="kw">class</span> <span class="cls">WalkingFlyer</span> {} <span class="cmt">// …and on, and on</span>
+
+<span class="cmt">// composition: abilities are parts you assemble</span>
+<span class="kw">const</span> walk = () => ({ <span class="fn">move</span>: () => <span class="str">"walking"</span> });
+<span class="kw">const</span> fly  = () => ({ <span class="fn">soar</span>: () => <span class="str">"flying"</span> });
+
+<span class="kw">function</span> <span class="fn">createHero</span>() {
+  <span class="kw">return</span> Object.<span class="fn">assign</span>({ name: <span class="str">"Kestrel"</span> }, <span class="fn">walk</span>(), <span class="fn">fly</span>()); <span class="cmt">// has-a, mixed in</span>
+}</pre>
+        <p>Feel the difference. On the left, toggle capabilities onto a character by composition — each is an independent part, and any combination just works. On the right is the inheritance tree you'd otherwise have to write: a separate class for every combination, growing exponentially:</p>
+
+        <div class="lab" id="compLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">Build by composition</div><div class="ps">mix capabilities freely — vs a class for every combination</div></div></div>
+          <div class="lab-body">
+            <div class="combo-stage">
+              <div class="combo-col">
+                <div class="cch" style="color:var(--compose)">✓ composition — toggle has-a parts</div>
+                <div class="chips" id="compChips"></div>
+                <div class="combo-result" id="compResult"></div>
+              </div>
+              <div class="combo-col">
+                <div class="cch" style="color:var(--st-warn)">✕ inheritance — a class per combination</div>
+                <div class="tree-bad" id="compTree"></div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-foot" id="compFoot">Composition adds abilities linearly — one part each. Inheritance needs a class for every subset, doubling with each new ability.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">"Favor composition" means never use inheritance.</div><div class="truth">It means reach for composition <b>first</b>. Inheritance is still right for genuine, stable is-a hierarchies with shared substitutable behavior. The rule guards against using it as a default reuse hammer.</div></div>
+          <div class="mc"><div class="myth">Composition is more code, so it's worse.</div><div class="truth">Slightly more wiring, far less coupling. Parts are independently testable, swappable, and reusable across unrelated objects — and you sidestep the combinatorial explosion and fragile base classes entirely.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 06</span></div><h2>Coupling &amp; cohesion</h2></div>
+        <p>Two metrics quietly decide whether a codebase is a pleasure or a nightmare to change. <strong>Coupling</strong> measures how much one module depends on others — how many threads connect it to the rest of the system. <strong>Cohesion</strong> measures how focused a single module is — whether its parts all serve one clear purpose. The eternal goal is <strong>loose coupling and high cohesion</strong>: modules that each do one thing well and lean on each other as little as possible.</p>
+        <p>The reason coupling matters so much is <strong>change propagation</strong>. When modules are tightly coupled, touching one forces you to touch its neighbors, which forces their neighbors — a small edit triggers a cascade of changes and a cascade of risk. When coupling is loose, changes stay <em>local</em>: you modify a module's insides and nothing outside notices, because everything outside depended only on its stable interface. Every pillar so far — encapsulation, abstraction, polymorphism, composition — is ultimately a tool for keeping coupling low.</p>
+        <div class="note">
+          <div class="nh">The two together</div>
+          <p>High cohesion <em>causes</em> loose coupling. When each module has a single, well-defined job, it needs little from others and exposes a small, stable surface. A "god module" that does everything is both incohesive <em>and</em> highly coupled — everything depends on it, and it depends on everything. Fix cohesion and coupling tends to fall out for free.</p>
+        </div>
+        <p>See how coupling controls blast radius. Below is the same system as a dependency graph, in two arrangements. Pick one, then <strong>click any module to "change" it</strong> and watch how far the ripple of affected modules spreads:</p>
+
+        <div class="lab" id="coupLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">Coupling &amp; the change ripple</div><div class="ps">change a module — see how many others are dragged along</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls">
+              <button class="ds-btn" data-cm="tight">tightly coupled</button>
+              <button class="ds-btn primary" data-cm="loose">loosely coupled</button>
+              <span style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-muted)">— then click a module to change it</span>
+            </div>
+            <div class="lab-stage">
+              <div class="stage" id="coupStage" style="height:300px;min-width:600px">
+                <svg class="edges" id="coupEdges" preserveAspectRatio="none"></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i style="background:var(--st-warn)"></i> changed</span>
+              <span><i style="background:var(--st-bad)"></i> forced to change too</span>
+              <span><i style="background:var(--surface-3);border:1px solid var(--border-strong)"></i> untouched</span>
+            </div>
+          </div>
+          <div class="lab-foot" id="coupFoot">In a tightly coupled system, one change drags most of the codebase with it. Loosen the coupling and changes stay contained.</div>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Splitting code into more files reduces coupling.</div><div class="truth">Only if you also cut the <b>dependencies</b> between them. Ten files that all reference each other are as coupled as one big file — worse, because the coupling is now hidden. Coupling is about references, not file count.</div></div>
+          <div class="mc"><div class="myth">Some coupling is bad, so zero coupling is the goal.</div><div class="truth">Modules must collaborate, so some coupling is necessary. The goal is to make it <b>loose and intentional</b> — through narrow interfaces — not to eliminate it. Zero coupling means the parts don't talk, which means they don't form a system.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--principle);border-color:rgba(242,151,60,.4);background:var(--principle-soft)">The five</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div><h2>The SOLID principles</h2></div>
+        <p>SOLID is five principles of class design that together push code toward loose coupling, easy extension, and safe change. They aren't laws; they're <strong>pressure</strong> in a direction. Internalize them and good structure starts to feel obvious. Each one has a memorable failure mode and a clean fix.</p>
+        <p>Tap each letter to see the principle, a common <strong>violation</strong>, and the <strong>fix</strong>:</p>
+
+        <div class="lab" id="solidLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">The SOLID explorer</div><div class="ps">five principles — each a violation and its fix</div></div></div>
+          <div class="lab-body">
+            <div class="solid-row" id="solidRow"></div>
+            <div id="solidDetail"></div>
+          </div>
+          <div class="lab-foot" id="solidFoot">Each principle reduces a specific kind of coupling. Together they make classes small, focused, and open to change.</div>
+        </div>
+
+        <p>None of these stands alone. Single Responsibility keeps classes cohesive; Open/Closed and Liskov make polymorphism safe; Interface Segregation and Dependency Inversion keep the dependencies between classes loose and pointed at abstractions. They're five views of the same goal you've been circling all course: <strong>localize change</strong>.</p>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">SOLID means more classes and interfaces, so more is always better.</div><div class="truth">Applied blindly, SOLID can over-engineer simple code into a maze of indirection. The principles solve <b>real</b> coupling pains — apply them when you feel the pain, not preemptively to every two-line class.</div></div>
+          <div class="mc"><div class="myth">The Open/Closed Principle means you can never edit existing code.</div><div class="truth">It means designing so that <b>common</b> kinds of change (a new type, a new rule) are additive rather than invasive. You still fix bugs and refactor; you just avoid architectures where every new case forces edits to shared, fragile code.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 08</span></div><h2>DRY, KISS &amp; YAGNI</h2></div>
+        <p>Three short slogans carry an enormous amount of practical wisdom about keeping code simple and change cheap.</p>
+        <p><strong>DRY — Don't Repeat Yourself.</strong> Every piece of knowledge should have a single, authoritative home. When the same rule is copy-pasted in five places, a change means finding and fixing all five — and the bug is the one you missed. Centralize it, and there's one place to change and one place to be right.</p>
+        <pre><span class="tag">js</span><span class="cmt">// repetitive — the tax rule lives in three places</span>
+<span class="kw">const</span> a = price + <span class="hl">price * 0.2</span>;
+<span class="kw">const</span> b = total + <span class="hl">total * 0.2</span>;   <span class="cmt">// change the rate → hunt them all down</span>
+
+<span class="cmt">// DRY — one source of truth</span>
+<span class="kw">const</span> withTax = (n) => <span class="hlok">n * 1.2</span>;
+<span class="kw">const</span> a = <span class="fn">withTax</span>(price), b = <span class="fn">withTax</span>(total);</pre>
+        <p><strong>KISS — Keep It Simple.</strong> Between a clever solution and a clear one, choose clear. Code is read far more often than it's written, and the next reader (often you) pays for every bit of cleverness. Simplicity isn't a lack of sophistication; it's the discipline of solving the problem with the least machinery that works.</p>
+        <p><strong>YAGNI — You Aren't Gonna Need It.</strong> Don't build for imagined futures. The configurable, pluggable, generalized framework you're tempted to add "in case we need it" usually never gets used — and meanwhile everyone pays to carry and understand it. Build what today's requirement needs; generalize when a <em>second</em> real case actually arrives.</p>
+        <div class="note warn">
+          <div class="nh">When DRY turns on you</div>
+          <p>DRY is about duplicated <strong>knowledge</strong>, not duplicated <strong>text</strong>. Two pieces of code that look identical today but change for <em>different reasons</em> are not true duplication — merging them couples two unrelated things, and the day their rules diverge you'll tear the abstraction apart. As the saying goes: <strong>a little duplication is far cheaper than the wrong abstraction.</strong> Wait until the pattern is undeniable before extracting it.</p>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">DRY means no two lines of code should ever look the same.</div><div class="truth">It means no <b>piece of knowledge</b> should be duplicated. Coincidentally-similar code that evolves separately should stay separate — forcing it together is the "wrong abstraction" that's harder to undo than the duplication was.</div></div>
+          <div class="mc"><div class="myth">YAGNI is an excuse to ignore the future and write shortsighted code.</div><div class="truth">It targets <b>speculative</b> features, not good design. Keep the code clean and easy to change (that's the whole course) — then changing it later when you <i>do</i> need something is cheap. YAGNI trusts refactoring over fortune-telling.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>Heuristics &amp; guidelines</h2></div>
+        <p>Below the big principles sits a layer of smaller rules of thumb — heuristics that nudge individual lines toward clarity and low coupling. None is absolute, but each catches a recurring mistake.</p>
+
+        <h3>Tell, Don't Ask</h3>
+        <p>Don't pull data out of an object, make a decision, and push a result back. <strong>Tell the object what you want and let it decide.</strong> Asking for an object's state and acting on it elsewhere drains behavior out of the object — re-creating the "data over here, logic over there" split that encapsulation exists to prevent.</p>
+        <div class="codeflip" data-flip>
+          <div class="flip-tabs">
+            <button class="flip-tab on bad">✕ ask</button>
+            <button class="flip-tab">✓ tell</button>
+          </div>
+          <pre data-panel><span class="tag">js</span><span class="cmt">// ASK: reach in, decide outside, write back</span>
+<span class="kw">if</span> (account.<span class="fn">getBalance</span>() &gt;= amount) {
+  account.<span class="fn">setBalance</span>(account.<span class="fn">getBalance</span>() - amount);
+}                       <span class="cmt">// the rule lives outside the object</span></pre>
+          <pre data-panel hidden><span class="tag">js</span><span class="cmt">// TELL: hand it the intent, let it enforce its own rules</span>
+account.<span class="fn">withdraw</span>(amount);   <span class="cmt">// the object owns the decision</span></pre>
+        </div>
+
+        <h3>The Law of Demeter <span class="ct" style="color:var(--couple);background:var(--couple-soft)">don't talk to strangers</span></h3>
+        <p>A method should only talk to its <em>immediate</em> collaborators — its own fields, its parameters, objects it creates — not reach through them to distant objects. Chains like <code class="tok">order.getCustomer().getAddress().getCity()</code> are <strong>train wrecks</strong>: they couple you to the entire object graph, so a change three objects away breaks your code. Ask your direct neighbor for what you need.</p>
+        <div class="codeflip" data-flip>
+          <div class="flip-tabs">
+            <button class="flip-tab on bad">✕ train wreck</button>
+            <button class="flip-tab">✓ one hop</button>
+          </div>
+          <pre data-panel><span class="tag">js</span><span class="cmt">// reaches through 3 objects — coupled to all of them</span>
+<span class="kw">const</span> city = <span class="hl">order.getCustomer().getAddress().getCity()</span>;</pre>
+          <pre data-panel hidden><span class="tag">js</span><span class="cmt">// ask the immediate object; let it delegate internally</span>
+<span class="kw">const</span> city = <span class="hlok">order.getShippingCity()</span>;   <span class="cmt">// one dot, one dependency</span></pre>
+        </div>
+
+        <p>A few more worth keeping in your pocket: <strong>Command–Query Separation</strong> — a method should either <em>do</em> something or <em>answer</em> something, never both, so callers can trust that asking has no side effects. <strong>Fail fast</strong> — validate inputs at the boundary and throw immediately, rather than letting bad data slip deep into the system where the eventual error makes no sense. <strong>Prefer immutability</strong> — objects that never change after construction can't be corrupted, can't surprise you, and are safe to share freely.</p>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The Law of Demeter bans all method chaining.</div><div class="truth">Fluent chains that return the <i>same</i> object (a builder, a stream pipeline) are fine. Demeter targets chains that <b>navigate</b> across different objects' internals — coupling you to a structure you don't own.</div></div>
+          <div class="mc"><div class="myth">These heuristics are unbreakable rules.</div><div class="truth">They're <b>defaults that pay their way</b>. Each prevents a common, specific pain. Break one deliberately when you have a concrete reason — but know which one you're breaking and why.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Code smells &amp; refactoring</h2></div>
+        <p>A <strong>code smell</strong> is a surface symptom that often points to a deeper design problem. Smells aren't bugs — the code works — but they signal that change will be harder than it should be. Learning to notice them is half the craft; the other half is <strong>refactoring</strong>: improving a program's internal structure <em>without changing its behavior</em>, in small safe steps backed by tests.</p>
+        <p>The most common smells, and what each is really telling you:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Smell</th><th>What you see</th><th>The deeper problem</th></tr></thead>
+            <tbody>
+              <tr><td><b>Long Method</b></td><td>A function that scrolls off the screen</td><td>It's doing several jobs; extract them into named methods.</td></tr>
+              <tr><td><b>Large Class / God Object</b></td><td>One class that knows and does everything</td><td>Low cohesion; split by responsibility (Module 07's S).</td></tr>
+              <tr><td><b>Feature Envy</b></td><td>A method that uses another object's data more than its own</td><td>The behavior is in the wrong class; move it to the data.</td></tr>
+              <tr><td><b>Primitive Obsession</b></td><td>Strings and ints standing in for real concepts (<code class="tok">money</code>, <code class="tok">email</code>)</td><td>A missing type; introduce a small value object.</td></tr>
+              <tr><td><b>Shotgun Surgery</b></td><td>One change forces tiny edits across many files</td><td>A responsibility is scattered; gather it into one place.</td></tr>
+              <tr><td><b>Long Parameter List</b></td><td>A method taking six, seven, eight arguments</td><td>Hidden data clump; pass an object, or rethink the call.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Here's a small but classic refactor. The "before" is a long method bristling with feature envy and primitive obsession; the "after" pushes behavior to where the data lives and names the concepts. Same behavior, far easier to change:</p>
+        <div class="codeflip" data-flip>
+          <div class="flip-tabs">
+            <button class="flip-tab on bad">✕ smelly</button>
+            <button class="flip-tab">✓ refactored</button>
+          </div>
+          <pre data-panel><span class="tag">js</span><span class="cmt">// long method + feature envy: pokes at order's internals</span>
+<span class="kw">function</span> <span class="fn">printReceipt</span>(order) {
+  <span class="kw">let</span> total = <span class="num">0</span>;
+  <span class="kw">for</span> (<span class="kw">const</span> line <span class="kw">of</span> order.lines)
+    total += <span class="hl">line.qty * line.unitPrice</span>;        <span class="cmt">// order's job, not ours</span>
+  <span class="kw">if</span> (<span class="hl">order.customer.type === "vip"</span>) total *= <span class="num">0.9</span>; <span class="cmt">// reaching in</span>
+  console.<span class="fn">log</span>(<span class="str">"Total: $"</span> + total.<span class="fn">toFixed</span>(<span class="num">2</span>));
+}</pre>
+          <pre data-panel hidden><span class="tag">js</span><span class="cmt">// behavior moved to the objects that own the data</span>
+<span class="kw">class</span> <span class="cls">Order</span> {
+  <span class="fn">total</span>() {
+    <span class="kw">const</span> sum = <span class="kw2">this</span>.lines.<span class="fn">reduce</span>((t, l) => t + l.<span class="fn">subtotal</span>(), <span class="num">0</span>);
+    <span class="kw">return</span> <span class="kw2">this</span>.customer.<span class="fn">applyDiscount</span>(sum);   <span class="cmt">// tell, don't ask</span>
+  }
+}
+<span class="kw">function</span> <span class="fn">printReceipt</span>(order) {
+  console.<span class="fn">log</span>(<span class="str">`Total: $${order.<span class="fn">total</span>().<span class="fn">toFixed</span>(2)}`</span>);
+}</pre>
+        </div>
+        <div class="note">
+          <div class="nh">Refactor on green</div>
+          <p>The discipline that makes refactoring safe is <strong>tests</strong>. With a passing test suite, you change structure in tiny steps and re-run after each — if the bar stays green, behavior is preserved. Refactoring without tests is just editing and hoping. This is why "make it work, make it right, make it fast" is an <em>order</em>: get a passing test, then improve the design underneath it.</p>
+        </div>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Refactoring means rewriting a messy module from scratch.</div><div class="truth">That's a rewrite — high-risk and behavior-changing. <b>Refactoring</b> is a sequence of tiny, behavior-preserving transformations, each verified by tests. The system stays working the entire time.</div></div>
+          <div class="mc"><div class="myth">A code smell means the code is wrong and must be fixed now.</div><div class="truth">A smell is a <b>hint to look closer</b>, not a verdict. Sometimes the simple, slightly-smelly version is the right call. Fix smells when they're getting in the way of a change you're actually making.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>Pragmatic OOP</h2></div>
+        <p>You now have the pillars and the principles. The final lesson is the one that ties them together: <strong>they are all means to an end, and the end is always changeability and clarity</strong>. Encapsulation, abstraction, SOLID, low coupling — none is valuable for its own sake. Each earns its keep only when it makes the code easier for the next person to understand and safer to change. When a "principle" makes code harder to follow, you've misapplied it.</p>
+        <p>Which means judgment outranks dogma. A three-line script needs no interfaces. A data-transformation pipeline may be clearer as plain functions than as a class hierarchy — <strong>OOP is one paradigm, not the only one</strong>, and the best engineers mix object-oriented, functional, and procedural styles to fit the problem. Reach for objects when you have <em>state and the behavior that guards it</em>, when you're modeling a domain of interacting things, when polymorphism lets you add cases without editing old code. Reach elsewhere when you don't.</p>
+        <div class="note key">
+          <div class="nh">The whole course in one line</div>
+          <p>Bundle state with the behavior that protects it, hide what others don't need, depend on stable interfaces instead of concrete details, and keep each piece focused — so that change stays small, local, and safe. Every pillar and principle here is a different angle on that one sentence.</p>
+        </div>
+        <p>The deepest skill isn't knowing the principles — it's developing the taste for <em>when</em> each one helps. That taste comes from reps: writing code, living with your decisions, feeling which ones made the next change easy and which made it painful, and adjusting. The principles give you the vocabulary; experience teaches you the music.</p>
+
+        <div class="practice">
+          <div class="ph">Practice · design judgment</div>
+          <p><strong>1.</strong> You have a <code class="tok">Report</code> class that builds data, formats it as HTML, and emails it. Which SOLID principle does this violate, and how would you fix it?</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p>Single Responsibility — it has three reasons to change (data logic, formatting, delivery). Split into a <code class="tok">Report</code> (data), a <code class="tok">ReportFormatter</code>, and a <code class="tok">Mailer</code>. Each can now change independently, and you can format without emailing or test the data logic in isolation.</p></div></details>
+          <p style="margin-top:16px"><strong>2.</strong> You see <code class="tok">a.getB().getC().doThing()</code> in a method. What's the smell, and what's the fix?</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p>A Law of Demeter violation (a "train wreck"). The method is coupled to the structure of <code class="tok">B</code> and <code class="tok">C</code>. Add a method to <code class="tok">a</code> that does the work and delegates internally — <code class="tok">a.doThing()</code> — so callers depend only on <code class="tok">a</code>.</p></div></details>
+          <p style="margin-top:16px"><strong>3. (judgment)</strong> You notice two functions with nearly identical bodies. Should you immediately extract a shared one?</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p>Not necessarily. Ask <em>why</em> they're the same. If they encode the <b>same rule</b>, extract (DRY). If they're similar by coincidence and will change for different reasons, leave them — premature extraction couples them and the wrong abstraction costs more than the duplication. Wait for a third occurrence before trusting the pattern.</p></div></details>
+        </div>
+
+        <div class="closing">
+          <h2>Now you can shape the code, not just write it</h2>
+          <p>You started with a single object — state and behavior, together — and built all the way to the principles that keep a large system soft enough to change. The syntax of classes was never the point; the thinking was, and now it's yours.</p>
+          <p>From here, the growth is in reps: write code, notice which decisions made the next change easy, and refactor toward the principles when the pain shows up. Good design isn't a destination you reach — it's a direction you keep choosing.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering OOP &amp; Coding Principles — a companion to Big&nbsp;O Complexity, Data Structures, Design Patterns, and SQL&nbsp;&amp;&nbsp;PostgreSQL. Built to be poked at.</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="js/mastering-oop-coding-principles.js"></script>
+</body>
+</html>

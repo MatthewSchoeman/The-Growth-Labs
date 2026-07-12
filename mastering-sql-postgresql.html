@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Growth Lab — Mastering SQL &amp; PostgreSQL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-sql-postgresql.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2.5" y="3.5" width="19" height="17" rx="3" stroke="#8C9ECD" stroke-width="1.4"/>
+        <rect x="2.5" y="3.5" width="19" height="5.2" rx="3" fill="#56C7FF" fill-opacity="0.28"/>
+        <line x1="2.5" y1="8.7" x2="21.5" y2="8.7" stroke="#8C9ECD" stroke-width="1.2"/>
+        <line x1="2.5" y1="14.4" x2="21.5" y2="14.4" stroke="#8C9ECD" stroke-width="1"/>
+        <line x1="9" y1="8.7" x2="9" y2="20.5" stroke="#8C9ECD" stroke-width="1"/>
+        <line x1="15" y1="3.5" x2="15" y2="20.5" stroke="#8C9ECD" stroke-width="1"/>
+        <rect x="15.4" y="14.8" width="5.6" height="5.3" fill="#4ED66B" fill-opacity="0.4"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>SQL &amp; PostgreSQL</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2.5" y="3.5" width="19" height="17" rx="3" stroke="#8C9ECD" stroke-width="1.4"/>
+            <rect x="2.5" y="3.5" width="19" height="5.2" rx="3" fill="#56C7FF" fill-opacity="0.28"/>
+            <line x1="2.5" y1="8.7" x2="21.5" y2="8.7" stroke="#8C9ECD" stroke-width="1.2"/>
+            <line x1="2.5" y1="14.4" x2="21.5" y2="14.4" stroke="#8C9ECD" stroke-width="1"/>
+            <line x1="9" y1="8.7" x2="9" y2="20.5" stroke="#8C9ECD" stroke-width="1"/>
+            <line x1="15" y1="3.5" x2="15" y2="20.5" stroke="#8C9ECD" stroke-width="1"/>
+            <rect x="15.4" y="14.8" width="5.6" height="5.3" fill="#4ED66B" fill-opacity="0.4"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>SQL &amp; PostgreSQL</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">Foundations · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>The relational model</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>SELECT — asking for data</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Filtering with WHERE</span></a>
+      <a class="module" href="#m3"><span class="num">03</span><span>Sorting &amp; limiting</span></a>
+      <div class="nav-group-label">Shaping Results · Intermediate</div>
+      <a class="module" href="#m4"><span class="num">04</span><span>Aggregation &amp; GROUP BY</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Joining tables</span></a>
+      <a class="module" href="#m6"><span class="num">06</span><span>How a query really runs</span></a>
+      <div class="nav-group-label">Power Tools · Advanced</div>
+      <a class="module" href="#m7"><span class="num">07</span><span>Subqueries &amp; CTEs</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Window functions</span></a>
+      <a class="module" href="#m9"><span class="num">09</span><span>Designing the schema</span></a>
+      <div class="nav-group-label">PostgreSQL · Expert</div>
+      <a class="module" href="#m10"><span class="num">10</span><span>PostgreSQL in depth</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>Writing fast, correct SQL</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert</div>
+        <h1>Say what you want,<br><span class="grad">not how to get it.</span></h1>
+        <p class="lede">SQL is a <strong>declarative</strong> language: you describe the result you want, and the database works out how to produce it. That single idea — plus a handful of tables and the relationships between them — is the whole game. This course builds from your first <code class="tok">SELECT</code> to window functions and PostgreSQL's query planner, and it ships with a <strong>real SQL engine running in the page</strong> so you can run every query as you read.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A SQL query over two tables producing a result set"></svg>
+          <div class="hero-cap">you write <span style="color:var(--c-select)">SELECT</span> first — the database runs it almost <em>last</em></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Start from the model →</a>
+          <a class="btn btn-ghost" href="#m1">Jump to the playground</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>The relational model</h2></div>
+        <p>Before any syntax, one idea. A relational database stores data as <strong>tables</strong> — grids of rows and columns. Each <strong>row</strong> is one record (one employee, one order, one event). Each <strong>column</strong> is one attribute of that record, with a fixed <strong>type</strong> (an integer, some text, a date). That's it. The power doesn't come from the tables themselves; it comes from the <strong>relationships between them</strong> and a language for asking questions across those relationships.</p>
+        <p>Here are the two tables this entire course runs on. Spend a moment with them — every query you'll write and run targets these:</p>
+
+        <div class="tbl-wrap" style="border:none;overflow-x:auto">
+          <table class="dtbl" style="min-width:560px">
+            <caption><b style="color:var(--c-from)">employees</b> — one row per person</caption>
+            <thead><tr><th>id</th><th>name</th><th>dept_id</th><th>salary</th><th>hire_date</th><th>manager_id</th></tr></thead>
+            <tbody>
+              <tr><td class="keyc">1</td><td>Alice</td><td>1</td><td>145000</td><td>2019-03-12</td><td><span class="nullv">NULL</span></td></tr>
+              <tr><td class="keyc">2</td><td>Bob</td><td>1</td><td>120000</td><td>2020-07-01</td><td>1</td></tr>
+              <tr><td class="keyc">3</td><td>Carla</td><td>2</td><td>98000</td><td>2018-11-23</td><td><span class="nullv">NULL</span></td></tr>
+              <tr><td class="keyc">4</td><td>Diego</td><td>2</td><td>87000</td><td>2021-01-15</td><td>3</td></tr>
+              <tr><td class="keyc">5</td><td>Erin</td><td>3</td><td>76000</td><td>2022-05-30</td><td><span class="nullv">NULL</span></td></tr>
+              <tr><td class="keyc">6</td><td>Frank</td><td>1</td><td>105000</td><td>2021-09-09</td><td>1</td></tr>
+              <tr><td class="keyc">7</td><td>Grace</td><td>4</td><td>68000</td><td>2023-02-18</td><td><span class="nullv">NULL</span></td></tr>
+              <tr><td class="keyc">8</td><td>Heidi</td><td>2</td><td>91000</td><td>2020-03-03</td><td>3</td></tr>
+              <tr><td class="keyc">9</td><td>Ivan</td><td><span class="nullv">NULL</span></td><td>82000</td><td>2023-08-01</td><td><span class="nullv">NULL</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-wrap" style="border:none;overflow-x:auto">
+          <table class="dtbl" style="min-width:440px">
+            <caption><b style="color:var(--c-from)">departments</b> — one row per department</caption>
+            <thead><tr><th>id</th><th>name</th><th>location</th><th>budget</th></tr></thead>
+            <tbody>
+              <tr><td class="keyc">1</td><td>Engineering</td><td>San Francisco</td><td>1200000</td></tr>
+              <tr><td class="keyc">2</td><td>Sales</td><td>New York</td><td>800000</td></tr>
+              <tr><td class="keyc">3</td><td>Marketing</td><td>New York</td><td>500000</td></tr>
+              <tr><td class="keyc">4</td><td>Support</td><td>Austin</td><td>300000</td></tr>
+              <tr><td class="keyc">5</td><td>Legal</td><td>Boston</td><td>250000</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Keys: how rows find each other</h3>
+        <p>Look at the colored column. Each table has a <strong>primary key</strong> — the <code class="tok">id</code> column — a value that uniquely identifies one row. No two departments share an <code class="tok">id</code>; given <code class="tok">id = 2</code> there is exactly one department, Sales.</p>
+        <p>Now look at <code class="tok">employees.dept_id</code>. It isn't an arbitrary number — it's a <strong>foreign key</strong> that points at <code class="tok">departments.id</code>. Bob's <code class="tok">dept_id</code> is <code class="tok">1</code>, which <em>means</em> Bob is in Engineering. The relationship between an employee and a department lives entirely in that one number. This is the relational model's central trick: <strong>store each fact once, and link to it by key.</strong> Department names aren't copied onto every employee row; they sit in one place and employees reference them.</p>
+        <div class="note key">
+          <div class="nh">Two rows that don't line up — on purpose</div>
+          <p>Ivan (employee 9) has a <code class="tok">NULL</code> <code class="tok">dept_id</code>: a new hire not yet assigned to a department. And Legal (department 5) has no employees pointing at it. These two deliberate gaps will matter enormously when we reach joins — they're exactly where <code class="tok">INNER</code> and <code class="tok">LEFT</code> joins behave differently.</p>
+        </div>
+
+        <h3>Declarative: the mental shift</h3>
+        <p>If you've written code in Python, Java, or JavaScript, you're used to telling the computer <em>how</em> to do something step by step: loop over this list, check each item, accumulate a result. SQL asks you to think differently. You describe <em>what you want</em> — "the names and salaries of employees earning over 90,000, highest first" — and the database's <strong>query planner</strong> decides how to get it: which table to scan, whether to use an index, how to sort. You write the goal; it writes the algorithm.</p>
+        <div class="codeflip" style="margin-top:10px">
+          <div class="tbl-wrap"><table style="min-width:0"><thead><tr><th style="color:var(--st-bad)">Imperative — you write the how</th><th style="color:var(--c-select)">Declarative (SQL) — you write the what</th></tr></thead>
+          <tbody><tr>
+            <td class="mono" style="font-size:12px;vertical-align:top;white-space:pre-wrap">result = []
+for e in employees:
+  if e.salary &gt; 90000:
+    result.append(e)
+result.sort(key=lambda e:
+  -e.salary)</td>
+            <td class="mono" style="font-size:12px;vertical-align:top;white-space:pre-wrap"><span class="k-select">SELECT</span> name, salary
+<span class="k-from">FROM</span> employees
+<span class="k-where">WHERE</span> salary &gt; 90000
+<span class="k-order">ORDER BY</span> salary <span class="k-order">DESC</span>;</td>
+          </tr></tbody></table></div>
+        </div>
+        <p>Same outcome; completely different responsibility. The SQL on the right doesn't say <em>scan</em>, <em>compare</em>, or <em>sort with this algorithm</em> — and because it doesn't, PostgreSQL is free to choose the fastest plan available, which might be radically different on a table of nine rows versus nine billion. Holding onto this "describe the result" mindset is what separates people who fight SQL from people who fly with it.</p>
+
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A database is just a place to store data.</div><div class="truth">Storage is the least of it. The value is the <b>query engine</b> — the ability to ask complex questions across related tables and have them answered efficiently and correctly, with guarantees about consistency.</div></div>
+          <div class="mc"><div class="myth">Tables should hold everything about an entity, to avoid lookups.</div><div class="truth">The opposite. Storing each fact once and linking by key (<b>normalization</b>) prevents contradictions — you'll see why in Module 09. Duplicated data is data waiting to disagree with itself.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>SELECT — asking for data</h2></div>
+        <p>Every question to a database is a <strong>query</strong>, and almost every query starts with <code class="tok">SELECT</code>. The minimal shape is two clauses: <span class="clause select">SELECT</span> which columns you want, and <span class="clause from">FROM</span> which table. The result is itself a table — rows and columns — which is why SQL composes so cleanly: the output of a query looks just like the input.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, salary      <span class="cmt">-- the columns you want</span>
+<span class="k-from">FROM</span> employees;          <span class="cmt">-- the table to read from</span></pre>
+        <p>To get <em>every</em> column, use <code class="tok">*</code>. It's convenient when exploring, but in real queries you should name the columns you need — it's clearer, survives schema changes, and moves less data.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> *  <span class="k-from">FROM</span> departments;</pre>
+
+        <h3>Aliases, expressions, and DISTINCT</h3>
+        <p>Columns can be renamed in the output with <code class="tok">AS</code> (an <strong>alias</strong>), and you can compute new columns with expressions — arithmetic, function calls — right in the <code class="tok">SELECT</code> list. The result is computed per row.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name,
+       salary <span class="op">/</span> <span class="num">12</span> <span class="kw2">AS</span> monthly_pay,        <span class="cmt">-- computed column</span>
+       <span class="fnc">upper</span>(name) <span class="kw2">AS</span> shout
+<span class="k-from">FROM</span> employees;</pre>
+        <p>And when you want the <em>distinct</em> values a column takes — no duplicates — reach for <code class="tok">DISTINCT</code>. "Which locations do we have offices in?" is really "the distinct values of <code class="tok">location</code>":</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> <span class="kw2">DISTINCT</span> location  <span class="k-from">FROM</span> departments;</pre>
+
+        <p>Enough reading — run it yourself. This playground holds a <strong>live SQL engine</strong>: edit the query, press <span class="kbd">Run</span> (or <span class="kbd">Ctrl/Cmd + Enter</span>), and the result table below updates. Every query in this course works here.</p>
+
+        <div class="pg" id="pgLab">
+          <div class="pg-head"><div><div class="pt">SQL playground</div><div class="ps">a real query engine — edit and run against the two tables</div></div></div>
+          <div class="pg-schema">
+            <div class="pg-tbl"><b>employees</b> <span class="cols">(id, name, dept_id, salary, hire_date, manager_id)</span></div>
+            <div class="pg-tbl"><b>departments</b> <span class="cols">(id, name, location, budget)</span></div>
+          </div>
+          <div class="pg-editor-wrap">
+            <textarea class="pg-editor" id="pgEditor" spellcheck="false">SELECT name, salary
+FROM employees
+WHERE salary &gt; 90000
+ORDER BY salary DESC;</textarea>
+          </div>
+          <div class="pg-toolbar">
+            <button class="pg-run" id="pgRun">▶ Run</button>
+            <span class="pg-ex-label">try:</span>
+            <button class="pg-ex" data-q="SELECT * FROM departments;">all departments</button>
+            <button class="pg-ex" data-q="SELECT DISTINCT location FROM departments;">distinct locations</button>
+            <button class="pg-ex" data-q="SELECT name, salary / 12 AS monthly FROM employees ORDER BY monthly DESC LIMIT 3;">top 3 monthly pay</button>
+            <button class="pg-ex" data-q="SELECT dept_id, COUNT(*) AS headcount, AVG(salary) AS avg_pay&#10;FROM employees&#10;GROUP BY dept_id&#10;ORDER BY headcount DESC;">headcount by dept</button>
+          </div>
+          <div id="pgResult"></div>
+        </div>
+
+        <div class="practice">
+          <div class="ph">Practice · run these in the playground</div>
+          <p><strong>1.</strong> Select just the <code class="tok">name</code> and <code class="tok">location</code> of every department.</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT name, location FROM departments;</code></p></div></details>
+          <p style="margin-top:16px"><strong>2.</strong> Show each employee's name alongside their annual salary expressed in thousands (salary ÷ 1000), aliased as <code class="tok">k_salary</code>.</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT name, salary / 1000 AS k_salary FROM employees;</code> — the expression is evaluated once per row.</p></div></details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>Filtering with WHERE</h2></div>
+        <p>A query without a filter returns the whole table. The <span class="clause where">WHERE</span> clause keeps only the rows where a condition is <strong>true</strong>. Conceptually the database tests every row against the condition and discards the ones that fail.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, salary
+<span class="k-from">FROM</span> employees
+<span class="k-where">WHERE</span> salary <span class="op">&gt;=</span> <span class="num">100000</span>;</pre>
+        <p>Conditions combine with <code class="tok">AND</code>, <code class="tok">OR</code>, and <code class="tok">NOT</code>. <code class="tok">AND</code> binds tighter than <code class="tok">OR</code>, so use parentheses when mixing them — the meaning changes completely otherwise.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, dept_id, salary
+<span class="k-from">FROM</span> employees
+<span class="k-where">WHERE</span> dept_id <span class="op">=</span> <span class="num">1</span> <span class="kw2">AND</span> salary <span class="op">&gt;</span> <span class="num">110000</span>;   <span class="cmt">-- both must hold</span></pre>
+
+        <h3>The convenient operators</h3>
+        <p>Three operators save you from clumsy chains of <code class="tok">AND</code>/<code class="tok">OR</code>:</p>
+        <ul>
+          <li><code class="tok">IN (…)</code> — matches any value in a list. <code class="tok">dept_id IN (1, 2)</code> beats <code class="tok">dept_id = 1 OR dept_id = 2</code>.</li>
+          <li><code class="tok">BETWEEN a AND b</code> — an inclusive range. <code class="tok">salary BETWEEN 80000 AND 100000</code> includes both ends.</li>
+          <li><code class="tok">LIKE</code> — pattern matching on text, where <code class="tok">%</code> means "any run of characters" and <code class="tok">_</code> means "one character". <code class="tok">name LIKE 'A%'</code> finds names starting with A. (PostgreSQL's <code class="tok">ILIKE</code> does the same, case-insensitively.)</li>
+        </ul>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, salary
+<span class="k-from">FROM</span> employees
+<span class="k-where">WHERE</span> dept_id <span class="kw2">IN</span> (<span class="num">1</span>, <span class="num">2</span>)
+  <span class="kw2">AND</span> salary <span class="kw2">BETWEEN</span> <span class="num">85000</span> <span class="kw2">AND</span> <span class="num">125000</span>;</pre>
+
+        <h3>NULL: the value that isn't</h3>
+        <p>A <code class="tok">NULL</code> means "unknown" or "absent" — not zero, not an empty string. This has a startling consequence: <strong>comparisons with <code class="tok">NULL</code> are never true.</strong> <code class="tok">NULL = NULL</code> is not true; it's <em>unknown</em>. So <code class="tok">WHERE dept_id = NULL</code> matches nothing, ever. To test for null you must use <code class="tok">IS NULL</code> or <code class="tok">IS NOT NULL</code>.</p>
+        <pre><span class="tag">sql</span><span class="cmt">-- find the unassigned employee (Ivan)</span>
+<span class="k-select">SELECT</span> name  <span class="k-from">FROM</span> employees  <span class="k-where">WHERE</span> dept_id <span class="kw2">IS NULL</span>;
+
+<span class="cmt">-- this returns NOTHING — a classic beginner trap:</span>
+<span class="k-select">SELECT</span> name  <span class="k-from">FROM</span> employees  <span class="k-where">WHERE</span> dept_id <span class="op">=</span> <span class="kw2">NULL</span>;</pre>
+        <p>This is <strong>three-valued logic</strong>: every condition is true, false, or unknown, and only <em>true</em> rows survive. It trips up nearly everyone at first, so we'll make it tangible. Type a condition below and watch which rows it keeps:</p>
+
+        <div class="lab" id="whereLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">WHERE filter</div><div class="ps">type a condition — kept rows glow, rejected rows fade</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls">
+              <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--c-where)">WHERE</span>
+              <input class="ds-input" id="whereInput" value="salary &gt; 90000" style="width:240px">
+              <button class="ds-btn primary" id="whereRun">Apply filter</button>
+            </div>
+            <div class="ds-controls" style="margin-top:-6px">
+              <span class="pg-ex-label">examples:</span>
+              <button class="pg-ex" data-w="dept_id = 1">dept_id = 1</button>
+              <button class="pg-ex" data-w="dept_id IN (1, 2) AND salary &gt; 90000">IN + AND</button>
+              <button class="pg-ex" data-w="name LIKE '%a%'">name LIKE '%a%'</button>
+              <button class="pg-ex" data-w="dept_id IS NULL">dept_id IS NULL</button>
+              <button class="pg-ex" data-w="dept_id = NULL">dept_id = NULL</button>
+            </div>
+            <div class="rtbl-wrap"><table class="dtbl" id="whereTable" style="min-width:560px"></table></div>
+          </div>
+          <div class="lab-foot" id="whereFoot">Every row is tested against the condition; only those that evaluate to <b>true</b> are kept.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">WHERE salary != 100000 returns everyone not paid 100k.</div><div class="truth">Only those with a <b>known</b> salary. Any row where salary is <code class="tok">NULL</code> is excluded, because <code class="tok">NULL != 100000</code> is unknown, not true. Null-handling is the source of countless real-world bugs.</div></div>
+          <div class="mc"><div class="myth">WHERE filters the final output of the query.</div><div class="truth">It filters <b>individual rows early</b>, before grouping and before <code class="tok">SELECT</code> runs. Filtering <i>groups</i> needs <code class="tok">HAVING</code> (Module 04), and the ordering of these steps is the subject of Module 06.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 03</span></div><h2>Sorting &amp; limiting</h2></div>
+        <p>Here is a fact that surprises people: <strong>a table has no inherent order.</strong> Rows come back in whatever order the database finds convenient, and that can change between runs. If you want a guaranteed order, you must ask for it with <span class="clause order">ORDER BY</span>.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, salary
+<span class="k-from">FROM</span> employees
+<span class="k-order">ORDER BY</span> salary <span class="k-order">DESC</span>;     <span class="cmt">-- DESC = high → low; ASC (default) = low → high</span></pre>
+        <p>You can sort by several columns — the first is the primary sort, the next breaks ties, and so on. Sort by department, then by salary within each department:</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, dept_id, salary
+<span class="k-from">FROM</span> employees
+<span class="k-order">ORDER BY</span> dept_id <span class="k-order">ASC</span>, salary <span class="k-order">DESC</span>;</pre>
+        <p>Where do <code class="tok">NULL</code>s sort? PostgreSQL places them <strong>last</strong> for ascending order and <strong>first</strong> for descending, and you can override with <code class="tok">NULLS FIRST</code> / <code class="tok">NULLS LAST</code>.</p>
+
+        <h3>LIMIT and OFFSET</h3>
+        <p><code class="tok">LIMIT</code> caps how many rows you get back — perfect for "top N" questions and for not accidentally pulling a million rows. <code class="tok">OFFSET</code> skips rows first, the naive basis of pagination.</p>
+        <pre><span class="tag">sql</span><span class="cmt">-- the three highest-paid employees</span>
+<span class="k-select">SELECT</span> name, salary
+<span class="k-from">FROM</span> employees
+<span class="k-order">ORDER BY</span> salary <span class="k-order">DESC</span>
+<span class="k-limit">LIMIT</span> <span class="num">3</span>;</pre>
+        <div class="note warn">
+          <div class="nh">LIMIT without ORDER BY is a coin flip</div>
+          <p><code class="tok">LIMIT 3</code> on its own returns <em>some</em> three rows — not the "first" three in any meaningful sense, because there is no first without an order. Always pair <code class="tok">LIMIT</code> with <code class="tok">ORDER BY</code> when the identity of the rows matters. (And for real pagination, large <code class="tok">OFFSET</code> values get slow; keyset pagination — "where id &gt; last_seen" — scales far better.)</p>
+        </div>
+        <p>Try the top-N pattern in the playground above: change the <code class="tok">ORDER BY</code> column, flip <code class="tok">ASC</code>/<code class="tok">DESC</code>, and adjust the <code class="tok">LIMIT</code>.</p>
+        <div class="practice">
+          <div class="ph">Practice · run in the playground</div>
+          <p><strong>1.</strong> List all departments from largest budget to smallest.</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT name, budget FROM departments ORDER BY budget DESC;</code></p></div></details>
+          <p style="margin-top:16px"><strong>2.</strong> Find the <em>two</em> most recently hired employees (largest <code class="tok">hire_date</code>).</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT name, hire_date FROM employees ORDER BY hire_date DESC LIMIT 2;</code> — ISO dates sort correctly as text, so this just works.</p></div></details>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat structural" style="color:var(--c-group);border-color:rgba(167,139,250,.4);background:var(--c-group-soft)">Aggregation</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Aggregation &amp; GROUP BY</h2></div>
+        <p>So far every query returned individual rows. Often you want a <strong>summary</strong> instead: how many employees, the average salary, the biggest budget. That's <strong>aggregation</strong> — collapsing many rows into a single computed value.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> <span class="fnc">COUNT</span>(*)        <span class="kw2">AS</span> headcount,
+       <span class="fnc">AVG</span>(salary)    <span class="kw2">AS</span> avg_salary,
+       <span class="fnc">MAX</span>(salary)    <span class="kw2">AS</span> top_salary
+<span class="k-from">FROM</span> employees;</pre>
+        <p>The five core aggregates are <code class="tok">COUNT</code>, <code class="tok">SUM</code>, <code class="tok">AVG</code>, <code class="tok">MIN</code>, and <code class="tok">MAX</code>. One subtlety worth burning in: <code class="tok">COUNT(*)</code> counts <em>rows</em>, while <code class="tok">COUNT(column)</code> counts <strong>non-NULL values</strong> in that column. <code class="tok">COUNT(dept_id)</code> over our employees returns 8, not 9 — Ivan's <code class="tok">NULL</code> isn't counted.</p>
+
+        <h3>GROUP BY: aggregate per group</h3>
+        <p>The real power arrives when you aggregate <em>per group</em> rather than over the whole table. <span class="clause group">GROUP BY</span> partitions rows into groups that share a value, then computes the aggregate <strong>once per group</strong>, returning one row each. "Average salary <em>by department</em>" is the canonical example:</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> dept_id,
+       <span class="fnc">COUNT</span>(*)     <span class="kw2">AS</span> headcount,
+       <span class="fnc">AVG</span>(salary) <span class="kw2">AS</span> avg_salary
+<span class="k-from">FROM</span> employees
+<span class="k-group">GROUP BY</span> dept_id;</pre>
+        <div class="note">
+          <div class="nh">The golden rule of GROUP BY</div>
+          <p>Every column in the <code class="tok">SELECT</code> list must either be <strong>inside an aggregate</strong> or <strong>listed in <code class="tok">GROUP BY</code></strong>. Why? Because the group collapses to one row — if you ask for a bare <code class="tok">salary</code> alongside grouped data, the database has many salaries and one slot, and no way to choose. PostgreSQL will reject it with "must appear in the GROUP BY clause or be used in an aggregate function."</p>
+        </div>
+        <p>Watch grouping happen. Pick an aggregate, then collapse the nine employee rows into one row per department:</p>
+
+        <div class="lab" id="groupLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">GROUP BY aggregation</div><div class="ps">many rows in, one row per group out</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls">
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted)">GROUP BY dept_id, computing</span>
+              <button class="chip-btn sel" data-agg="count">COUNT(*)</button>
+              <button class="chip-btn" data-agg="avg">AVG(salary)</button>
+              <button class="chip-btn" data-agg="sum">SUM(salary)</button>
+              <button class="chip-btn" data-agg="max">MAX(salary)</button>
+              <button class="ds-btn primary" id="groupRun" style="margin-left:6px">Collapse into groups →</button>
+            </div>
+            <div class="win-grid">
+              <div><div class="rtbl-wrap"><table class="dtbl" id="groupSource" style="min-width:0"></table></div></div>
+              <div><div class="rtbl-wrap"><table class="dtbl" id="groupResult" style="min-width:0"></table></div></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="groupFoot">Rows sharing a <code class="tok">dept_id</code> form a group; the aggregate is computed once per group. Note the <code class="tok">NULL</code> group — Ivan, with no department.</div>
+        </div>
+
+        <h3>HAVING: filtering groups</h3>
+        <p><code class="tok">WHERE</code> filters rows <em>before</em> grouping. To filter the <em>groups themselves</em> — "only departments whose average salary exceeds 100k" — you need <span class="clause having">HAVING</span>, which runs <em>after</em> aggregation and can reference aggregate values.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> dept_id, <span class="fnc">AVG</span>(salary) <span class="kw2">AS</span> avg_salary
+<span class="k-from">FROM</span> employees
+<span class="k-group">GROUP BY</span> dept_id
+<span class="k-having">HAVING</span> <span class="fnc">AVG</span>(salary) <span class="op">&gt;</span> <span class="num">100000</span>;   <span class="cmt">-- filter the groups, not the rows</span></pre>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Use HAVING to filter rows by a condition.</div><div class="truth">Use <code class="tok">WHERE</code> for rows; <code class="tok">HAVING</code> is specifically for filtering <b>groups</b> by aggregate results. <code class="tok">WHERE salary &gt; 90000</code> filters people; <code class="tok">HAVING AVG(salary) &gt; 90000</code> filters departments.</div></div>
+          <div class="mc"><div class="myth">COUNT(*) and COUNT(column) are interchangeable.</div><div class="truth">Only when the column has no NULLs. <code class="tok">COUNT(*)</code> counts rows; <code class="tok">COUNT(col)</code> skips NULLs. The gap between them is literally a count of missing values.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--c-join);border-color:rgba(91,214,194,.4);background:var(--c-join-soft)">Joins</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Joining tables</h2></div>
+        <p>This is the payoff of the relational model. Our employees table stores a <code class="tok">dept_id</code>, but humans want the department <em>name</em>. A <span class="clause join">JOIN</span> follows the foreign key, stitching rows from two tables together wherever a condition matches.</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> e.name, d.name <span class="kw2">AS</span> department
+<span class="k-from">FROM</span> employees e
+<span class="k-join">JOIN</span> departments d <span class="kw2">ON</span> e.dept_id <span class="op">=</span> d.id;</pre>
+        <p>Read it as: for each employee row <code class="tok">e</code>, find the department row <code class="tok">d</code> where <code class="tok">e.dept_id = d.id</code>, and combine them. The short letters (<code class="tok">e</code>, <code class="tok">d</code>) are <strong>table aliases</strong>, and once tables share column names like <code class="tok">name</code>, qualifying with the alias (<code class="tok">e.name</code>) stops things being ambiguous.</p>
+
+        <h3>The four joins — it's all about the non-matches</h3>
+        <p>A plain <code class="tok">JOIN</code> is an <strong>INNER</strong> join: it returns only rows that match on <em>both</em> sides. The other join types differ purely in how they treat rows with <em>no</em> match:</p>
+        <ul>
+          <li><code class="tok">INNER JOIN</code> — only matched pairs. Unmatched rows on either side vanish.</li>
+          <li><code class="tok">LEFT JOIN</code> — every left row, matched or not; unmatched ones get <code class="tok">NULL</code>s for the right columns.</li>
+          <li><code class="tok">RIGHT JOIN</code> — the mirror image: every right row is kept.</li>
+          <li><code class="tok">FULL JOIN</code> — every row from both sides; unmatched on either side gets <code class="tok">NULL</code>s.</li>
+        </ul>
+        <p>This is exactly where Ivan (an employee with no department) and Legal (a department with no employees) earn their keep. Switch join types below and watch which rows survive — and where <code class="tok">NULL</code>s appear:</p>
+
+        <div class="lab" id="joinLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">JOIN visualizer</div><div class="ps">employees.dept_id = departments.id</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls">
+              <button class="ds-btn primary" data-jt="inner">INNER</button>
+              <button class="ds-btn" data-jt="left">LEFT</button>
+              <button class="ds-btn" data-jt="right">RIGHT</button>
+              <button class="ds-btn" data-jt="full">FULL</button>
+            </div>
+            <div class="join-grid">
+              <div class="join-panel"><table class="dtbl" id="joinLeft" style="min-width:0"></table></div>
+              <div class="join-panel"><table class="dtbl" id="joinRight" style="min-width:0"></table></div>
+            </div>
+            <div class="join-result"><table class="dtbl" id="joinResult" style="min-width:0"></table></div>
+          </div>
+          <div class="lab-foot" id="joinFoot">An INNER join keeps only rows that match on both sides. Switch the join type to see unmatched rows reappear with NULLs.</div>
+        </div>
+
+        <h3>Self-joins: a table joined to itself</h3>
+        <p>Nothing stops you joining a table to <em>itself</em> — you just alias it twice. Our <code class="tok">manager_id</code> points at another employee's <code class="tok">id</code>, so to list each person beside their manager's name, join <code class="tok">employees</code> to <code class="tok">employees</code>:</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> e.name <span class="kw2">AS</span> employee, m.name <span class="kw2">AS</span> manager
+<span class="k-from">FROM</span> employees e
+<span class="k-join">LEFT JOIN</span> employees m <span class="kw2">ON</span> e.manager_id <span class="op">=</span> m.id;</pre>
+        <p>(A <code class="tok">LEFT</code> join so that people with no manager — Alice, Carla, Erin — still appear, with <code class="tok">NULL</code> for the manager.) Try all of these in the playground; joins are fully supported there.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A JOIN combines tables by stacking their rows together.</div><div class="truth">That's <code class="tok">UNION</code> (rows on top of rows). A <code class="tok">JOIN</code> combines them <b>side by side</b>, widening rows by matching on a condition. Different operations entirely.</div></div>
+          <div class="mc"><div class="myth">LEFT and INNER joins return the same rows, just ordered differently.</div><div class="truth">They differ whenever the left side has unmatched rows. <code class="tok">INNER</code> drops Ivan (no department); <code class="tok">LEFT</code> keeps him with <code class="tok">NULL</code>. Choosing the wrong one silently loses or invents rows.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>How a query really runs</h2></div>
+        <p>Here is the single most clarifying idea in all of SQL. You <em>write</em> a query in one order, but the database <em>executes</em> it in a different one. Almost every confusing error and "why can't I do that?" dissolves once you know the real sequence — the <strong>logical query processing order</strong>.</p>
+        <div class="order-list">
+          <div class="order-item"><span class="onum">1</span><span class="clause from">FROM / JOIN</span><span style="color:var(--ink-soft);font-size:14.5px">assemble the rows from the source tables</span><span class="owrite">written 2nd</span></div>
+          <div class="order-item"><span class="onum">2</span><span class="clause where">WHERE</span><span style="color:var(--ink-soft);font-size:14.5px">keep only rows matching the condition</span><span class="owrite">written 3rd</span></div>
+          <div class="order-item"><span class="onum">3</span><span class="clause group">GROUP BY</span><span style="color:var(--ink-soft);font-size:14.5px">collapse rows into groups</span><span class="owrite">written 4th</span></div>
+          <div class="order-item"><span class="onum">4</span><span class="clause having">HAVING</span><span style="color:var(--ink-soft);font-size:14.5px">keep only groups matching the condition</span><span class="owrite">written 5th</span></div>
+          <div class="order-item"><span class="onum">5</span><span class="clause select">SELECT</span><span style="color:var(--ink-soft);font-size:14.5px">compute the output columns &amp; aliases</span><span class="owrite">written 1st</span></div>
+          <div class="order-item"><span class="onum">6</span><span class="clause order">ORDER BY</span><span style="color:var(--ink-soft);font-size:14.5px">sort the result rows</span><span class="owrite">written 6th</span></div>
+          <div class="order-item"><span class="onum">7</span><span class="clause limit">LIMIT</span><span style="color:var(--ink-soft);font-size:14.5px">cut to the first N rows</span><span class="owrite">written 7th</span></div>
+        </div>
+        <p>Notice <code class="tok">SELECT</code> — written first — runs <strong>fifth</strong>, after the rows have been chosen and grouped. This one fact explains a whole family of behaviors:</p>
+        <ul>
+          <li><strong>Why <code class="tok">WHERE</code> can't see a <code class="tok">SELECT</code> alias.</strong> You can't write <code class="tok">WHERE monthly &gt; 5000</code> for an alias defined in <code class="tok">SELECT</code> — <code class="tok">WHERE</code> (step 2) runs long before <code class="tok">SELECT</code> (step 5) has created <code class="tok">monthly</code>.</li>
+          <li><strong>Why <code class="tok">ORDER BY</code> <em>can</em>.</strong> Sorting (step 6) happens after <code class="tok">SELECT</code>, so <code class="tok">ORDER BY monthly</code> works fine — the alias exists by then.</li>
+          <li><strong>Why <code class="tok">WHERE</code> can't use aggregates.</strong> <code class="tok">WHERE COUNT(*) &gt; 2</code> is illegal because grouping (step 3) hasn't happened yet at step 2. That's precisely the job <code class="tok">HAVING</code> exists to do.</li>
+        </ul>
+        <p>Let's watch it. Below is a query that uses every stage. Run the pipeline and see the rows flow through, shrinking and transforming at each step:</p>
+
+        <div class="lab" id="pipeLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">The query pipeline</div><div class="ps">watch row counts change at each logical stage</div></div></div>
+          <div class="lab-body">
+            <pre style="margin-bottom:16px"><span class="k-select">SELECT</span> dept_id, <span class="fnc">COUNT</span>(*) <span class="kw2">AS</span> n, <span class="fnc">AVG</span>(salary) <span class="kw2">AS</span> avg_pay
+<span class="k-from">FROM</span> employees
+<span class="k-where">WHERE</span> salary <span class="op">&gt;</span> <span class="num">70000</span>
+<span class="k-group">GROUP BY</span> dept_id
+<span class="k-having">HAVING</span> <span class="fnc">COUNT</span>(*) <span class="op">&gt;=</span> <span class="num">2</span>
+<span class="k-order">ORDER BY</span> avg_pay <span class="k-order">DESC</span>
+<span class="k-limit">LIMIT</span> <span class="num">2</span>;</pre>
+            <div class="ds-controls"><button class="ds-btn primary" id="pipeRun">▶ Run the pipeline</button><button class="ds-btn" id="pipeReset">Reset</button></div>
+            <div class="pipe-row" id="pipeStages"></div>
+          </div>
+          <div class="lab-foot" id="pipeFoot">Nine rows enter at <code class="tok">FROM</code>. Each stage transforms them in logical order — ending with the two rows the query actually returns.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The database reads your query top to bottom, like a script.</div><div class="truth">It reads it as a <b>declaration</b> and executes in logical order (FROM → WHERE → GROUP → HAVING → SELECT → ORDER → LIMIT), then the planner reorders the <i>physical</i> work however is fastest.</div></div>
+          <div class="mc"><div class="myth">Putting a condition in WHERE vs HAVING is a style choice.</div><div class="truth">It's a correctness choice tied to the order. <code class="tok">WHERE</code> filters rows pre-grouping; <code class="tok">HAVING</code> filters groups post-aggregation. They run at different stages and can give different results.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div><h2>Subqueries &amp; CTEs</h2></div>
+        <p>A query's result is a table — so a query can be used <em>inside</em> another query, anywhere a table or a value is expected. These nested queries, <strong>subqueries</strong>, let you build answers in layers.</p>
+        <h3>Subqueries by where they sit</h3>
+        <p>A <strong>scalar subquery</strong> returns a single value and can stand in for one. "Who earns more than the company average?" — the average is itself a one-row query:</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, salary
+<span class="k-from">FROM</span> employees
+<span class="k-where">WHERE</span> salary <span class="op">&gt;</span> (<span class="k-select">SELECT</span> <span class="fnc">AVG</span>(salary) <span class="k-from">FROM</span> employees);   <span class="cmt">-- inner query yields one number</span></pre>
+        <p>A subquery in <code class="tok">FROM</code> acts as a <strong>derived table</strong> you can query further. And a subquery in <code class="tok">WHERE</code> with <code class="tok">IN</code> or <code class="tok">EXISTS</code> tests membership — "departments that actually have employees":</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name
+<span class="k-from">FROM</span> departments d
+<span class="k-where">WHERE</span> <span class="kw2">EXISTS</span> (<span class="k-select">SELECT</span> <span class="num">1</span> <span class="k-from">FROM</span> employees e <span class="k-where">WHERE</span> e.dept_id <span class="op">=</span> d.id);</pre>
+        <p>That inner query references <code class="tok">d.id</code> from the outer one — a <strong>correlated subquery</strong>, conceptually re-evaluated for each outer row. (<code class="tok">EXISTS</code> is usually the right tool over <code class="tok">IN</code> when you only care <em>whether</em> a match exists, and it handles <code class="tok">NULL</code>s more predictably.)</p>
+
+        <h3>CTEs: subqueries with a name</h3>
+        <p>Deeply nested subqueries become unreadable. A <strong>Common Table Expression</strong> (<code class="tok">WITH</code>) lets you name a query and reference it below, reading top-to-bottom like steps in a recipe:</p>
+        <pre><span class="tag">sql</span><span class="kw2">WITH</span> dept_avg <span class="kw2">AS</span> (
+  <span class="k-select">SELECT</span> dept_id, <span class="fnc">AVG</span>(salary) <span class="kw2">AS</span> avg_pay
+  <span class="k-from">FROM</span> employees
+  <span class="k-group">GROUP BY</span> dept_id
+)
+<span class="k-select">SELECT</span> e.name, e.salary, da.avg_pay
+<span class="k-from">FROM</span> employees e
+<span class="k-join">JOIN</span> dept_avg da <span class="kw2">ON</span> e.dept_id <span class="op">=</span> da.dept_id
+<span class="k-where">WHERE</span> e.salary <span class="op">&gt;</span> da.avg_pay;   <span class="cmt">-- everyone paid above their department's average</span></pre>
+        <div class="note key">
+          <div class="nh">Recursive CTEs walk hierarchies</div>
+          <p>A <code class="tok">WITH RECURSIVE</code> CTE can reference itself, which is how you traverse tree-shaped data — an org chart through <code class="tok">manager_id</code>, a category tree, a graph of dependencies. It starts from a base case and repeatedly joins the table to the rows found so far until none are left. It's the one place SQL expresses genuine iteration, and it's remarkably powerful for reporting lines and bill-of-materials problems.</p>
+        </div>
+        <div class="note warn">
+          <div class="nh">A note on the in-page engine</div>
+          <p>The playground's mini-engine covers the core: <code class="tok">SELECT</code>, <code class="tok">WHERE</code>, <code class="tok">JOIN</code>, <code class="tok">GROUP BY</code>/<code class="tok">HAVING</code>, <code class="tok">ORDER BY</code>, and <code class="tok">LIMIT</code>. Subqueries, CTEs, and window functions (next module) are beyond it — running those is exactly when you'd reach for a real PostgreSQL instance. The engine will tell you politely if you try.</p>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 08</span></div><h2>Window functions</h2></div>
+        <p>Window functions are the feature that turns SQL from "fetch and summarize" into a genuine analytics language — and the one that most often makes people say "I didn't know SQL could do that." The core idea: <strong>compute across a set of related rows while keeping every individual row.</strong></p>
+        <p>Contrast with <code class="tok">GROUP BY</code>, which <em>collapses</em> rows. A window function computes over a "window" of rows defined by <code class="tok">OVER (…)</code> but <strong>returns a value for every row</strong> — nothing is collapsed. Ranking each employee's salary <em>within their department</em>, while still listing every employee:</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, dept_id, salary,
+       <span class="fnc">RANK</span>() <span class="kw2">OVER</span> (<span class="kw2">PARTITION BY</span> dept_id <span class="kw2">ORDER BY</span> salary <span class="k-order">DESC</span>) <span class="kw2">AS</span> dept_rank
+<span class="k-from">FROM</span> employees;</pre>
+        <p>Read <code class="tok">OVER (...)</code> as "for each row, look at this window of rows." <code class="tok">PARTITION BY dept_id</code> restarts the calculation per department; the inner <code class="tok">ORDER BY</code> sets the ranking order. Other essentials: <code class="tok">ROW_NUMBER()</code> (a unique sequential number), <code class="tok">DENSE_RANK()</code> (ranks with no gaps after ties), and <code class="tok">LAG()</code>/<code class="tok">LEAD()</code> (peek at the previous/next row — perfect for "change since last period"). A running total is just <code class="tok">SUM</code> with an ordered window:</p>
+        <pre><span class="tag">sql</span><span class="k-select">SELECT</span> name, hire_date, salary,
+       <span class="fnc">SUM</span>(salary) <span class="kw2">OVER</span> (<span class="kw2">ORDER BY</span> hire_date) <span class="kw2">AS</span> running_total
+<span class="k-from">FROM</span> employees;   <span class="cmt">-- cumulative payroll as people were hired</span></pre>
+        <p>See the difference directly. The same nine employees, viewed three ways — collapsed by group, ranked within group, and accumulated:</p>
+
+        <div class="lab" id="windowLab">
+          <div class="lab-head"><div><div class="pt" style="font-family:var(--font-display);font-weight:600;font-size:1.05rem">GROUP BY vs window functions</div><div class="ps">collapse the rows, or keep them and compute across them</div></div></div>
+          <div class="lab-body">
+            <div class="ds-controls">
+              <button class="ds-btn primary" data-wm="group">GROUP BY (collapses)</button>
+              <button class="ds-btn" data-wm="rank">RANK() OVER (keeps rows)</button>
+              <button class="ds-btn" data-wm="runtotal">running SUM() OVER</button>
+            </div>
+            <div class="rtbl-wrap"><table class="dtbl" id="windowTable" style="min-width:0"></table></div>
+          </div>
+          <div class="lab-foot" id="windowFoot">GROUP BY returns one row per department. A window function returns one row per <b>employee</b>, with the computed value alongside.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Window functions are just a fancier GROUP BY.</div><div class="truth">They're complementary. <code class="tok">GROUP BY</code> <b>collapses</b> rows to summaries; a window function <b>keeps every row</b> and adds a value computed over related rows. You often want both detail <i>and</i> summary at once — only windows give you that.</div></div>
+          <div class="mc"><div class="myth">You can filter on a window function in WHERE.</div><div class="truth">No — windows are computed at the <code class="tok">SELECT</code> stage, after <code class="tok">WHERE</code>. To filter by <code class="tok">dept_rank = 1</code>, wrap the query in a CTE or subquery and filter in the outer query.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>Designing the schema</h2></div>
+        <p>Good queries start with good tables. The <strong>schema</strong> — the definitions of your tables, their columns and types, and the rules tying them together — is where you encode what's <em>possible</em>. A well-designed schema makes bad data hard to insert; a sloppy one lets contradictions creep in that no query can fully undo.</p>
+        <pre><span class="tag">sql</span><span class="kw2">CREATE TABLE</span> departments (
+  id      <span class="fnc">serial</span> <span class="kw2">PRIMARY KEY</span>,            <span class="cmt">-- unique, auto-incrementing identity</span>
+  name    <span class="fnc">text</span>   <span class="kw2">NOT NULL UNIQUE</span>,         <span class="cmt">-- required, and no two alike</span>
+  budget  <span class="fnc">numeric</span> <span class="kw2">CHECK</span> (budget <span class="op">&gt;=</span> <span class="num">0</span>)        <span class="cmt">-- a rule the data must obey</span>
+);
+
+<span class="kw2">CREATE TABLE</span> employees (
+  id         <span class="fnc">serial</span> <span class="kw2">PRIMARY KEY</span>,
+  name       <span class="fnc">text</span>   <span class="kw2">NOT NULL</span>,
+  salary     <span class="fnc">numeric</span> <span class="kw2">NOT NULL</span> <span class="kw2">DEFAULT</span> <span class="num">0</span>,
+  dept_id    <span class="fnc">int</span>    <span class="kw2">REFERENCES</span> departments(id)  <span class="cmt">-- foreign key: must point at a real dept</span>
+);</pre>
+
+        <h3>Constraints: rules the database enforces</h3>
+        <p>Constraints are guardrails checked on every insert and update. The workhorses: <code class="tok">PRIMARY KEY</code> (unique row identity), <code class="tok">NOT NULL</code> (value required), <code class="tok">UNIQUE</code> (no duplicates), <code class="tok">CHECK</code> (a custom boolean rule), <code class="tok">DEFAULT</code> (a fallback value), and the crucial <code class="tok">FOREIGN KEY</code> / <code class="tok">REFERENCES</code>, which guarantees <strong>referential integrity</strong> — you cannot give an employee a <code class="tok">dept_id</code> that doesn't exist, and (depending on the rule) you can't delete a department while employees still point at it. The database refuses to let your data become inconsistent.</p>
+
+        <h3>Normalization: store each fact once</h3>
+        <p>Why are department names in their own table instead of repeated on every employee row? Because duplicated data drifts. If "Engineering" were copied onto 200 employee rows and you renamed it, you'd have to update all 200 perfectly or end up with both "Engineering" and "Enginering" in your data. <strong>Normalization</strong> is the discipline of organizing tables so each fact lives in exactly one place, reached by key. The practical heuristics:</p>
+        <ul>
+          <li>Each column holds a single value (no comma-separated lists stuffed in a text field).</li>
+          <li>Each non-key column depends on the <em>whole</em> key, and on nothing but the key.</li>
+          <li>Repeating groups get their own table, linked by a foreign key — exactly our employees/departments split.</li>
+        </ul>
+        <p>This prevents <strong>update, insertion, and deletion anomalies</strong> — the trio of ways duplicated data betrays you. The counterweight is that heavily normalized data needs more joins to reassemble; high-read analytical systems sometimes <strong>denormalize</strong> deliberately, trading storage and write-complexity for read speed. Normalize by default; denormalize as a conscious, measured exception.</p>
+
+        <h3>Indexes, briefly</h3>
+        <p>An <strong>index</strong> is a separate, sorted data structure that lets the database find rows by a column's value without scanning the whole table — like the index at the back of a book versus reading every page. It makes matching reads dramatically faster, at the cost of extra storage and slightly slower writes (the index must be kept up to date). Primary keys and unique constraints are indexed automatically; foreign-key columns you join or filter on are usually worth indexing too. We'll see exactly how PostgreSQL uses them next.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Add an index to every column to be safe.</div><div class="truth">Indexes cost write time and space, and the planner may ignore ones that don't help. Index the columns you actually <b>filter, join, or sort</b> on — and verify with <code class="tok">EXPLAIN</code> that they're used.</div></div>
+          <div class="mc"><div class="myth">Foreign keys are just documentation.</div><div class="truth">In PostgreSQL they're <b>enforced</b>. An insert referencing a non-existent parent row is rejected outright. They actively prevent the orphaned, inconsistent data that plagues schemas without them.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>PostgreSQL in depth</h2></div>
+        <p>Everything so far is standard SQL that runs on any relational database. PostgreSQL takes that foundation and adds a famously rich, extensible feature set — it behaves less like a passive store and more like a programmable data platform. Here's what sets it apart.</p>
+
+        <h3>A type system far beyond rows and columns</h3>
+        <p>Alongside the usual numbers, text, dates, and booleans, PostgreSQL has first-class types most databases lack:</p>
+        <ul>
+          <li><strong><code class="tok">JSONB</code></strong> — JSON stored in a decomposed binary form that's <em>indexable and queryable</em>. You get schema flexibility without giving up SQL, querying nested fields with operators like <code class="tok">-&gt;</code> and <code class="tok">-&gt;&gt;</code> and the containment operator <code class="tok">@&gt;</code>.</li>
+          <li><strong>Arrays</strong> — a column can hold <code class="tok">int[]</code> or <code class="tok">text[]</code>, with operators to test membership and overlap.</li>
+          <li><strong>Ranges</strong> (<code class="tok">int4range</code>, <code class="tok">tstzrange</code>) — a value representing a span, with built-in overlap logic, ideal for booking and scheduling.</li>
+          <li><strong><code class="tok">UUID</code></strong>, <strong><code class="tok">ENUM</code></strong>, <strong>full-text search</strong> (<code class="tok">tsvector</code>), geometric types, network address types, and more.</li>
+        </ul>
+        <pre><span class="tag">sql</span><span class="cmt">-- query inside a JSONB column</span>
+<span class="k-select">SELECT</span> data <span class="op">-&gt;&gt;</span> <span class="str">'email'</span> <span class="kw2">AS</span> email
+<span class="k-from">FROM</span> accounts
+<span class="k-where">WHERE</span> data <span class="op">@&gt;</span> <span class="str">'{"plan": "pro"}'</span>;   <span class="cmt">-- rows whose JSON contains this</span></pre>
+
+        <h3>EXPLAIN: see the plan the planner chose</h3>
+        <p>Remember that SQL is declarative — you never told PostgreSQL <em>how</em> to run your query. <code class="tok">EXPLAIN</code> shows you what it decided, and <code class="tok">EXPLAIN ANALYZE</code> actually runs it and reports real timings. This is the single most important tool for performance work.</p>
+        <pre><span class="tag">query plan</span><span class="kw2">EXPLAIN</span> <span class="k-select">SELECT</span> * <span class="k-from">FROM</span> employees <span class="k-where">WHERE</span> dept_id <span class="op">=</span> <span class="num">1</span>;
+
+Seq Scan on employees  (cost=0.00..1.11 rows=3 width=64)
+  Filter: (dept_id = 1)        <span class="cmt">-- reads every row; fine for 9 rows, slow for 9 million</span></pre>
+        <p>On a tiny table a <strong>sequential scan</strong> (read everything, filter) is optimal. Add an index on <code class="tok">dept_id</code> and grow the table, and the planner switches to an <strong>index scan</strong> — jumping straight to matching rows. The plan is <em>cost-based</em>: PostgreSQL estimates the cheapest path using table statistics, which is why keeping statistics fresh (autovacuum/analyze) matters.</p>
+
+        <h3>How an index finds a row so fast</h3>
+        <p>The default index is a <strong>B-tree</strong>: a balanced, sorted tree. Instead of scanning N rows, a lookup walks from the root down a handful of levels — O(log n) — comparing at each step, exactly like binary search. That's the difference between reading nine million rows and reading roughly twenty-three:</p>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);padding:18px;margin:0 0 22px"><svg id="btreeSvg" viewBox="0 0 660 230" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block" role="img" aria-label="A B-tree index: a lookup walks from the root down a few levels instead of scanning every row"></svg></div>
+        <p>PostgreSQL offers several index types for different jobs: <strong>B-tree</strong> for equality, ranges, and sorting; <strong>GIN</strong> for "does this contain that" over <code class="tok">JSONB</code>, arrays, and full-text; <strong>GiST</strong> for geometric and range overlap; <strong>BRIN</strong> for huge, naturally-ordered tables; plus <strong>partial</strong> indexes (index only some rows) and <strong>expression</strong> indexes (index <code class="tok">lower(email)</code> rather than <code class="tok">email</code>).</p>
+
+        <h3>MVCC: concurrency without blocking reads</h3>
+        <p>PostgreSQL's transactions are fully <strong>ACID</strong> — atomic, consistent, isolated, durable — and its concurrency model, <strong>MVCC</strong> (Multi-Version Concurrency Control), is a defining strength. Instead of locking rows for reading, it keeps multiple <em>versions</em> of a row, so each transaction sees a consistent snapshot and <strong>readers never block writers, and writers never block readers.</strong> The trade is that superseded row versions accumulate as "dead tuples," which <code class="tok">VACUUM</code> (usually automatic) reclaims. Isolation levels (Read Committed, Repeatable Read, Serializable) let you tune exactly how transactions perceive each other.</p>
+        <div class="note key">
+          <div class="nh">Extensible by design</div>
+          <p>Much of PostgreSQL's power is that you can extend it: <strong>PostGIS</strong> turns it into a world-class geospatial database, <code class="tok">pg_trgm</code> enables fuzzy text matching, <code class="tok">pg_stat_statements</code> profiles your queries, and you can add custom types, operators, functions, and even index methods. The same engine scales from a laptop side-project to enormous production systems.</p>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>Writing fast, correct SQL</h2></div>
+        <p>You know the language now. Expert-level SQL is mostly judgment: writing queries the planner can run efficiently, and sidestepping the traps that produce wrong answers or slow ones. A field guide to the habits that matter most.</p>
+        <h3>Make the planner's life easy</h3>
+        <ul>
+          <li><strong>Keep predicates <em>sargable</em>.</strong> An index on <code class="tok">email</code> can't help <code class="tok">WHERE lower(email) = '…'</code> — the function on the column hides the indexed value. Index the expression, or store it normalized. The same defeats indexes when you wrap a column in arithmetic or a cast.</li>
+          <li><strong>Select only the columns you need.</strong> <code class="tok">SELECT *</code> moves data you'll discard and can prevent index-only scans. Name your columns.</li>
+          <li><strong>Join instead of looping.</strong> Fetching a list and then querying once per item (the "N+1" pattern, common via ORMs) turns one query into hundreds. A single join does it in one round trip.</li>
+          <li><strong>Filter early.</strong> Push conditions into <code class="tok">WHERE</code> so rows are eliminated before joins and grouping do expensive work over them.</li>
+          <li><strong>Prefer <code class="tok">EXISTS</code> to <code class="tok">IN</code></strong> for "is there a match" tests on subqueries — it can stop at the first hit and behaves better with <code class="tok">NULL</code>s.</li>
+        </ul>
+        <h3>Common gotchas, side by side</h3>
+        <div class="tbl-wrap"><table><thead><tr><th>Looks reasonable</th><th>What actually happens</th></tr></thead><tbody>
+          <tr><td class="mono">WHERE status &lt;&gt; 'done'</td><td>Silently drops rows where <code class="tok">status</code> is <code class="tok">NULL</code>. Add <code class="tok">OR status IS NULL</code> if you want them.</td></tr>
+          <tr><td class="mono">LIMIT 10 OFFSET 100000</td><td>Still computes and discards the 100,000 skipped rows. Use keyset pagination (<code class="tok">WHERE id &gt; :last</code>) at scale.</td></tr>
+          <tr><td class="mono">COUNT(column)</td><td>Skips <code class="tok">NULL</code>s — not the same as <code class="tok">COUNT(*)</code>. Easy to under-count by accident.</td></tr>
+          <tr><td class="mono">SELECT in a loop (app code)</td><td>N+1 queries. Replace with one <code class="tok">JOIN</code> or a single <code class="tok">WHERE id IN (…)</code>.</td></tr>
+          <tr><td class="mono">date_col = '2024-01-01'</td><td>If <code class="tok">date_col</code> is a timestamp, this matches only midnight. Use a range: <code class="tok">&gt;= '2024-01-01' AND &lt; '2024-01-02'</code>.</td></tr>
+        </tbody></table></div>
+        <p>And the meta-skill: <strong>measure, don't guess.</strong> When a query is slow, run <code class="tok">EXPLAIN ANALYZE</code> and read what the planner actually did — a sequential scan where you expected an index scan, a row-count estimate wildly off from reality (stale statistics), a join strategy you didn't anticipate. The plan tells you the truth; intuition often lies.</p>
+
+        <div class="practice">
+          <div class="ph">Capstone · solve these in the playground</div>
+          <p><strong>1.</strong> List every department whose <em>average</em> salary is above 90,000, highest average first.</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT dept_id, AVG(salary) AS avg_pay FROM employees GROUP BY dept_id HAVING AVG(salary) &gt; 90000 ORDER BY avg_pay DESC;</code></p></div></details>
+          <p style="margin-top:16px"><strong>2.</strong> Show each employee's name with their department name and location, excluding the unassigned, sorted by salary (highest first).</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT e.name, d.name AS dept, d.location, e.salary FROM employees e JOIN departments d ON e.dept_id = d.id ORDER BY e.salary DESC;</code> — the inner join naturally drops Ivan.</p></div></details>
+          <p style="margin-top:16px"><strong>3.</strong> Find departments with <em>no</em> employees. (Hint: <code class="tok">LEFT JOIN</code>, then keep rows where the employee side is <code class="tok">NULL</code>.)</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT d.name FROM departments d LEFT JOIN employees e ON e.dept_id = d.id WHERE e.id IS NULL;</code> — returns Legal. This "anti-join" is a hugely useful pattern.</p></div></details>
+          <p style="margin-top:16px"><strong>4. (stretch)</strong> The highest-paid employee <em>in each department</em>, with their name. This one needs a window function or correlated subquery — run it in a real PostgreSQL.</p>
+          <details class="sol"><summary><span class="arr">▸</span> Show answer</summary><div class="sol-body"><p><code class="tok">SELECT dept_id, name, salary FROM (SELECT *, RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS r FROM employees) t WHERE r = 1;</code> — rank within each department, then keep the top of each. The classic "top-N-per-group" pattern.</p></div></details>
+        </div>
+
+        <div class="closing">
+          <h2>You can ask anything now</h2>
+          <p>You started with a single idea — describe the result, not the steps — and walked it all the way to window functions, query plans, and PostgreSQL's internals. The syntax was never the hard part; the relational way of thinking was, and now it's yours.</p>
+          <p>From here, the growth is in reps: model a small project, write the queries it needs, and reach for <code class="tok">EXPLAIN</code> whenever something feels slow. The database will keep teaching you if you keep asking.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering SQL &amp; PostgreSQL — a companion to Big&nbsp;O Complexity, Data Structures, and Design Patterns. Built to be poked at.</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="js/mastering-sql-postgresql.js"></script>
+</body>
+</html>

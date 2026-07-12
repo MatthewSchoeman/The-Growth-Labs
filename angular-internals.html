@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular Internals · The Growth Lab</title>
+<meta name="description" content="A deep-dive master course on how Angular actually works — pull-based signals and the reactive graph, resource(), the four higher-order RxJS operators, multicasting, hierarchical dependency injection with resolution modifiers, the change-detection tick and the LView tree, the view API and structural-directive desugaring, ControlValueAccessor, AOT compilation and @defer, and a signal store built from scratch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/angular-internals.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2.2 L20.6 5.4 L19.3 17.6 L12 21.8 L4.7 17.6 L3.4 5.4 Z" stroke="#C74FE6" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M12 6 L16.7 7.7 L15.9 15 L12 17.6 L8.1 15 L7.3 7.7 Z" stroke="#C74FE6" stroke-width="1.1" stroke-linejoin="round" opacity="0.6"/>
+        <circle cx="12" cy="11.4" r="1.6" fill="#C74FE6"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Internals</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.2 L20.6 5.4 L19.3 17.6 L12 21.8 L4.7 17.6 L3.4 5.4 Z" stroke="#C74FE6" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M12 6 L16.7 7.7 L15.9 15 L12 17.6 L8.1 15 L7.3 7.7 Z" stroke="#C74FE6" stroke-width="1.1" stroke-linejoin="round" opacity="0.6"/>
+            <circle cx="12" cy="11.4" r="1.6" fill="#C74FE6"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Internals</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">The Reactive Core · Advanced</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>The pull-based model</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Signals in depth</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>Async as signals: resource()</span></a>
+      <div class="nav-group-label">RxJS Mastery · Advanced</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Higher-order streams</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Multicasting &amp; interop</span></a>
+      <div class="nav-group-label">Framework Internals · Advanced → Expert</div>
+      <a class="module" href="#m5"><span class="num">05</span><span>Dependency injection, deeply</span></a>
+      <a class="module" href="#m6"><span class="num">06</span><span>The change-detection tick</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Directives &amp; the view API</span></a>
+      <div class="nav-group-label">Expert Craft · Expert</div>
+      <a class="module" href="#m8"><span class="num">08</span><span>Custom form controls</span></a>
+      <a class="module" href="#m9"><span class="num">09</span><span>Compilation &amp; @defer</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>A signal store from scratch</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>The expert dashboard</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Advanced → Expert · Deep dive after Mastering Angular</div>
+        <h1>Under the hood.<br><span class="grad">The reactive machine.</span></h1>
+        <p class="lede">The first Angular course taught the framework's surface — the APIs you write. This one opens the case and shows the mechanism <em>underneath</em>: how signals form a <strong>pull-based reactive graph</strong> that recomputes lazily and stays glitch-free, how <code class="tok">resource()</code> models async as signal state, how the four <strong>higher-order RxJS operators</strong> actually differ, how the <strong>injector tree</strong> resolves a token, how a <strong>change-detection tick</strong> walks the LView tree marking and refreshing, how <code class="tok">*structural</code> directives desugar into the <strong>view API</strong>, how <code class="tok">ControlValueAccessor</code> welds a custom control into forms, what the compiler emits and how <code class="tok">@defer</code> streams it, and — as a finale — a typed <strong>signal store built from scratch</strong>. Ten labs, each one instrumented so you can watch the internals move. The running project stays <strong>Snip</strong>; the depth is new.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The reactive dependency graph: a signal feeds computed nodes that feed an effect that writes the DOM, with version counters and lazy pull edges"></svg>
+          <div class="hero-cap">signal → computed → computed → effect → DOM · <span style="color:var(--accent)">lazy pull, glitch-free</span> — the graph under everything</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Open the case →</a>
+          <a class="btn btn-ghost" href="#m1">Jump to the graph</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl advanced">Advanced</span><span class="mod-num">Module 00</span></div><h2>The pull-based model</h2></div>
+        <p>You already know <em>what</em> a signal does. This course is about <em>how</em> — and it starts with a distinction most tutorials skip: reactivity can be <strong>push</strong> or <strong>pull</strong>. A push system (classic RxJS) sends new values downstream the instant they change; every subscriber is told immediately, whether it needs the value now or not. A <strong>pull</strong> system inverts this: writing a value doesn't compute anything — it just marks dependents <em>stale</em>. The actual recomputation happens later, lazily, only when someone <em>reads</em>. Angular's signals are pull-based, and that single choice explains almost everything that follows.</p>
+        <p>Two properties fall out of pull-based design for free. First, <strong>laziness</strong>: a <code class="tok">computed</code> nobody reads never runs, no matter how often its inputs change. Second, <strong>glitch-freedom</strong>: because values are pulled on demand, you can never observe an inconsistent intermediate state where one derived value has updated and another hasn't. Push systems fight both problems with operators and scheduling; pull systems don't have them to begin with.</p>
+        <span class="filetag">the shape of it</span>
+        <pre><span class="kw">const</span> count   = <span class="fn">signal</span>(<span class="num">1</span>);              <span class="cmt">// a producer</span>
+<span class="kw">const</span> doubled = <span class="fn">computed</span>(() =&gt; count() * <span class="num">2</span>);  <span class="cmt">// producer + consumer</span>
+
+count.<span class="fn">set</span>(<span class="num">2</span>);   <span class="cmt">// ← does NOT recompute doubled. It marks it dirty.</span>
+doubled();     <span class="hl">// ← THIS recomputes (pull), then caches until the next write</span></pre>
+        <p>Every node in this graph is a <strong>producer</strong> (something can read it), a <strong>consumer</strong> (it reads others), or both. Reading a producer <em>inside</em> a consumer records a dependency edge — automatically, no dependency arrays. That graph, and the version counters that drive its dirty-checking, is the machine you'll watch in the next module. Hold one sentence in mind for the whole course: <strong>writes mark; reads compute</strong>.</p>
+        <div class="xref"><span class="xi">↳ Mastering Angular · Front-End Engineering</span><div>The intro course showed signals as <b>UI = f(state)</b> with a sharper pencil. Here we sharpen the pencil itself: the "graph knows who to recompute" claim becomes a mechanism you can single-step — producers, consumers, versions, and lazy pull.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Signals are just observables with nicer syntax.</div><div class="truth">They're the <b>opposite propagation direction</b>. Observables push values at subscribers; signals let readers pull values on demand. That's why signals need no <code class="tok">unsubscribe</code>, never glitch, and skip work nobody observes — none of which is a syntax difference.</div></div>
+          <div class="mc"><div class="myth">Setting a signal immediately updates everything that depends on it.</div><div class="truth">Setting a signal updates <b>nothing</b> — it only bumps a version and marks consumers stale. The recompute is deferred until a read (for computed) or a scheduled flush (for effects). "Writes mark; reads compute" is the entire model.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--sgraph);border-color:var(--accent-line);background:var(--sgraph-soft)">Reactive graph</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 01</span></div><h2>Signals in depth</h2></div>
+        <p>Now the machinery. Each writable signal carries a <strong>version</strong> — a counter bumped on every change. Each computed remembers the versions of the producers it last read; if any differ when the computed is pulled, it's <em>dirty</em> and recomputes, otherwise it returns its cached value. Effects are consumers with no readable output; they're <strong>scheduled</strong> to run after a change rather than run inline. The knobs you'll actually use: a custom <code class="tok">equal</code> to suppress no-op writes, <code class="tok">untracked()</code> to read without recording a dependency, and <code class="tok">linkedSignal()</code> for writable state that resets when a source changes.</p>
+        <span class="filetag">reactive-depth.ts</span>
+        <pre><span class="kw">const</span> count = <span class="fn">signal</span>(<span class="num">1</span>, { equal: <span class="typ">Object</span>.is });   <span class="cmt">// equal → skip no-op sets</span>
+<span class="kw">const</span> doubled = <span class="fn">computed</span>(() =&gt; count() * <span class="num">2</span>);   <span class="cmt">// caches; recomputes only when pulled dirty</span>
+<span class="kw">const</span> label = <span class="fn">computed</span>(() =&gt; <span class="str">`badge ×${doubled()}`</span>);  <span class="cmt">// pulls doubled transitively</span>
+
+<span class="fn">effect</span>(() =&gt; log(label()));      <span class="cmt">// scheduled consumer — runs on flush, not inline</span>
+<span class="kw">const</span> total = <span class="fn">untracked</span>(() =&gt; count());  <span class="cmt">// read WITHOUT a dependency edge</span></pre>
+        <p>Below is that exact graph, single-steppable. Watch the discipline: <strong>write</strong> marks the downstream nodes dirty but recomputes nothing; <strong>reading</strong> a dirty computed pulls its dependencies and recomputes (and only then does its counter tick); reading again returns the cache; the effect waits for a <strong>flush</strong>:</p>
+        <div class="lab" id="signalDeepLab">
+          <div class="lab-head"><div><div class="pt">Writes mark · reads compute</div><div class="ps">version counters · dirty flags · lazy pull</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="sdInc">count.set(+1)</button>
+              <button class="ds-btn" id="sdReadD">read doubled()</button>
+              <button class="ds-btn" id="sdReadL">read label()</button>
+              <button class="ds-btn" id="sdFlush">flush effects</button>
+              <button class="ds-btn" id="sdReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="rg-graph">
+              <div class="rg-col"><div class="rg-col-h">signal</div>
+                <div class="rg-node sig" id="sdCount"><div class="rn-name">count <span class="ver" id="sdVer">v1</span></div><div class="rn-val" id="sdCountVal">1</div><div class="rn-foot"><span class="state clean">producer</span></div></div>
+              </div>
+              <div class="rg-col"><div class="rg-col-h">computed</div><div class="rg-arrow">→</div>
+                <div class="rg-node comp" id="sdDoubled"><div class="rn-name">doubled</div><div class="rn-val" id="sdDoubledVal">2</div><div class="rn-foot"><span class="state clean" id="sdDoubledState">CLEAN</span><span class="rc" id="sdDoubledRc">computed ×1</span></div></div>
+              </div>
+              <div class="rg-col"><div class="rg-col-h">computed</div><div class="rg-arrow">→</div>
+                <div class="rg-node comp" id="sdLabel"><div class="rn-name">label</div><div class="rn-val" id="sdLabelVal">badge ×2</div><div class="rn-foot"><span class="state clean" id="sdLabelState">CLEAN</span><span class="rc" id="sdLabelRc">computed ×1</span></div></div>
+              </div>
+              <div class="rg-col"><div class="rg-col-h">effect</div><div class="rg-arrow">→</div>
+                <div class="rg-node eff" id="sdEffect"><div class="rn-name">effect</div><div class="rn-val">log(label())</div><div class="rn-foot"><span class="state clean" id="sdEffectState">IDLE</span><span class="rc" id="sdEffectRc">ran ×1</span></div></div>
+              </div>
+            </div>
+            <div class="wlog" id="sdLog"></div>
+          </div>
+          <div class="lab-foot" id="sdFoot">Press <b>count.set</b> and read the graph: doubled and label flip to DIRTY, but their counters don't move — nothing recomputed. The work happens only when you pull.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Bits, Pointers &amp; Overflow</span><div>Dirty-checking by <b>version counter</b> is the same trick as a monotonic sequence number: don't compare the (expensive) values, compare a cheap integer that only ever increases. Reference equality plus a version is how Angular decides "did this actually change?" in O(1).</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A computed recalculates every time you read it.</div><div class="truth">It recalculates only when it's <b>dirty</b> — when a producer's version moved since its last pull. Read a clean computed a thousand times and it returns the same cached reference a thousand times, zero recomputation. Caching is the default, not an optimization you add.</div></div>
+          <div class="mc"><div class="myth">effect() runs synchronously the moment a dependency changes.</div><div class="truth">Effects are <b>scheduled</b>, then run once per flush — which is how ten writes in a row cause one effect run, not ten. Effects are for the outside world (DOM, logging); deriving values belongs in <code class="tok">computed</code>, which the lab keeps strictly separate.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--async);border-color:rgba(45,212,191,.4);background:var(--async-soft)">Async signals</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 02</span></div><h2>Async as signals: resource()</h2></div>
+        <p>Signals hold synchronous state; the network is asynchronous. Modern Angular bridges the gap with <code class="tok">resource()</code> (and <code class="tok">rxResource()</code>): you give it a <em>request</em> derived from signals and an async <em>loader</em>, and it hands back the whole async lifecycle <em>as signal state</em> — <code class="tok">.value()</code>, <code class="tok">.status()</code> (<code class="tok">idle → loading → resolved | error</code>), <code class="tok">.error()</code>, and a <code class="tok">reload()</code>. Crucially, when the request signal changes while a load is in flight, the resource <strong>aborts the stale one</strong> via an <code class="tok">AbortSignal</code> — the stale-response bug from the intro course, handled by the primitive itself.</p>
+        <span class="filetag">link-detail.resource.ts</span>
+        <pre><span class="kw">const</span> id = <span class="fn">signal</span>(<span class="str">'4C92'</span>);
+
+<span class="kw">const</span> link = <span class="fn">resource</span>({
+  request: () =&gt; ({ code: id() }),                 <span class="cmt">// re-runs when id() changes</span>
+  loader: <span class="kw">async</span> ({ request, <span class="at">abortSignal</span> }) =&gt; {      <span class="cmt">// stale loads get aborted</span>
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/links/${request.code}`</span>, { signal: abortSignal });
+    <span class="kw">return</span> res.<span class="fn">json</span>();
+  },
+});
+<span class="cmt">// template: @if (link.status() === 'loading') { … } @else { {{ link.value()?.clicks }} }</span></pre>
+        <p>Drive the lifecycle below. Load a link, then <strong>change the request while it's loading</strong> and watch the first load abort; flip the server to failing to see the <code class="tok">error</code> state render honestly:</p>
+        <div class="lab" id="resourceLab">
+          <div class="lab-head"><div><div class="pt">The async lifecycle, as state</div><div class="ps">idle · loading · resolved · error · abort</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="rqLoad">set id('4C92')</button>
+              <button class="ds-btn" id="rqChange">set id('launch') mid-flight</button>
+              <button class="ds-btn" id="rqFail">server: healthy</button>
+              <button class="ds-btn" id="rqReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="rq-bar"><span class="rq-pill idle" id="rqPill">IDLE</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint)">request = <span class="chip" id="rqReq">—</span></span></div>
+            <div class="rq-val" id="rqValue"><span class="rv-empty">link.value() is undefined — nothing requested yet</span></div>
+            <div class="wlog" id="rqLog"></div>
+          </div>
+          <div class="lab-foot" id="rqFoot">status(), value(), and error() are all signals — the template reads them like any other state. Change the request mid-load and the resource cancels the work that no longer matters.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Mastering Angular · ASP.NET Core</span><div>This is the intro course's fetch lifecycle and switchMap cancellation, folded into one primitive. The loader still calls your ASP.NET endpoint — but loading, error, and abort are no longer yours to wire; <code class="tok">resource()</code> owns them and exposes them as signals.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">resource() is just fetch() wrapped in a signal.</div><div class="truth">It's a <b>state machine with cancellation</b>: it tracks status, exposes value and error as signals, re-runs when its request signal changes, and aborts the previous load through <code class="tok">abortSignal</code>. The wrapper you'd hand-roll — and get subtly wrong — is the point.</div></div>
+          <div class="mc"><div class="myth">You should call the API inside an effect and store the result in a signal.</div><div class="truth">That's the anti-pattern <code class="tok">resource()</code> exists to replace: effects that write signals build hidden async cascades with no cancellation and no status. Declare the request as derived state; let the resource own the lifecycle. Effects stay for genuine side effects.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--rxhi);border-color:rgba(124,156,255,.4);background:var(--rxhi-soft)">RxJS</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 03</span></div><h2>Higher-order streams</h2></div>
+        <p>Signals own state; RxJS owns <em>time</em>. And the heart of RxJS is a problem signals never face: what do you do when each value from an outer stream starts an <em>inner</em> stream — a value triggering an HTTP call, say? You have to <strong>flatten</strong> outer-of-inner back into one stream, and there are exactly four strategies. Choosing the wrong one is the single most common RxJS bug in production, so learn them as a set:</p>
+        <p><code class="tok">mergeMap</code> runs every inner concurrently and interleaves results — maximum throughput, no ordering. <code class="tok">concatMap</code> queues inners and runs them strictly in order, one finishing before the next starts — ordering preserved, latency accumulates. <code class="tok">exhaustMap</code> ignores new outer values while an inner is running — perfect for "submit" buttons that must not double-fire. <code class="tok">switchMap</code> cancels the current inner when a new outer arrives — perfect for typeahead, where only the latest query matters.</p>
+        <span class="filetag">flattening.ts</span>
+        <pre>clicks$.<span class="fn">pipe</span>(<span class="fn">mergeMap</span>(()  =&gt; save$()))   <span class="cmt">// all in parallel</span>
+clicks$.<span class="fn">pipe</span>(<span class="fn">concatMap</span>(() =&gt; save$()))   <span class="cmt">// queued, in order</span>
+clicks$.<span class="fn">pipe</span>(<span class="fn">exhaustMap</span>(()=&gt; save$()))   <span class="cmt">// ignore while busy</span>
+clicks$.<span class="fn">pipe</span>(<span class="fn">switchMap</span>(() =&gt; save$()))   <span class="hl">// cancel the previous</span></pre>
+        <p>Below, one impatient triple-click feeds <em>all four</em> operators at once — each inner task takes the same time, so the only variable is the flattening strategy. Watch four different truths emerge from identical input:</p>
+        <div class="lab" id="flatteningLab">
+          <div class="lab-head"><div><div class="pt">Four strategies, one input</div><div class="ps">3 rapid clicks → 3 inner tasks, four ways</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="hoFire">fire 3 rapid clicks</button>
+              <button class="ds-btn" id="hoReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ho-lane"><span class="hl-h"><b>mergeMap</b><span>all concurrent</span></span><span id="hoMerge"></span></div>
+            <div class="ho-lane"><span class="hl-h"><b>concatMap</b><span>queued, in order</span></span><span id="hoConcat"></span></div>
+            <div class="ho-lane"><span class="hl-h"><b>exhaustMap</b><span>ignore while busy</span></span><span id="hoExhaust"></span></div>
+            <div class="ho-lane"><span class="hl-h"><b>switchMap</b><span>cancel previous</span></span><span id="hoSwitch"></span></div>
+            <div class="stateline" id="hoStatus">fire the clicks and compare — same input, four outcomes</div>
+          </div>
+          <div class="lab-foot" id="hoFoot">merge finishes all three (overlapping); concat finishes all three (one after another); exhaust finishes one and ignores two; switch finishes one and cancels two. The operator <em>is</em> the behavior.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Mastering Angular</span><div>The intro course's typeahead used <code class="tok">switchMap</code> and moved on. Here you can see <i>why</i> it was <code class="tok">switchMap</code> and not the other three — and why a save button wants <code class="tok">exhaustMap</code>, an audit log wants <code class="tok">concatMap</code>, and parallel prefetch wants <code class="tok">mergeMap</code>.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">mergeMap is the general-purpose one — default to it.</div><div class="truth">mergeMap's concurrency is exactly what breaks ordered or single-flight work: overlapping saves, out-of-order writes, duplicate submits. Pick by <b>intent</b> — cancel (switch), ignore (exhaust), queue (concat), or parallelize (merge). "Default to merge" is how race conditions ship.</div></div>
+          <div class="mc"><div class="myth">These are interchangeable; results are the same anyway.</div><div class="truth">The lab proves otherwise from identical input: same three clicks yield three results, three results, one result, one result. The operator determines <b>how many inners run, in what order, and which get cancelled</b> — not a detail, the whole behavior.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--rxhi);border-color:rgba(124,156,255,.4);background:var(--rxhi-soft)">RxJS</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 04</span></div><h2>Multicasting &amp; interop</h2></div>
+        <p>One more RxJS truth that bites hard: most observables are <strong>cold</strong>. A cold observable re-runs its producer <em>for every subscriber</em> — subscribe an <code class="tok">HttpClient</code> call twice and you fire two HTTP requests. Templates make this easy to do by accident: two <code class="tok">async</code> pipes on the same stream are two subscriptions. The fix is <strong>multicasting</strong> — <code class="tok">share()</code> / <code class="tok">shareReplay()</code> — which runs the producer once and fans the result out to all subscribers, turning a cold stream <em>hot</em>. And the bridges to the signal world, <code class="tok">toSignal()</code> and <code class="tok">toObservable()</code>, are how you move between the two reactive systems deliberately.</p>
+        <span class="filetag">interop.ts</span>
+        <pre><span class="kw">const</span> links$ = <span class="kw">this</span>.http.<span class="fn">get</span>&lt;<span class="typ">Link</span>[]&gt;(<span class="str">'/api/links'</span>).<span class="fn">pipe</span>(
+  <span class="fn">shareReplay</span>({ bufferSize: <span class="num">1</span>, refCount: <span class="kw">true</span> })   <span class="hl">// one request, many readers</span>
+);
+<span class="kw">const</span> links = <span class="fn">toSignal</span>(links$, { initialValue: [] });   <span class="cmt">// stream → signal</span>
+<span class="kw">const</span> query$ = <span class="fn">toObservable</span>(<span class="kw">this</span>.querySignal);          <span class="cmt">// signal → stream (for operators)</span></pre>
+        <p>Add subscribers to a cold stream and to a shared one, and watch the execution counters diverge — the cold source re-runs every time, the shared source runs exactly once:</p>
+        <div class="lab" id="multicastLab">
+          <div class="lab-head"><div><div class="pt">Cold re-runs · hot is shared</div><div class="ps">one producer execution, or many?</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="mxAddCold">subscribe (cold)</button>
+              <button class="ds-btn primary" id="mxAddShared">subscribe (shareReplay)</button>
+              <button class="ds-btn" id="mxReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="mx-grid">
+              <div class="mx-col cold"><div class="mx-h">cold source · http.get()</div><div class="mx-exec"><span id="mxColdExec">0</span> <span>producer runs</span></div><div class="mx-subs" id="mxColdSubs"></div></div>
+              <div class="mx-col shared"><div class="mx-h">shareReplay() · multicast</div><div class="mx-exec"><span id="mxSharedExec">0</span> <span>producer runs</span></div><div class="mx-subs" id="mxSharedSubs"></div></div>
+            </div>
+            <div class="stateline" id="mxStatus">each cold subscription is another HTTP request — each shared one just joins the first</div>
+          </div>
+          <div class="lab-foot" id="mxFoot">Three cold subscribers → three executions. Three shared subscribers → one execution, replayed. Two async pipes on a cold stream is the bug this hides.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Subscribing twice just reads the same result twice.</div><div class="truth">For a cold observable it <b>re-runs the producer</b> twice — two HTTP requests, two side effects. Observables are recipes, not values; each subscription cooks the recipe again. <code class="tok">shareReplay</code> is what turns the recipe into a shared dish.</div></div>
+          <div class="mc"><div class="myth">toSignal / toObservable are rarely needed.</div><div class="truth">They're the <b>seams</b> of a real app: router events, form <code class="tok">valueChanges</code>, and HTTP arrive as observables; your components increasingly think in signals. Convert at the boundary — <code class="tok">toSignal</code> to consume, <code class="tok">toObservable</code> when you need time-based operators — and each system does what it's best at.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--diinj);border-color:rgba(167,139,250,.4);background:var(--diinj-soft)">DI internals</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 05</span></div><h2>Dependency injection, deeply</h2></div>
+        <p>The intro course showed <em>that</em> DI resolves a token; this one shows <em>how the walk works</em>. Injectors form a tree — an <strong>environment</strong> hierarchy (root → lazy routes) and an <strong>element</strong> hierarchy (component → parent component). When you <code class="tok">inject(TOKEN)</code>, resolution starts at the requesting injector and walks <em>up</em> until someone provides it, throwing <code class="tok">NullInjectorError</code> if no one does. Four <strong>resolution modifiers</strong> bend that walk: <code class="tok">@Self</code> (look only here), <code class="tok">@SkipSelf</code> (start at the parent), <code class="tok">@Optional</code> (return <code class="tok">null</code> instead of throwing), and <code class="tok">@Host</code> (stop at the host element's injector).</p>
+        <span class="filetag">resolution-modifiers.ts</span>
+        <pre>a = <span class="fn">inject</span>(<span class="typ">Cfg</span>);                          <span class="cmt">// walk up until found (or throw)</span>
+b = <span class="fn">inject</span>(<span class="typ">Cfg</span>, { self: <span class="kw">true</span> });            <span class="cmt">// only THIS injector</span>
+c = <span class="fn">inject</span>(<span class="typ">Cfg</span>, { skipSelf: <span class="kw">true</span> });        <span class="cmt">// start at the parent</span>
+d = <span class="fn">inject</span>(<span class="typ">Cfg</span>, { optional: <span class="kw">true</span> });        <span class="cmt">// null instead of NullInjectorError</span>
+e = <span class="fn">inject</span>(<span class="typ">Cfg</span>, { host: <span class="kw">true</span> });            <span class="cmt">// stop at the host element injector</span></pre>
+        <p>Toggle which injectors provide the token, pick a modifier, and resolve from the deepest component — the highlighted node is the one the walk lands on (or a thrown error when nothing qualifies):</p>
+        <div class="lab" id="injectorLab">
+          <div class="lab-head"><div><div class="pt">The resolution walk</div><div class="ps">who answers inject(Cfg)?</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="ijResolve">inject(Cfg) from LinkEditor</button>
+              <button class="ds-btn" id="ijReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ij-controls">
+              <span style="color:var(--ink-faint)">provides Cfg:</span>
+              <label><input type="checkbox" id="ijRoot" checked> Root</label>
+              <label><input type="checkbox" id="ijParent" checked> Dashboard</label>
+              <label><input type="checkbox" id="ijChild"> LinkEditor</label>
+              <span style="color:var(--ink-faint);margin-left:6px">modifier:</span>
+              <select class="sel-ctl" id="ijMod"><option value="none">(none)</option><option value="self">@Self</option><option value="skipSelf">@SkipSelf</option><option value="optional">@Optional</option><option value="host">@Host</option></select>
+            </div>
+            <div class="ij-tree">
+              <div class="ij-node provides" id="ijNodeRoot"><div class="ijn-h"><span>root <span style="color:var(--ink-faint);font-weight:400">· EnvironmentInjector</span></span><span class="ij-prov" id="ijProvRoot">Cfg = 'root'</span></div>
+                <div class="ij-kids">
+                  <div class="ij-node provides" id="ijNodeParent"><div class="ijn-h"><span>Dashboard <span style="color:var(--ink-faint);font-weight:400">· element injector</span></span><span class="ij-prov" id="ijProvParent">Cfg = 'dashboard'</span></div>
+                    <div class="ij-kids">
+                      <div class="ij-node" id="ijNodeChild"><div class="ijn-h"><span>LinkEditor <span style="color:var(--ink-faint);font-weight:400">· requester</span></span><span class="ij-prov off" id="ijProvChild">Cfg = 'editor'</span></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ij-result" id="ijResult">pick providers and a modifier, then resolve</div>
+            <div class="wlog" id="ijLog"></div>
+          </div>
+          <div class="lab-foot" id="ijFoot">Default walk climbs LinkEditor → Dashboard → Root and takes the first provider. @SkipSelf ignores the requester; @Self forbids climbing; @Host stops at the host; @Optional turns a miss into null.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ ASP.NET Core · Design Patterns</span><div>The environment hierarchy is your ASP.NET service lifetimes again — root singletons, route-scoped providers. The modifiers add what a server container rarely needs: a <b>positional</b> walk (self / parent / host) because Angular's injectors mirror a live component tree, not a flat container.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">There's one injector and DI just finds the service.</div><div class="truth">There's a <b>tree</b> of injectors, and "finds" means a directed walk up it. Where you <i>provide</i> a token decides which subtree sees which instance — the root singleton, a route's copy, or a component-scoped one. Placement is the design decision; the walk is the mechanism.</div></div>
+          <div class="mc"><div class="myth">@Optional, @Self, @Host are exotic edge-case decorators.</div><div class="truth">They're how reusable directives stay safe: <code class="tok">@Optional @Host</code> to cooperate with a host component's control if present, <code class="tok">@SkipSelf</code> to find a parent instance while providing your own. Library authors reach for them constantly — they bend the walk to the component's real shape.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--cd);border-color:rgba(232,179,65,.4);background:var(--cd-soft)">Change detection</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 06</span></div><h2>The change-detection tick</h2></div>
+        <p>The intro course counted <em>which</em> components get checked. Now the mechanism. Angular holds every component instance as an <strong>LView</strong> — a flat array of its bindings — linked into a tree that mirrors the component tree. A change-detection <strong>tick</strong> walks that tree from the root and refreshes each view. Under OnPush and zoneless, a view is refreshed only if it's <em>dirty</em>, and here's the subtle part: when something marks a leaf dirty (a signal it reads changed, or <code class="tok">markForCheck()</code> fires), the dirty flag <strong>propagates up</strong> the ancestor chain — because the tick reaches a node only by walking through its parents. Mark the leaf, flag the path.</p>
+        <p>The other half is the <strong>scheduler</strong>. Ten signals changing in one turn don't schedule ten ticks — they <em>coalesce</em> into a single tick on the next microtask. Between the up-propagation of dirtiness and the coalescing of ticks, Angular turns "something changed somewhere" into "walk once, refresh only the flagged path."</p>
+        <span class="filetag">the two motions</span>
+        <pre>signalInLeaf.<span class="fn">set</span>(next);   <span class="cmt">// 1. mark LeafA dirty → flag DashA → flag App (upward)</span>
+                       <span class="cmt">// 2. scheduler coalesces → ONE tick on the next microtask</span>
+<span class="cmt">// tick(): walk from root, refresh only nodes whose dirty flag is set, clear flags</span></pre>
+        <p>Fire a change in a leaf and watch the dirty flag climb its ancestors — nothing refreshes yet. Then schedule the tick and watch a single downward pass refresh exactly the flagged path. Fire <em>both</em> leaves before ticking to see coalescing — two changes, one tick:</p>
+        <div class="lab" id="ctickLab">
+          <div class="lab-head"><div><div class="pt">Mark upward · refresh downward</div><div class="ps">the LView tree · dirty flags · one coalesced tick</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="ctSignalA">signal changes in LeafA</button>
+              <button class="ds-btn" id="ctSignalB">signal changes in LeafB</button>
+              <button class="ds-btn primary" id="ctTick">schedule tick ▸</button>
+              <button class="ds-btn" id="ctReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ct-tree">
+              <div class="ct-node" id="ctApp"><div class="ctn-h"><span><span class="ct-dot"></span> App</span><span class="cc">refreshed ×0</span></div>
+                <div class="ct-kids ct-cols">
+                  <div class="ct-node" id="ctDashA"><div class="ctn-h"><span><span class="ct-dot"></span> DashA</span><span class="cc">refreshed ×0</span></div>
+                    <div class="ct-kids"><div class="ct-node" id="ctLeafA"><div class="ctn-h"><span><span class="ct-dot"></span> LeafA</span><span class="cc">refreshed ×0</span></div></div></div>
+                  </div>
+                  <div class="ct-node" id="ctDashB"><div class="ctn-h"><span><span class="ct-dot"></span> DashB</span><span class="cc">refreshed ×0</span></div>
+                    <div class="ct-kids"><div class="ct-node" id="ctLeafB"><div class="ctn-h"><span><span class="ct-dot"></span> LeafB</span><span class="cc">refreshed ×0</span></div></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <span class="ct-total">ticks: <b id="ctTicks">0</b> · refreshed last tick: <b id="ctRefreshed">0</b></span>
+              <span class="stateline" id="ctStatus" style="flex:1;min-width:220px">mark a leaf, then schedule a tick</span>
+            </div>
+          </div>
+          <div class="lab-foot" id="ctFoot">Marking flags the path but refreshes nothing — the tick does the refreshing. Fire both leaves, then tick once: two dirty paths, a single coalesced pass. That's the zoneless scheduler.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Data Structures · Big O</span><div>The LView tree is the tree from <i>Data Structures</i> holding your running UI, and the tick is a traversal of it. Up-propagating dirtiness plus refreshing only flagged nodes is what keeps a tick near <b>O(dirty path)</b> instead of O(all components) — the <i>Big O</i> reason OnPush scales.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">markForCheck() re-renders the component immediately.</div><div class="truth">It sets a <b>flag and schedules</b> — nothing renders synchronously. The name is literal: it <i>marks</i> the view (and its ancestors) as needing a check on the next tick. Confusing "mark" with "render" is why people call it in loops and wonder why nothing changed until later.</div></div>
+          <div class="mc"><div class="myth">Every state change triggers its own change-detection pass.</div><div class="truth">The scheduler <b>coalesces</b> changes within a turn into one tick — the lab's "both leaves, one tick" is exactly this. That's why a handler can update ten signals cheaply, and why zoneless Angular stays fast without Zone.js patching every async API.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--view);border-color:rgba(242,151,60,.4);background:var(--view-soft)">View API</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div><h2>Directives &amp; the view API</h2></div>
+        <p>Structural directives look like magic (<code class="tok">*ngIf</code>, <code class="tok">@for</code>) but rest on a small, explicit API you can wield yourself. The asterisk is pure sugar: <code class="tok">*x="e"</code> <strong>desugars</strong> to an <code class="tok">&lt;ng-template&gt;</code> wrapping the element, with the directive attached. The directive receives two tools by injection — a <code class="tok">TemplateRef</code> (the blueprint of the wrapped content) and a <code class="tok">ViewContainerRef</code> (an insertion point in the DOM) — and it renders by calling <code class="tok">createEmbeddedView</code>, <code class="tok">clear</code>, <code class="tok">move</code>, or <code class="tok">remove</code>. That's all <code class="tok">@if</code> and <code class="tok">@for</code> do under the compiler.</p>
+        <span class="filetag">repeat.directive.ts</span>
+        <pre><span class="dec">@Directive</span>({ selector: <span class="str">'[repeat]'</span> })
+<span class="kw">export class</span> <span class="typ">Repeat</span> {
+  <span class="kw">private</span> tpl = <span class="fn">inject</span>(<span class="typ">TemplateRef</span>);          <span class="cmt">// the blueprint</span>
+  <span class="kw">private</span> vcr = <span class="fn">inject</span>(<span class="typ">ViewContainerRef</span>);     <span class="cmt">// where views go</span>
+  count = input.required&lt;<span class="typ">number</span>&gt;({ alias: <span class="str">'repeat'</span> });
+  <span class="kw">constructor</span>() { <span class="fn">effect</span>(() =&gt; {
+    <span class="kw">this</span>.vcr.<span class="fn">clear</span>();
+    <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="kw">this</span>.count(); i++)
+      <span class="kw">this</span>.vcr.<span class="fn">createEmbeddedView</span>(<span class="kw">this</span>.tpl, { <span class="at">$implicit</span>: i });   <span class="cmt">// render</span>
+  }); }
+}</pre>
+        <p>The desugaring on the left is what the compiler sees. On the right, drive a <code class="tok">ViewContainerRef</code> directly — create, insert, move, and remove embedded views, and watch the live view list and its indices track every call:</p>
+        <div class="lab" id="viewApiLab">
+          <div class="lab-head"><div><div class="pt">The view container, by hand</div><div class="ps">*sugar desugared · createEmbeddedView &amp; friends</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="vaCreate">createEmbeddedView()</button>
+              <button class="ds-btn" id="vaInsertTop">insert @ index 0</button>
+              <button class="ds-btn" id="vaMove">move first → last</button>
+              <button class="ds-btn" id="vaRemove">remove(0)</button>
+              <button class="ds-btn" id="vaClear">clear()</button>
+              <button class="ds-btn" id="vaReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="va-desugar">
+              <div class="va-code"><span class="lbl">what you write</span><span style="color:var(--view)">*repeat</span>=<span style="color:#E8B341">"3"</span> renders a row</div>
+              <div class="va-code"><span class="lbl">what the compiler sees</span>&lt;ng-template <span style="color:var(--view)">repeat</span>=<span style="color:#E8B341">"3"</span>&gt;
+  &lt;row/&gt;
+&lt;/ng-template&gt;</div>
+            </div>
+            <div class="va-views" id="vaViews"><div class="va-empty">the ViewContainerRef is empty — createEmbeddedView() to fill it</div></div>
+            <div class="stateline" id="vaLen">vcr.length = 0</div>
+          </div>
+          <div class="lab-foot" id="vaFoot">Every button is one real ViewContainerRef method. The indices are the container's — insert, move, and remove renumber exactly as the DOM does.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ OOP &amp; Coding Principles</span><div>Attribute directives are the <b>Decorator pattern</b> made literal — add behavior to an element without subclassing it. And <code class="tok">hostDirectives</code> (composing directives onto a component) is composition-over-inheritance, the <i>OOP</i> principle, promoted to a first-class Angular feature.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">*ngIf and @if are built-in specials the compiler hardcodes.</div><div class="truth">They're ordinary uses of <code class="tok">TemplateRef</code> + <code class="tok">ViewContainerRef</code> — the same API your own <code class="tok">*repeat</code> gets. The asterisk is a desugaring rule, not a privileged keyword. Knowing that, you can build any structural directive the framework didn't ship.</div></div>
+          <div class="mc"><div class="myth">To render a component dynamically you need a complex factory.</div><div class="truth">It's one call: <code class="tok">vcr.createComponent(Cmp)</code>, or <code class="tok">ngComponentOutlet</code> in a template. The old <code class="tok">ComponentFactoryResolver</code> ceremony is gone — the view container creates components and embedded views through the same small interface you just drove by hand.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--cva);border-color:rgba(78,214,107,.4);background:var(--cva-soft)">Forms</span><span class="lvl expert">Expert</span><span class="mod-num">Module 08</span></div><h2>Custom form controls</h2></div>
+        <p>Reactive forms bind to native inputs effortlessly — but the moment you build a <em>custom</em> control (a rating widget, a segmented picker, a rich editor) you need it to speak the forms API. That contract is <strong>ControlValueAccessor</strong>: implement four methods and your component becomes indistinguishable from an <code class="tok">&lt;input&gt;</code> to <code class="tok">formControl</code>. <code class="tok">writeValue</code> pushes a model value <em>into</em> your view (programmatic changes); <code class="tok">registerOnChange</code> hands you a callback to fire when the <em>user</em> changes the value (view → model); <code class="tok">registerOnTouched</code> reports blur; <code class="tok">setDisabledState</code> reflects <code class="tok">disable()</code>. Two directions, cleanly separated — the same data-down / events-up split, at the forms boundary.</p>
+        <span class="filetag">status-picker.component.ts</span>
+        <pre><span class="dec">@Component</span>({ providers: [{ provide: <span class="typ">NG_VALUE_ACCESSOR</span>,
+  useExisting: <span class="typ">StatusPicker</span>, multi: <span class="kw">true</span> }], … })   <span class="cmt">// register as a control</span>
+<span class="kw">export class</span> <span class="typ">StatusPicker</span> <span class="kw">implements</span> <span class="typ">ControlValueAccessor</span> {
+  value = <span class="fn">signal</span>&lt;<span class="typ">string</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+  <span class="kw">private</span> onChange = (v: <span class="typ">string</span>) =&gt; {};
+  <span class="fn">writeValue</span>(v: <span class="typ">string</span>)      { <span class="kw">this</span>.value.<span class="fn">set</span>(v); }        <span class="cmt">// model → view</span>
+  <span class="fn">registerOnChange</span>(fn: <span class="kw">any</span>) { <span class="kw">this</span>.onChange = fn; }         <span class="cmt">// view → model hook</span>
+  <span class="fn">pick</span>(v: <span class="typ">string</span>)            { <span class="kw">this</span>.value.<span class="fn">set</span>(v); <span class="kw">this</span>.<span class="fn">onChange</span>(v); }  <span class="cmt">// user picked</span>
+}</pre>
+        <p>The segmented control on the left is a CVA. Click it (user edit) and watch the form's value, dirty, and touched flags update through <code class="tok">onChange</code>; press <strong>patch from code</strong> to see <code class="tok">writeValue</code> update the control <em>without</em> marking it dirty; toggle disabled to see <code class="tok">setDisabledState</code>:</p>
+        <div class="lab" id="cvaLab">
+          <div class="lab-head"><div><div class="pt">A control that speaks forms</div><div class="ps">writeValue ↓ · onChange ↑ · setDisabledState</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="cvaPatch">patch from code → writeValue</button>
+              <button class="ds-btn" id="cvaDisable">disable</button>
+              <button class="ds-btn" id="cvaReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="cva-grid">
+              <div class="cva-pane host"><div class="dp-h" style="color:var(--accent)">&lt;status-picker&gt; · the CVA</div>
+                <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-muted);margin-bottom:2px">pick a status:</div>
+                <div class="cva-seg" id="cvaSeg">
+                  <button class="cva-opt" data-val="live">live</button>
+                  <button class="cva-opt" data-val="paused">paused</button>
+                  <button class="cva-opt" data-val="expired">expired</button>
+                </div>
+              </div>
+              <div class="cva-pane"><div class="dp-h">the FormControl · status</div>
+                <div class="cva-row"><span>value</span><b id="cvaValue">null</b></div>
+                <div class="cva-row"><span>valid</span><span class="cva-flag f" id="cvaValid">INVALID</span></div>
+                <div class="cva-row"><span>dirty</span><span class="cva-flag f" id="cvaDirty">false</span></div>
+                <div class="cva-row"><span>touched</span><span class="cva-flag f" id="cvaTouched">false</span></div>
+              </div>
+            </div>
+            <div class="wlog" id="cvaLog"></div>
+          </div>
+          <div class="lab-foot" id="cvaFoot">User clicks flow up through onChange and mark the control dirty + touched. Patch-from-code flows down through writeValue and marks nothing — exactly the native-input contract.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A custom control can just take a FormControl as an @Input.</div><div class="truth">That leaks the control everywhere and skips validation, dirty/touched, and disabled wiring. <b>ControlValueAccessor</b> is the contract that makes your widget a first-class citizen of <code class="tok">formControlName</code> — driven, validated, and status-tracked like any native input.</div></div>
+          <div class="mc"><div class="myth">writeValue and onChange are two names for the same update.</div><div class="truth">They're <b>opposite directions</b>, and conflating them causes loops. <code class="tok">writeValue</code> is model→view (programmatic, marks nothing); <code class="tok">onChange</code> is view→model (user intent, marks dirty). The lab's "patch from code" vs "click" is precisely this asymmetry — keep them separate and forms behave.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--compile);border-color:rgba(86,199,255,.4);background:var(--compile-soft)">Compiler</span><span class="lvl expert">Expert</span><span class="mod-num">Module 09</span></div><h2>Compilation &amp; @defer</h2></div>
+        <p>Angular is a <em>compiled</em> framework. Ahead-of-time, the compiler turns every template into a pair of functions — a <strong>creation</strong> block that builds the DOM once and an <strong>update</strong> block that patches bindings on each tick — emitted as static instructions on the component class. There's no template interpreter shipped to the browser; your <code class="tok">{{ }}</code> and <code class="tok">@if</code> become straight-line calls like <code class="tok">ɵɵtext</code>, <code class="tok">ɵɵproperty</code>, and <code class="tok">ɵɵconditional</code>. That's why Angular can tree-shake unused features and why bindings are fast: the "framework" at runtime is mostly your compiled instructions plus a small renderer.</p>
+        <p>The most visible payoff is <code class="tok">@defer</code>. A deferred block is compiled into a tiny state machine with its own bundle: it shows <code class="tok">@placeholder</code> until a <strong>trigger</strong> fires (<code class="tok">on idle</code>, <code class="tok">on viewport</code>, <code class="tok">on interaction</code>, <code class="tok">on timer</code>…), streams the lazy chunk while showing <code class="tok">@loading</code>, then swaps in the real content — with optional <code class="tok">prefetch</code> to fetch the chunk early without rendering it:</p>
+        <span class="filetag">dashboard.html</span>
+        <pre>@defer (<span class="at">on viewport</span>; <span class="at">prefetch on idle</span>) {
+  <span class="tg">&lt;analytics-chart</span> <span class="at">[data]</span>=<span class="str">"stats()"</span><span class="tg">/&gt;</span>     <span class="cmt">&lt;!-- its own lazy bundle --&gt;</span>
+} @placeholder { <span class="tg">&lt;chart-skeleton/&gt;</span> }   <span class="cmt">&lt;!-- shown until the trigger --&gt;</span>
+  @loading (minimum <span class="num">200</span>ms) { <span class="tg">&lt;spinner/&gt;</span> }  <span class="cmt">&lt;!-- shown while streaming --&gt;</span>
+  @error { <span class="tg">&lt;p&gt;</span>chart failed to load<span class="tg">&lt;/p&gt;</span> }</pre>
+        <p>Pick a trigger, optionally prefetch, then fire it and watch the block move through placeholder → loading → loaded — and notice how prefetch removes the wait:</p>
+        <div class="lab" id="compileLab">
+          <div class="lab-head"><div><div class="pt">@defer, in motion</div><div class="ps">placeholder → trigger → loading → loaded</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="cpFire">fire trigger ▸</button>
+              <button class="ds-btn" id="cpPrefetch">prefetch: off</button>
+              <button class="ds-btn" id="cpReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="cp-controls">
+              <span>trigger:</span>
+              <select class="sel-ctl" id="cpTrigger"><option value="idle">on idle</option><option value="viewport">on viewport</option><option value="interaction">on interaction</option><option value="timer">on timer (1s)</option></select>
+            </div>
+            <div class="cp-block placeholder" id="cpBlock">
+              <div class="cp-state" id="cpState">@placeholder</div>
+              <div class="cp-body" id="cpBody">&lt;chart-skeleton/&gt; — the real chart hasn't been downloaded yet</div>
+            </div>
+            <div class="wlog" id="cpLog"></div>
+          </div>
+          <div class="lab-foot" id="cpFoot">The deferred chart is a separate bundle that doesn't touch the first load. Prefetch fetches it early so that when the trigger fires, there's nothing left to wait for.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Front-End Engineering · SDLC</span><div>This is the front-end course's build step — bundling, code-splitting, lazy loading — pulled into the template as one keyword. What used to be webpack configuration and route-level splitting is now <code class="tok">@defer</code>, compiled per block, and it ships through the same CI pipeline the <i>Lifecycle</i> course built.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">The browser downloads a template engine and interprets my HTML.</div><div class="truth">There's no template interpreter at runtime. AOT compiles each template to <b>static instruction calls</b> baked onto the component; the browser runs those directly. That's the source of the tree-shaking, the binding speed, and the compile-time errors in your templates.</div></div>
+          <div class="mc"><div class="myth">@defer is just lazy loading with nicer syntax.</div><div class="truth">It's a compiled <b>state machine per block</b>: placeholder, loading (with a minimum to prevent flicker), error, and a menu of triggers plus prefetch — all declarative, all in the template, all tree-shaken into their own chunk. Route-level lazy loading can't express "load when this scrolls into view."</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--store);border-color:rgba(251,113,133,.4);background:var(--store-soft)">State</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>A signal store from scratch</h2></div>
+        <p>You now have every piece to build the thing teams reach for a library to get: a reactive store. The recipe is small. Hold state in one private <code class="tok">signal</code>. Expose <strong>computed selectors</strong> that derive read-only views of it. Offer <strong>methods</strong> that update it immutably through a <code class="tok">patchState</code> helper. That's the whole pattern behind <code class="tok">@ngrx/signals</code> and friends — and because selectors are computed, each one recomputes only when the slice it reads actually changes, which you'll see counted live.</p>
+        <span class="filetag">snip-store.ts</span>
+        <pre><span class="kw">function</span> <span class="fn">snipStore</span>() {
+  <span class="kw">const</span> state = <span class="fn">signal</span>({ links: [...], filter: <span class="str">'all'</span> });
+  <span class="kw">const</span> patch = (p) =&gt; state.<span class="fn">update</span>(s =&gt; ({ ...s, ...p }));   <span class="cmt">// immutable write</span>
+  <span class="kw">return</span> {
+    visible: <span class="fn">computed</span>(() =&gt; state().links.<span class="fn">filter</span>(byFilter(state().filter))),
+    total:   <span class="fn">computed</span>(() =&gt; state().links.<span class="fn">reduce</span>(sumClicks, <span class="num">0</span>)),   <span class="cmt">// ignores filter</span>
+    count:   <span class="fn">computed</span>(() =&gt; <span class="kw">this</span>.visible().length),
+    addLink: (l) =&gt; <span class="fn">patch</span>({ links: [...state().links, l] }),
+    setFilter: (f) =&gt; <span class="fn">patch</span>({ filter: f }),
+  };
+}</pre>
+        <p>The store drives three views. Add a link and all three selectors recompute; switch the filter and watch <code class="tok">total</code> <em>skip its recompute</em> — it never reads <code class="tok">filter</code>, so the graph knows it can't have changed:</p>
+        <div class="lab" id="storeLab">
+          <div class="lab-head"><div><div class="pt">State · selectors · views</div><div class="ps">patchState in · computed selectors out</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="sxAdd">addLink()</button>
+              <button class="ds-btn" id="sxFilterBtn">setFilter('paid')</button>
+              <button class="ds-btn" id="sxClear">clear links</button>
+              <button class="ds-btn" id="sxReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="sx-grid">
+              <div class="sx-pane"><div class="dp-h">private state signal</div><div class="sx-json" id="sxStateJson"></div>
+                <div class="dp-h" style="margin-top:12px">computed selectors</div>
+                <div class="sx-sel" id="sxVisible"><span>visible()</span><span><b id="sxVisibleVal">3</b> · <span class="rc" id="sxVisibleRc">computed ×1</span></span></div>
+                <div class="sx-sel" id="sxTotal"><span>total()</span><span><b id="sxTotalVal">1,422</b> · <span class="rc" id="sxTotalRc">computed ×1</span></span></div>
+                <div class="sx-sel" id="sxCount"><span>count()</span><span><b id="sxCountVal">3</b> · <span class="rc" id="sxCountRc">computed ×1</span></span></div>
+              </div>
+              <div class="sx-pane"><div class="dp-h">three subscribing views</div>
+                <div class="sx-views">
+                  <div class="sx-view" id="sxStatsView"><span class="sv-n">StatsView · reads total()</span><b id="sxStatsText">1,422 total clicks</b></div>
+                  <div class="sx-view" id="sxListView"><span class="sv-n">ListView · reads visible()</span><b id="sxListText">3 links shown</b></div>
+                  <div class="sx-view" id="sxFilterView"><span class="sv-n">FilterView · reads filter</span><b id="sxFilterText">filter: all</b></div>
+                </div>
+                <div class="wlog" id="sxLog" style="margin-top:10px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-foot" id="sxFoot">setFilter recomputes visible and count — but total ignores filter, so its counter holds and StatsView never re-renders. Selectors recompute only when their own inputs move.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Design Patterns · Mastering Angular</span><div>This is the intro course's one-way store, rebuilt from primitives: the Observer pattern (selectors subscribe to state) with immutable <code class="tok">patchState</code> as the single writer. No Redux, no library — just a signal, some computeds, and methods. You could publish it in twenty lines.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Real state management needs Redux or NgRx.</div><div class="truth">For most apps a <b>signal store</b> — private state signal, computed selectors, patchState methods — is the whole thing, and it's what the modern libraries are now built on. Reach for a bigger tool when you need its <i>specific</i> features (devtools, effects orchestration), not by default.</div></div>
+          <div class="mc"><div class="myth">Every view re-renders whenever any store state changes.</div><div class="truth">Views re-render only when a selector they read produces a new value — the lab's <code class="tok">total</code> holding steady through a filter change is the proof. Fine-grained selectors mean a store update touches exactly the views whose data actually moved, and no others.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>The expert dashboard</h2></div>
+        <p>The intro course assembled Snip's dashboard from the framework's surface. Here it is assembled from its <em>depths</em> — every technique in this course, in one zoneless component:</p>
+        <span class="filetag">dashboard.component.ts</span>
+        <pre><span class="fn">bootstrapApplication</span>(<span class="typ">App</span>, { providers: [<span class="fn">provideZonelessChangeDetection</span>()] });  <span class="cmt">// m06</span>
+
+<span class="dec">@Component</span>({ changeDetection: <span class="typ">ChangeDetectionStrategy</span>.OnPush, template: <span class="str">`</span>
+  <span class="tg">&lt;stats-bar</span> <span class="at">[total]</span>=<span class="str">"store.total()"</span><span class="tg">/&gt;</span>              <span class="cmt">// m10 · computed selector</span>
+  <span class="tg">&lt;status-picker</span> <span class="at">[formControl]</span>=<span class="str">"statusFilter"</span><span class="tg">/&gt;</span>    <span class="cmt">// m08 · a CVA control</span>
+  &#64;for (l of store.visible(); track l.code) {          <span class="cmt">// m01 · signals + keyed</span>
+    <span class="tg">&lt;link-row</span> <span class="at">*highlight</span>=<span class="str">"l.code === sel()"</span> <span class="at">[link]</span>=<span class="str">"l"</span><span class="tg">/&gt;</span>  <span class="cmt">// m07 · custom structural dir</span>
+  }
+  &#64;defer (on viewport; prefetch on idle) {              <span class="cmt">// m09 · compiled lazy block</span>
+    <span class="tg">&lt;analytics-chart</span> <span class="at">[data]</span>=<span class="str">"chart.value()"</span><span class="tg">/&gt;</span>       <span class="cmt">// m02 · resource() signal</span>
+  } @placeholder { <span class="tg">&lt;chart-skeleton/&gt;</span> }
+<span class="str">`</span> })
+<span class="kw">export class</span> <span class="typ">DashboardComponent</span> {
+  store = <span class="fn">inject</span>(<span class="typ">SnipStore</span>);                            <span class="cmt">// m05 · injector walk</span>
+  chart = <span class="fn">resource</span>({ request: () =&gt; <span class="kw">this</span>.store.filter(), loader: fetchStats });  <span class="cmt">// m02</span>
+  search$ = <span class="fn">toObservable</span>(<span class="kw">this</span>.query)                    <span class="cmt">// m04 · interop</span>
+    .<span class="fn">pipe</span>(<span class="fn">debounceTime</span>(<span class="num">250</span>), <span class="fn">switchMap</span>(api.search));      <span class="cmt">// m03 · switchMap</span>
+}</pre>
+        <div class="note key">
+          <div class="nh">The machine, in your hands</div>
+          <p>Nothing here is framework magic anymore. The <code class="tok">store.visible()</code> selector is a computed you can trace through the reactive graph (m01). The <code class="tok">resource()</code> is a state machine you watched abort stale loads (m02). The <code class="tok">switchMap</code> was one of four operators you raced (m03); <code class="tok">status-picker</code> is a CVA you wired by hand (m08); <code class="tok">*highlight</code> is a structural directive over the view API (m07); <code class="tok">@defer</code> compiles to the state machine you stepped through (m09); and <code class="tok">provideZonelessChangeDetection</code> means the tick refreshes exactly the dirty path (m06). <strong>The surface course told you it works; this one showed you why — and now you could rebuild any of it.</strong></p>
+        </div>
+        <div class="xref"><span class="xi">↳ The Capstone · The Lifecycle</span><div>Snip has been built, queried, given a face, and now understood to its foundations. What remains is the outer loop — review, CI, canary, observe — which is the coral <i>Lifecycle</i> course. The internals are yours; shipping them is the discipline around them.</div></div>
+        <div class="closing">
+          <h2>The reactive machine, mastered.</h2>
+          <p>You opened the case and found no magic — a pull-based graph that recomputes lazily, a scheduler that coalesces work, an injector tree that answers a directed walk, a compiler that emits straight-line instructions, and a forms contract that's four honest methods. Every abstraction you used on the surface turned out to be a mechanism you can now single-step, reason about, and reconstruct.</p>
+          <p>That is what separates using a framework from mastering one. When the next version ships a new primitive, you'll recognize the machinery under it. When a bug hides in change detection or a stale subscription, you'll know where to look. When a library offers a store, you'll know you could have written it. The depth was the point — go build something, and this time you'll know exactly what the framework is doing beneath your hands.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Angular Internals — the deep dive beneath Mastering&nbsp;Angular, across the whole curriculum: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, Advanced&nbsp;SQL&nbsp;&amp;&nbsp;PostgreSQL, Front-End&nbsp;Engineering, Mastering&nbsp;Angular, and the Capstone that built Snip. You learned the framework; then you learned the machine beneath it.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/angular-internals.js"></script>
+</body>
+</html>

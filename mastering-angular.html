@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastering Angular · The Growth Lab</title>
+<meta name="description" content="An interactive course on modern Angular — standalone components, template bindings, built-in control flow, signals, component I/O, dependency injection, RxJS and HttpClient, routing with guards and lazy loading, typed reactive forms, change detection and OnPush, and application architecture. Snip's dashboard, rebuilt for real.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/mastering-angular.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2.2 L20.6 5.4 L19.3 17.6 L12 21.8 L4.7 17.6 L3.4 5.4 Z" stroke="#ED6E9E" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M12 6.6 L8.3 15.6 M12 6.6 L15.7 15.6 M9.8 12.6 H14.2" stroke="#ED6E9E" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Angular</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.2 L20.6 5.4 L19.3 17.6 L12 21.8 L4.7 17.6 L3.4 5.4 Z" stroke="#ED6E9E" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M12 6.6 L8.3 15.6 M12 6.6 L15.7 15.6 M9.8 12.6 H14.2" stroke="#ED6E9E" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Angular</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">The Framework · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>What Angular is</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>Components &amp; bindings</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>The template toolkit</span></a>
+      <div class="nav-group-label">Reactivity &amp; Data · Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>Signals</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>Component I/O</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Services &amp; DI</span></a>
+      <div class="nav-group-label">The Application · Advanced</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>RxJS &amp; HttpClient</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>Routing</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Reactive forms</span></a>
+      <div class="nav-group-label">Craft &amp; Assembly · Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Change detection</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Architecture</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>The dashboard, assembled</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">A Course · Beginner → Expert · Sequel to Front-End Engineering</div>
+        <h1>The full framework.<br><span class="grad">Batteries included.</span></h1>
+        <p class="lede">The front-end course taught you the loop — <strong>UI&nbsp;=&nbsp;f(state)</strong> — as pure concept. Angular is that loop <em>industrialized</em>: a complete platform where the <strong>router</strong>, <strong>forms</strong>, <strong>HTTP client</strong>, <strong>dependency injection</strong>, and <strong>CLI</strong> ship in one box, versioned together, designed together. This course covers modern Angular whole: <strong>standalone components</strong>, template <strong>bindings</strong> and the built-in <strong>control flow</strong>, <strong>signals</strong>, component <strong>I/O</strong>, <strong>services &amp; DI</strong>, <strong>RxJS</strong>, <strong>routing</strong>, typed <strong>reactive forms</strong>, and <strong>change detection</strong>. If you came through the C# track, you're home — decorators, DI, and strict types are the reason .NET developers love this framework. The project: <strong>Snip's dashboard</strong>, rebuilt for real.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The Angular platform: a core shield surrounded by its built-in modules — router, forms, HTTP client, dependency injection, signals, and the CLI"></svg>
+          <div class="hero-cap">router · forms · http · DI · signals · CLI — <span style="color:var(--accent)">one platform, one version, one team</span></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">Open the box →</a>
+          <a class="btn btn-ghost" href="#m3">Jump to signals</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>What Angular is</h2></div>
+        <p>Most front-end tools are <em>libraries</em>: a rendering core, and a shopping trip for everything else — router, forms, HTTP, state, build config, all chosen, versioned, and glued by you. <strong>Angular is a framework</strong> in the full sense: the platform ships whole. One team designs the router, the forms, the HTTP client, the DI system, and the CLI to work together; one <code class="tok">ng update</code> moves them together. The trade is explicit — you accept Angular's opinions, and in return the architecture decisions arrive pre-made and coherent.</p>
+        <p>Modern Angular is also not the Angular of old blog posts. The renaissance versions made <strong>standalone components</strong> the default (no NgModule ceremony), added <strong>signals</strong> as a first-class reactivity primitive, and replaced asterisk directives with built-in <strong>control flow</strong>. It's TypeScript-first, decorator-driven, and DI-native — which is why it reads like home if you arrived through the C# track:</p>
+        <span class="filetag">terminal · then app.component.ts</span>
+        <pre><span class="cmt"># the CLI scaffolds, serves, generates, tests, and builds</span>
+ng new snip-dashboard      ng serve      ng generate component link-list
+
+<span class="dec">@Component</span>({
+  selector: <span class="str">'snip-root'</span>,
+  template: <span class="str">`&lt;h1&gt;Snip · {{ links().length }} links&lt;/h1&gt;`</span>
+})
+<span class="kw">export class</span> <span class="typ">AppComponent</span> {
+  links = <span class="fn">signal</span>([{ code: <span class="str">'4C92'</span>, clicks: <span class="num">812</span> }]);
+}   <span class="cmt">// standalone by default — a component is a class + a decorator</span></pre>
+        <div class="xref"><span class="xi">↳ Front-End Engineering · Mastering C#</span><div>This is the <b>sequel</b>: every concept from <i>Front-End Engineering</i> — the loop, components, keys, one-way flow, server state, routing — reappears here wearing Angular syntax. And if <i>Mastering C#</i> was your track, notice the accent: <b>decorators ≈ attributes, DI ≈ the ASP.NET container, strict types everywhere</b>. Angular is the front end .NET developers recognize.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Angular is the old, heavyweight, dying one.</div><div class="truth">That reputation describes a version, not the framework. Modern Angular — standalone components, signals, built-in control flow, a rebuilt compiler — is <b>lean and current</b>, and it still ships the whole platform: the thing teams actually pay for is fewer glue decisions and one coherent upgrade path.</div></div>
+          <div class="mc"><div class="myth">You must learn NgModules before anything works.</div><div class="truth">Standalone is the <b>default</b>: a component declares its own imports and just works. NgModules are legacy <i>reading</i> knowledge for older codebases — this course teaches the modern shape and flags the old one where you'll meet it.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--acomp);border-color:var(--accent-line);background:var(--acomp-soft)">Components</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>Components &amp; bindings</h2></div>
+        <p>An Angular component is a TypeScript class with a template, and <strong>bindings</strong> are the wires between them. There are exactly four directions to learn: <code class="tok">{{ interpolation }}</code> renders class data as text; <code class="tok">[property]</code> pushes data <em>into</em> an element; <code class="tok">(event)</code> pulls user actions <em>out</em>; and <code class="tok">[(two-way)]</code> — the "banana in a box" — is the two combined. Data down, events up: the contract from the front-end course, now with syntax.</p>
+        <span class="filetag">link-editor.component.ts</span>
+        <pre><span class="dec">@Component</span>({ template: <span class="str">`</span>
+  <span class="tg">&lt;input</span> <span class="at">[(ngModel)]</span>=<span class="str">"code"</span><span class="tg">&gt;</span>                <span class="cmt">&lt;!-- two-way: in and out --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>preview: snip.ly/<span class="at">{{ code }}</span><span class="tg">&lt;/p&gt;</span>        <span class="cmt">&lt;!-- interpolation --&gt;</span>
+  <span class="tg">&lt;button</span> <span class="at">[disabled]</span>=<span class="str">"!code"</span>                <span class="cmt">&lt;!-- property binding --&gt;</span>
+          <span class="at">(click)</span>=<span class="str">"save()"</span><span class="tg">&gt;</span>save<span class="tg">&lt;/button&gt;</span>   <span class="cmt">&lt;!-- event binding --&gt;</span>
+<span class="str">`</span> })
+<span class="kw">export class</span> <span class="typ">LinkEditor</span> { code = <span class="str">''</span>; <span class="fn">save</span>() { <span class="cmt">/* … */</span> } }</pre>
+        <p>All four wires, live — type in <em>either</em> input and watch the two-way pair stay in lockstep while every dependent binding follows:</p>
+        <div class="lab" id="bindLab">
+          <div class="lab-head"><div><div class="pt">Four bindings, one model</div><div class="ps">the wires between class and template</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="bReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="b-grid">
+              <div class="b-pane"><div class="dp-h">the rendered template</div>
+                <div class="b-row" id="brTwo"><span class="b-k">[(ngModel)]</span><input class="mini-input" id="bInput" placeholder="code…" autocomplete="off" style="width:130px"></div>
+                <div class="b-row" id="brTwo2"><span class="b-k">[(ngModel)] · same model</span><input class="mini-input" id="bTwoWay" placeholder="code…" autocomplete="off" style="width:130px"></div>
+                <div class="b-row" id="brInterp"><span class="b-k">{{ code }}</span><span class="b-out" id="bInterp">snip.ly/—</span></div>
+                <div class="b-row" id="brProp"><span class="b-k">[disabled]="!code"</span><button id="bBtn" disabled>save</button></div>
+                <div class="b-row" id="brEvent"><span class="b-k">(click)="save()"</span><span class="b-out">saves: <b id="bClicks" style="color:var(--accent)">0</b></span></div>
+              </div>
+              <div class="b-pane"><div class="dp-h">the class · model = <span class="chip" id="bModel">""</span></div>
+                <pre style="margin:0;font-size:11px"><span class="cline" id="bc1">code = <span class="str">''</span>;                    <span class="cmt">// the model</span></span>
+<span class="cline" id="bc2">saves = <span class="num">0</span>;</span>
+<span class="cline" id="bc3"><span class="fn">save</span>() { <span class="kw">this</span>.saves++; }       <span class="cmt">// (click) lands here</span></span></pre>
+              </div>
+            </div>
+            <div class="stateline" id="bStatus">type in either input — one model, two views of it, four wires</div>
+          </div>
+          <div class="lab-foot" id="bFoot">Both inputs bind the same <code class="tok">code</code> — typing in one updates the model, and the model updates the other. [( )] is [property] plus (event), nothing more mystical.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Templates can hold real logic — it's all JavaScript anyway.</div><div class="truth">Template expressions are a deliberately <b>small language</b>: no assignments, no <code class="tok">new</code>, no chained side effects. That's a feature — logic lives in the class (or a computed signal), templates stay declarative and inspectable, and the compiler can check every binding.</div></div>
+          <div class="mc"><div class="myth">Two-way binding is framework magic to be avoided.</div><div class="truth">It's <b>sugar with a receipt</b>: <code class="tok">[(x)]</code> desugars to <code class="tok">[x]</code> + <code class="tok">(xChange)</code> — data down, event up, exactly the discipline you already learned. Use it where it reads well (form controls); expand it whenever you need the two halves separately.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--atpl);border-color:rgba(242,151,60,.4);background:var(--atpl-soft)">Templates</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>The template toolkit</h2></div>
+        <p>Real templates branch, loop, and format. Modern Angular builds control flow into the template language: <code class="tok">@if / @else</code> for branches, <code class="tok">@for</code> for lists — with a <em>required</em> <code class="tok">track</code> expression — and <code class="tok">@switch</code> for enumerations. Alongside them, <strong>pipes</strong> transform values at the binding site (<code class="tok">clicks | number</code>, <code class="tok">created | date</code>), and <strong>attribute directives</strong> like <code class="tok">[class.sel]</code> decorate elements. You'll still <em>read</em> the legacy asterisk forms (<code class="tok">*ngIf</code>, <code class="tok">*ngFor</code>) in older code; you'll <em>write</em> the new ones.</p>
+        <span class="filetag">link-list.component.html</span>
+        <pre>@if (links().length) {
+  @for (l <span class="kw">of</span> links(); <span class="at">track l.code</span>) {          <span class="cmt">&lt;!-- identity = the keys lesson --&gt;</span>
+    <span class="tg">&lt;article</span> <span class="at">[class.sel]</span>=<span class="str">"l.code === sel()"</span><span class="tg">&gt;</span>
+      snip.ly/{{ l.code }} · {{ l.clicks | <span class="fn">number</span> }}
+      @switch (l.status) {
+        @case (<span class="str">'live'</span>)    { <span class="tg">&lt;span</span> <span class="at">class</span>=<span class="str">"ok"</span><span class="tg">&gt;</span>live<span class="tg">&lt;/span&gt;</span> }
+        @case (<span class="str">'paused'</span>)  { … }  @default { … }
+      }
+    <span class="tg">&lt;/article&gt;</span>
+  }
+} @else { <span class="tg">&lt;p&gt;</span>no links match — create one<span class="tg">&lt;/p&gt;</span> }
+<span class="cmt">&lt;!-- @defer (on viewport) { &lt;heavy-chart/&gt; } — lazy templates, one keyword --&gt;</span></pre>
+        <p>Drive the same template through its branches — the <em>active</em> path lights up in the code as the view follows:</p>
+        <div class="lab" id="tplLab">
+          <div class="lab-head"><div><div class="pt">Control flow, live</div><div class="ps">@if · @for track · @switch · pipes</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="tpReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="tp-controls">
+              <span>filter:</span>
+              <select id="tpFilter"><option value="all">all</option><option value="paid">paid</option><option value="archived">archived (none)</option></select>
+              <span>status of 4C92:</span>
+              <select id="tpStatus"><option value="live">live</option><option value="paused">paused</option><option value="expired">expired</option></select>
+            </div>
+            <div class="tp-grid">
+              <div><div class="dp-h">rendered view</div><div class="tp-view" id="tpView"></div></div>
+              <div><div class="dp-h">the template · active branch highlighted</div>
+                <div class="tp-code"><span class="br" id="brIf">@if (visible().length) {</span>
+<span class="br" id="brFor">  @for (l of visible(); track l.code) {</span>
+    &lt;article&gt; {{ l.code }} · {{ l.clicks | number }}
+<span class="br" id="brSw">      @switch (l.status) {</span>
+<span class="br" id="brLive">        @case ('live')    { live }</span>
+<span class="br" id="brPaused">        @case ('paused')  { paused }</span>
+<span class="br" id="brExpired">        @default          { expired }</span>
+      }
+    &lt;/article&gt;
+  }
+<span class="br" id="brElse">} @else { no links match — create one }</span></div>
+              </div>
+            </div>
+            <div class="stateline" id="tpStatusLine"></div>
+          </div>
+          <div class="lab-foot" id="tpFoot">The template is a function of state too: change the inputs and different branches render. <code class="tok">track l.code</code> is the keys lesson from the front-end course, now enforced by the compiler.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Front-End Engineering</span><div>That mandatory <code class="tok">track</code> expression is Module 06 of the <i>Front-End</i> course — <b>keyed reconciliation</b> — promoted from best practice to required syntax. Angular refuses to let you write the unkeyed list that turns one move into a full rebuild.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">*ngIf and *ngFor are how you write Angular.</div><div class="truth">They're how you <b>read</b> yesterday's Angular. Built-in control flow is the modern default — no directive imports, better type narrowing inside branches, and a faster list algorithm under <code class="tok">@for</code>. Learn both directions of the translation.</div></div>
+          <div class="mc"><div class="myth">Pipes are just formatting sugar — do it in the class.</div><div class="truth">Pipes are <b>memoized transforms at the binding site</b>: a pure pipe re-runs only when its input changes, and reusable ones (<code class="tok">date</code>, <code class="tok">number</code>, custom) keep formatting out of every component class. The <code class="tok">async</code> pipe in Module 06 is a pipe doing subscription management.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--asig);border-color:rgba(45,212,191,.4);background:var(--asig-soft)">Signals</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 03</span></div><h2>Signals</h2></div>
+        <p>Here is modern Angular's heart. A <strong>signal</strong> is a value that knows who reads it. <code class="tok">signal()</code> holds writable state; <code class="tok">computed()</code> derives from other signals and <em>tracks its dependencies automatically</em>; <code class="tok">effect()</code> runs side effects when its dependencies change. Update a signal and only its actual dependents recompute — the fine-grained version of <strong>UI&nbsp;=&nbsp;f(state)</strong>, and the engine templates now run on.</p>
+        <span class="filetag">dashboard.state.ts</span>
+        <pre><span class="kw">const</span> links  = <span class="fn">signal</span>&lt;<span class="typ">Link</span>[]&gt;([…]);            <span class="cmt">// writable state</span>
+<span class="kw">const</span> filter = <span class="fn">signal</span>&lt;<span class="str">'all'</span> | <span class="str">'paid'</span>&gt;(<span class="str">'all'</span>);
+
+<span class="kw">const</span> visible = <span class="fn">computed</span>(() =&gt;                  <span class="cmt">// derives; tracks deps itself</span>
+  links().<span class="fn">filter</span>(l =&gt; filter() === <span class="str">'all'</span> || l.paid));
+<span class="kw">const</span> count = <span class="fn">computed</span>(() =&gt; visible().length);
+
+<span class="fn">effect</span>(() =&gt; console.<span class="fn">log</span>(<span class="str">`showing ${count()}`</span>)); <span class="cmt">// side effects only</span>
+
+links.<span class="fn">update</span>(ls =&gt; [...ls, newLink]);            <span class="cmt">// .set / .update to write</span></pre>
+        <p>Below is that exact graph, instrumented. Every node carries a <strong>recompute counter</strong> — update a signal and watch precisely who wakes up, and who doesn't:</p>
+        <div class="lab" id="signalLab">
+          <div class="lab-head"><div><div class="pt">The dependency graph, counted</div><div class="ps">only true dependents recompute</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="sgAdd">links.update(+1)</button>
+              <button class="ds-btn" id="sgTgl">filter.set(…)</button>
+              <button class="ds-btn" id="sgTheme">theme.set(…)</button>
+              <button class="ds-btn" id="sgReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="sg-graph">
+              <div class="sg-col"><div class="sg-col-h">signals · writable</div>
+                <div class="sg-node base" id="ndLinks"><div class="sn-name">links <span class="rc">×1</span></div><div class="sn-val" id="vLinks"></div></div>
+                <div class="sg-node base" id="ndFilter"><div class="sn-name">filter <span class="rc">×1</span></div><div class="sn-val" id="vFilter"></div></div>
+                <div class="sg-node base" id="ndTheme"><div class="sn-name">theme <span class="rc">×1</span></div><div class="sn-val" id="vTheme"></div></div>
+              </div>
+              <div class="sg-col"><div class="sg-col-h">computed · derived</div>
+                <div class="sg-arrow">→</div>
+                <div class="sg-node comp" id="ndVisible"><div class="sn-name">visible <span class="rc">×1</span></div><div class="sn-val" id="vVisible"></div></div>
+                <div class="sg-node comp" id="ndCount"><div class="sn-name">count <span class="rc">×1</span></div><div class="sn-val" id="vCount"></div></div>
+                <div class="sg-arrow">→</div>
+              </div>
+              <div class="sg-col"><div class="sg-col-h">effect · side effects</div>
+                <div class="sg-node eff" id="ndEffect"><div class="sn-name">effect <span class="rc">×1</span></div><div class="sn-val">console.log(count)</div></div>
+                <div class="sg-node eff" id="ndThemeEff"><div class="sn-name">effect <span class="rc">×1</span></div><div class="sn-val">body.dataset.theme</div></div>
+              </div>
+            </div>
+            <div class="wlog" id="sgLog"></div>
+          </div>
+          <div class="lab-foot" id="sgFoot">Press <b>theme.set</b> and notice: the list graph doesn\u2019t stir — only theme\u2019s own effect runs. That precision is what \u201cfine-grained reactivity\u201d means, and it\u2019s counted, not claimed.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Front-End Engineering</span><div>Signals are <b>UI&nbsp;=&nbsp;f(state)</b> from the parent course with the dependency edges made explicit: instead of re-rendering the whole view and diffing, the graph knows exactly which computation each write invalidates. Same formula, sharper pencil.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Signals replace RxJS — forget Observables.</div><div class="truth">They <b>divide the work</b>: signals hold <i>state</i> (current values, synchronous, always readable); RxJS models <i>events over time</i> (streams, cancellation, backpressure — Module 06). <code class="tok">toSignal</code>/<code class="tok">toObservable</code> bridge them. Two tools, two shapes of problem.</div></div>
+          <div class="mc"><div class="myth">effect() is the place to update other state.</div><div class="truth">Effects are for the <b>outside world</b> — DOM, logging, storage. Deriving state from state is <code class="tok">computed()</code>\u2019s job; writing signals inside effects builds hidden cascades and feedback loops the graph was designed to eliminate.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--acomp);border-color:var(--accent-line);background:var(--acomp-soft)">I/O</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>Component I/O</h2></div>
+        <p>Components talk through a typed, signal-based surface: <code class="tok">input()</code> receives data from the parent (with <code class="tok">input.required()</code> when it isn't optional), <code class="tok">output()</code> emits events upward, and <code class="tok">model()</code> is a two-way <em>signal</em> — both sides can read and write it, and both stay in sync through an explicit change event. The classic <code class="tok">@Input()</code>/<code class="tok">@Output()</code> decorators do the same jobs in older code.</p>
+        <span class="filetag">link-card.component.ts</span>
+        <pre><span class="kw">export class</span> <span class="typ">LinkCard</span> {
+  link     = input.required&lt;<span class="typ">Link</span>&gt;();          <span class="cmt">// data ↓ (a signal)</span>
+  selected = <span class="fn">input</span>(<span class="kw">false</span>);
+  remove   = <span class="fn">output</span>&lt;<span class="typ">string</span>&gt;();                <span class="cmt">// events ↑</span>
+  editing  = <span class="fn">model</span>(<span class="kw">false</span>);                     <span class="cmt">// two-way signal ⇅</span>
+}
+<span class="cmt">&lt;!-- parent: --&gt;</span> <span class="tg">&lt;link-card</span> <span class="at">[link]</span>=<span class="str">"l"</span> <span class="at">(remove)</span>=<span class="str">"drop($event)"</span> <span class="at">[(editing)]</span>=<span class="str">"edit"</span><span class="tg">/&gt;</span></pre>
+        <div class="lab" id="ioLab">
+          <div class="lab-head"><div><div class="pt">input() ↓ · output() ↑ · model() ⇅</div><div class="ps">the typed wires between parent and child</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="ioReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="io-grid">
+              <div class="io-parent"><div class="dp-h" style="color:var(--accent)">DashboardComponent · the parent</div>
+                <div style="font-family:var(--font-mono);font-size:12px;color:var(--ink-soft)">selected = <span class="chip" id="ioSel">—</span></div>
+                <label class="io-check"><input type="checkbox" id="ioParentEdit"> editing <span style="color:var(--ink-faint)">(model, parent side)</span> = <b id="ioEditVal" style="color:var(--accent)">false</b></label>
+              </div>
+              <div><div class="dp-h">&lt;link-card&gt; × 3 · the children</div>
+                <div class="io-kids" id="ioKids"></div>
+                <label class="io-check"><input type="checkbox" id="ioChildEdit"> editing <span style="color:var(--ink-faint)">(model, child side — same signal)</span></label>
+              </div>
+            </div>
+            <div class="wlog" id="ioLog"></div>
+          </div>
+          <div class="lab-foot" id="ioFoot">Select flows up as an output and returns as an input; remove shrinks the parent\u2019s list; and the editing checkboxes are one <code class="tok">model()</code> worn by two owners — flip either.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Any two components that share data need a shared service.</div><div class="truth">Parent and child already have a channel: <b>inputs down, outputs up</b>. Services (Module 05) are for state that\u2019s genuinely app-wide or crosses distant branches — reaching for one first turns local wiring into global coupling.</div></div>
+          <div class="mc"><div class="myth">model() is just old ngModel with a new hat.</div><div class="truth">It\u2019s a <b>two-way signal</b>: typed, decorator-free, readable as a value and writable from either side, with the change event generated for you. The banana-in-a-box syntax survives; the machinery underneath is the Module 03 graph.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--adi);border-color:rgba(167,139,250,.4);background:var(--adi-soft)">DI</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Services &amp; DI</h2></div>
+        <p>Logic that outlives a component — API calls, shared state, cross-cutting helpers — lives in a <strong>service</strong>: a plain class marked <code class="tok">@Injectable</code>. Components never construct services; they <em>ask</em> for them with <code class="tok">inject()</code>, and Angular's <strong>injector tree</strong> supplies an instance. <code class="tok">providedIn:&nbsp;'root'</code> means one app-wide singleton; providing at a component instead scopes a <em>fresh instance</em> to that subtree. A service holding signals is modern Angular's simplest shared store:</p>
+        <span class="filetag">snip-store.service.ts</span>
+        <pre><span class="dec">@Injectable</span>({ providedIn: <span class="str">'root'</span> })          <span class="cmt">// one instance, whole app</span>
+<span class="kw">export class</span> <span class="typ">SnipStore</span> {
+  <span class="kw">readonly</span> links = <span class="fn">signal</span>&lt;<span class="typ">Link</span>[]&gt;([]);
+  <span class="fn">add</span>(l: <span class="typ">Link</span>)  { <span class="kw">this</span>.links.<span class="fn">update</span>(ls =&gt; [...ls, l]); }
+}
+<span class="cmt">// any component, anywhere:</span>
+store = <span class="fn">inject</span>(<span class="typ">SnipStore</span>);                   <span class="cmt">// ask the tree, don't new()</span></pre>
+        <p>Prove the tree's behavior — two components inject the store and share every write, until you re-provide it locally and one of them gets a private copy:</p>
+        <div class="lab" id="diLab">
+          <div class="lab-head"><div><div class="pt">The injector tree</div><div class="ps">one instance — until you scope it</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="diLocal">provide locally in LinkEditor</button>
+              <button class="ds-btn" id="diReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="di-tree">
+              <div class="di-box"><div class="db-name">root injector <span class="prov-chip">provides SnipStore</span></div>
+                <div class="di-kids">
+                  <div class="di-comp" id="diCompA"><div class="dc-h">StatsBar <span class="inst i1" id="diBadgeA">instance #1</span></div>
+                    inject(SnipStore) → links = <b id="diCntA" style="color:var(--ink)">0</b>
+                    <div><button id="diIncA">store.add(link)</button></div>
+                  </div>
+                  <div class="di-comp" id="diCompB"><div class="dc-h">LinkEditor <span class="inst i1" id="diBadgeB">instance #1</span><span class="prov-chip" id="diLocalChip" style="display:none">providers:[SnipStore]</span></div>
+                    inject(SnipStore) → links = <b id="diCntB" style="color:var(--ink)">0</b>
+                    <div><button id="diIncB">store.add(link)</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stateline" id="diStatus">both components asked the tree — the root answered with the same singleton</div>
+          </div>
+          <div class="lab-foot" id="diFoot">Same badge, same instance: a write from either side is visible to both. Scoping the provider is a deliberate act — and the badges will say so.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ ASP.NET Core</span><div>This is the <b>same container</b> you configured in <i>Mastering ASP.NET Core</i>: <code class="tok">providedIn: 'root'</code> is a singleton lifetime, component-level providers are scoped lifetimes, and constructor/<code class="tok">inject()</code> resolution is the identical mental model. One DI brain, both ends of the wire.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">DI is enterprise ceremony — just import and new().</div><div class="truth"><code class="tok">new()</code> welds your component to a concrete class. Injection is why Angular code <b>swaps and tests</b> so cleanly — hand the tree a fake <code class="tok">SnipStore</code> and every consumer uses it, no component edited. The ceremony is one function call.</div></div>
+          <div class="mc"><div class="myth">providedIn: 'root' is just a global variable.</div><div class="truth">It\u2019s a <b>singleton with an owner</b>: lazily created, tree-shaken if unused, replaceable in tests, and overridable per-subtree — everything a mutable global isn\u2019t. The lab\u2019s local provider is that override in action.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--arx);border-color:rgba(124,156,255,.4);background:var(--arx-soft)">RxJS</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 06</span></div><h2>RxJS &amp; HttpClient</h2></div>
+        <p>Angular's <code class="tok">HttpClient</code> returns an <strong>Observable</strong> — RxJS's stream type. Where a promise is one future value, an observable is <em>any number of values over time</em>, lazy until subscribed and — crucially — <strong>cancellable</strong>. Streams compose through operators, and one pipeline is the canonical demonstration: the typeahead. Keystrokes are a stream; <code class="tok">debounceTime</code> quiets the burst, <code class="tok">distinctUntilChanged</code> drops repeats, and <code class="tok">switchMap</code> maps each query to an HTTP call while <em>cancelling the previous one</em> — the stale-response bug, deleted by an operator:</p>
+        <span class="filetag">search.component.ts</span>
+        <pre>results$ = <span class="kw">this</span>.query.valueChanges.<span class="fn">pipe</span>(
+  <span class="fn">debounceTime</span>(<span class="num">250</span>),                        <span class="cmt">// the perf-course lesson</span>
+  <span class="fn">distinctUntilChanged</span>(),
+  <span class="fn">switchMap</span>(q =&gt; <span class="kw">this</span>.http.<span class="fn">get</span>&lt;<span class="typ">Link</span>[]&gt;(<span class="str">`/api/links?q=${q}`</span>))
+);                                          <span class="hl">// switchMap cancels the stale call</span>
+<span class="cmt">&lt;!-- template: no subscribe, no leak --&gt;</span>
+@for (l <span class="kw">of</span> results$ | <span class="fn">async</span>; track l.code) { … }</pre>
+        <p>Type below and read the lanes — raw keystrokes, the debounced survivors, and the requests <code class="tok">switchMap</code> launches and kills:</p>
+        <div class="lab" id="rxLab">
+          <div class="lab-head"><div><div class="pt">The typeahead pipeline</div><div class="ps">debounce → distinct → switchMap</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="rxReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <input class="mini-input" id="rxInput" placeholder="search links… try typing 'do', pausing, then 'cs'" autocomplete="off" style="width:100%;margin-bottom:12px">
+            <div class="rx-lane"><span class="rl-h">keystrokes</span><span id="rxSrc"></span></div>
+            <div class="rx-lane"><span class="rl-h">debounced (250ms)</span><span id="rxDeb"></span></div>
+            <div class="rx-lane"><span class="rl-h">switchMap → HTTP</span><span id="rxSwitch"></span></div>
+            <div class="rx-lane"><span class="rl-h">results</span><span id="rxOut" style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-soft)">—</span></div>
+            <div class="stateline" id="rxStatus">every keystroke enters the stream — few of them survive to the network</div>
+          </div>
+          <div class="lab-foot" id="rxFoot">Fire a second query while the first request is in flight and switchMap strikes the old one through — the answer that no longer matters can no longer arrive.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ ASP.NET Core · Advanced SQL</span><div>The endpoint being debounced into is yours: ASP.NET routing the request, the <i>Advanced SQL</i> queries answering it. <code class="tok">HttpClient</code> is the typed, testable, interceptable last leg of a pipeline this curriculum built end to end.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Observables are just promises with extra steps.</div><div class="truth">Promises can\u2019t <b>cancel</b>, can\u2019t emit twice, and start eagerly. The typeahead needs all three fixed at once — which is why <code class="tok">switchMap</code> has no promise translation. Streams are a different shape of value, not a wrapper on the old one.</div></div>
+          <div class="mc"><div class="myth">Call subscribe(), stash the data on a field, done.</div><div class="truth">Every manual <code class="tok">subscribe</code> is a leak waiting for a forgotten unsubscribe. Prefer the <code class="tok">async</code> pipe or <code class="tok">toSignal()</code> — subscription and teardown handled — and when you must subscribe, tie it to <code class="tok">takeUntilDestroyed()</code> so the component\u2019s death is the stream\u2019s.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--aroute);border-color:rgba(86,199,255,.4);background:var(--aroute-soft)">Routing</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 07</span></div><h2>Routing</h2></div>
+        <p>Angular ships the router. Routes are data — an array mapping paths to components — and everything else follows: <code class="tok">&lt;router-outlet&gt;</code> marks where views render, <code class="tok">routerLink</code> navigates, <code class="tok">:code</code> declares a parameter (bindable straight to a component <code class="tok">input()</code>), <strong>guards</strong> vet navigation, and <code class="tok">loadComponent</code> makes any route a lazily-loaded bundle in one line:</p>
+        <span class="filetag">app.routes.ts</span>
+        <pre><span class="kw">export const</span> routes: <span class="typ">Routes</span> = [
+  { path: <span class="str">'links'</span>,       component: <span class="typ">LinkListComponent</span> },
+  { path: <span class="str">'links/:code'</span>, component: <span class="typ">LinkDetailComponent</span> },  <span class="cmt">// :code → input()</span>
+  { path: <span class="str">'settings'</span>,
+    <span class="fn">canActivate</span>: [() =&gt; <span class="fn">inject</span>(<span class="typ">Auth</span>).isAdmin() || <span class="fn">inject</span>(<span class="typ">Router</span>).<span class="fn">parseUrl</span>(<span class="str">'/links'</span>)],
+    <span class="fn">loadComponent</span>: () =&gt; <span class="kw">import</span>(<span class="str">'./settings.component'</span>) },   <span class="cmt">// lazy bundle</span>
+  { path: <span class="str">''</span>, redirectTo: <span class="str">'links'</span>, pathMatch: <span class="str">'full'</span> }
+];</pre>
+        <div class="lab" id="ngRouteLab">
+          <div class="lab-head"><div><div class="pt">Routes, params &amp; a guard</div><div class="ps">the config above, running</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn" id="arBack">← back</button>
+              <button class="ds-btn" id="arGuard">isAdmin: false</button>
+              <button class="ds-btn" id="arReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="ar-chrome">
+              <div class="ar-top"><span class="ar-dots"><span></span><span></span><span></span></span><span class="ar-url" id="arUrl"></span></div>
+              <div class="ar-body">
+                <nav class="ar-nav" id="arNav"></nav>
+                <div class="ar-view" id="arView"></div>
+              </div>
+            </div>
+            <div class="wlog" id="arLog"></div>
+          </div>
+          <div class="lab-foot" id="arFoot">Click a link row and the :code parameter arrives in the detail component as an input. Try /settings — the guard has opinions.</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Route guards are the app's security layer.</div><div class="truth">Guards are <b>UX</b> — they keep users out of screens that would only error. Security lives on the server (your ASP.NET auth), which must reject the request no matter what the client renders. A guard is a courtesy; the API is the law.</div></div>
+          <div class="mc"><div class="myth">Lazy loading is an optimization for later.</div><div class="truth">Route-level splitting is <b>one line</b> (<code class="tok">loadComponent</code>) and permanently shrinks the first load — the settings bundle simply isn\u2019t downloaded until someone goes there. Deferred cost, immediate architecture: do it from the first route.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--aform);border-color:rgba(78,214,107,.4);background:var(--aform-soft)">Forms</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 08</span></div><h2>Reactive forms</h2></div>
+        <p>Angular offers two form systems. <em>Template-driven</em> forms lean on <code class="tok">ngModel</code> — fine for the trivial. <strong>Reactive forms</strong> build the form as an <em>object in the class</em>: <code class="tok">FormControl</code>s composed into a <code class="tok">FormGroup</code>, validators attached as functions, validity computed continuously, and every keystroke available as an observable through <code class="tok">valueChanges</code>. Typed, testable without a DOM, and composable — the moment a form has rules, this is the system:</p>
+        <span class="filetag">create-link.component.ts</span>
+        <pre>form = <span class="kw">new</span> <span class="typ">FormGroup</span>({
+  code: <span class="kw">new</span> <span class="typ">FormControl</span>(<span class="str">''</span>, [ <span class="typ">Validators</span>.required,
+    <span class="typ">Validators</span>.<span class="fn">minLength</span>(<span class="num">3</span>), <span class="typ">Validators</span>.<span class="fn">pattern</span>(<span class="str">/^[a-z0-9-]+$/</span>) ]),
+  url:  <span class="kw">new</span> <span class="typ">FormControl</span>(<span class="str">''</span>, [ <span class="typ">Validators</span>.required,
+    <span class="typ">Validators</span>.<span class="fn">pattern</span>(<span class="str">/^https?:\/\//</span>) ]),
+});                                     <span class="cmt">// typed: form.value.code is string</span>
+<span class="cmt">// the form is also a stream:</span>
+<span class="kw">this</span>.form.valueChanges.<span class="fn">subscribe</span>(v =&gt; …)   <span class="cmt">// Module 06, again</span></pre>
+        <div class="lab" id="formLab">
+          <div class="lab-head"><div><div class="pt">Validity as a model</div><div class="ps">the form object drives everything you see</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn" id="fmReset">reset</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="fm-grid">
+              <div>
+                <div class="fm-field"><label>code · required · min 3 · [a-z0-9-]</label><input class="mini-input" id="fmCode" autocomplete="off" placeholder="promo"><div class="fm-err" id="fmCodeErr"></div></div>
+                <div class="fm-field"><label>url · required · must start http(s)://</label><input class="mini-input" id="fmUrl" autocomplete="off" placeholder="https://example.com/launch"><div class="fm-err" id="fmUrlErr"></div></div>
+                <div style="display:flex;align-items:center;gap:12px"><span class="fm-pill invalid" id="fmValid">INVALID</span><button class="ds-btn primary" id="fmSubmit" style="margin:0" disabled>create link</button></div>
+                <div class="fm-done" id="fmDone"></div>
+              </div>
+              <div><div class="dp-h">form.valueChanges — the form as a stream</div><div class="wlog" id="fmLog" style="max-height:212px"></div></div>
+            </div>
+          </div>
+          <div class="lab-foot" id="fmFoot">Errors appear per rule, the pill tracks group validity, submit follows the pill — one form object, and the template merely reflects it. UI = f(form).</div>
+        </div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Template-driven forms are simpler — always start there.</div><div class="truth">Simpler until the first real rule. Reactive forms put the model <b>in the class</b>: typed values, validators as plain functions, testable with no DOM, and <code class="tok">valueChanges</code> feeding straight into Module 06 pipelines. Rules present → reactive.</div></div>
+          <div class="mc"><div class="myth">Disabling the submit button is the validation.</div><div class="truth">The button follows the <b>validity model</b>; it isn\u2019t the model. Show errors when fields are touched, keep the messages next to their rules — and validate on the server regardless, because Module 07 already told you who enforces the law.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--acd);border-color:rgba(232,179,65,.4);background:var(--acd-soft)">Change detection</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>Change detection</h2></div>
+        <p>The hardest Angular question is the quietest: <em>after something happens, how does the screen know?</em> Classic Angular answers with <strong>Zone.js</strong> — a patch over every async API that says "something <em>may</em> have changed" — after which Angular checks <em>every component's bindings</em>, top to bottom. Correct, and wasteful. <code class="tok">OnPush</code> tightens it: a component is checked only when its inputs change, an event fires inside it, or a signal it reads updates — so a change checks a <em>path</em>, not the world. Signals finish the journey: with fine-grained dependencies, Angular can run <strong>zoneless</strong>, updating exactly the views that read what changed.</p>
+        <p>The lifecycle hooks live in this rhythm too: <code class="tok">ngOnInit</code> after inputs first arrive, <code class="tok">ngOnDestroy</code> (or a <code class="tok">DestroyRef</code>) for teardown — which is where <code class="tok">takeUntilDestroyed</code> from Module 06 plugs in.</p>
+        <span class="filetag">stats-bar.component.ts</span>
+        <pre><span class="dec">@Component</span>({ changeDetection: <span class="typ">ChangeDetectionStrategy</span>.OnPush, … })
+<span class="kw">export class</span> <span class="typ">StatsBar</span> {
+  links = input.required&lt;<span class="typ">Link</span>[]&gt;();   <span class="cmt">// new reference in → check me</span>
+  count = <span class="fn">computed</span>(() =&gt; <span class="kw">this</span>.links().length);  <span class="cmt">// signal read → tracked</span>
+}
+<span class="cmt">// the zoneless future, one provider:</span>
+<span class="fn">bootstrapApplication</span>(<span class="typ">App</span>, { providers: [<span class="fn">provideZonelessChangeDetection</span>()] });</pre>
+        <p>Count the checks yourself. Fire an event under both strategies, then change a single signal and watch the difference between "check everything" and "check exactly one":</p>
+        <div class="lab" id="cdLab">
+          <div class="lab-head"><div><div class="pt">Who gets checked?</div><div class="ps">Zone-default vs OnPush + signals — counted</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="cdClick">click in LinkRow</button>
+              <button class="ds-btn" id="cdSignal">a signal in LinkRow changes</button>
+              <button class="ds-btn" id="cdMode">strategy: Default (Zone.js)</button>
+              <button class="ds-btn" id="cdReset">reset</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div class="cd-tree">
+              <div class="cd-node" id="cdApp"><div class="cd-name">App <span class="cc">checked ×0</span></div>
+                <div class="cd-kids">
+                  <div class="cd-node" id="cdHeader"><div class="cd-name">Header <span class="cc">checked ×0</span></div></div>
+                  <div class="cd-node" id="cdDash"><div class="cd-name">Dashboard <span class="cc">checked ×0</span></div>
+                    <div class="cd-kids">
+                      <div class="cd-node" id="cdStats"><div class="cd-name">StatsBar <span class="cc">checked ×0</span></div></div>
+                      <div class="cd-node" id="cdList"><div class="cd-name">LinkList <span class="cc">checked ×0</span></div>
+                        <div class="cd-kids">
+                          <div class="cd-node" id="cdRow"><div class="cd-name">LinkRow <span class="cc">checked ×0</span></div></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <span class="cd-total">total checks this pass: <b id="cdPass">0</b> · all time: <b id="cdTotal">0</b></span>
+              <span class="stateline" id="cdStatus" style="flex:1;min-width:220px">pick a strategy and fire an event</span>
+            </div>
+          </div>
+          <div class="lab-foot" id="cdFoot">Default checks all six components for any event anywhere. OnPush checks the event\u2019s path. A signal under fine-grained reactivity touches exactly one. That\u2019s the whole performance story, counted.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Big O</span><div>Change detection is a complexity story: Zone-default is <b>O(components) per event</b>; OnPush prunes to a path; signals approach O(affected views). The <i>Big O</i> instinct — count the work as n grows — is exactly how you reason about a 500-component app staying at 60&nbsp;fps.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Zone.js watches my data and knows what changed.</div><div class="truth">It knows only that <b>time passed</b>: a click, a timer, an XHR completed. It cannot see <i>what</i> changed — hence "check everything." Signals invert this: the data itself reports its readers, which is why they make zoneless possible.</div></div>
+          <div class="mc"><div class="myth">OnPush randomly breaks working apps.</div><div class="truth">OnPush breaks <b>hidden mutation</b>: editing an array in place and expecting the child to notice. New references for inputs and signals for state — the immutability discipline from the front-end course — and OnPush is not a risk but a guarantee.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Architecture</h2></div>
+        <p>Angular's opinions extend to the shape of the app. The convention that scales: organize by <strong>feature</strong>, not by file type — each feature a folder of standalone components behind a lazy route, split internally into <em>smart</em> components (inject services, own state) and <em>presentational</em> ones (inputs in, outputs out, no injections). Shared plumbing — the store from Module 05, interceptors, guards — lives in <code class="tok">core/</code>; dumb reusable pieces in <code class="tok">shared/</code>.</p>
+        <span class="filetag">src/app/ · and one interceptor</span>
+        <pre>core/       snip-store.ts · auth.interceptor.ts · api.service.ts
+features/
+  links/    links.routes.ts (lazy) · link-list · link-card · link-detail
+  settings/ settings.routes.ts (lazy, guarded)
+shared/     badge.component.ts · time-ago.pipe.ts
+
+<span class="cmt">// cross-cutting HTTP concerns are functions in the DI pipeline:</span>
+<span class="kw">export const</span> authInterceptor: <span class="typ">HttpInterceptorFn</span> = (req, next) =&gt;
+  <span class="fn">next</span>(req.<span class="fn">clone</span>({ setHeaders: { Authorization: <span class="fn">inject</span>(<span class="typ">Auth</span>).token() } }));</pre>
+        <p>Two more conventions earn their keep everywhere: keep components <em>thin</em> (logic migrates to services and computed signals, which is also what makes <code class="tok">TestBed</code> tests small — the <i>Testing in .NET</i> instincts transfer directly), and let the CLI generate so names and structure stay uniform. An interceptor, you'll notice, is ASP.NET middleware wearing a TypeScript jacket — the pipeline idea, on the client.</p>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A components/ folder and a services/ folder — organized!</div><div class="truth">Type-sorted folders scatter every feature across the tree. <b>Feature folders</b> keep a slice\u2019s route, components, and state together — lazily loaded as a unit, reviewable as a unit, and, best of all, <i>deletable</i> as a unit.</div></div>
+          <div class="mc"><div class="myth">Guards, interceptors, resolvers — too much framework magic.</div><div class="truth">Each is a <b>plain function</b> registered with DI and called at a documented moment — the middleware pattern from <i>ASP.NET Core</i>, client-side. The magic is just a pipeline you can read, test, and order deliberately.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>The dashboard, assembled</h2></div>
+        <p>The front-end course ended with this component in pseudocode. Here it is in Angular — every line an earlier module:</p>
+        <span class="filetag">dashboard.component.ts</span>
+        <pre><span class="dec">@Component</span>({                                        <span class="cmt">// m01 · a class + a decorator</span>
+  changeDetection: <span class="typ">ChangeDetectionStrategy</span>.OnPush,  <span class="cmt">// m09 · check the path</span>
+  template: <span class="str">`</span>
+    <span class="tg">&lt;stats-bar</span> <span class="at">[links]</span>=<span class="str">"store.links()"</span><span class="tg">/&gt;</span>          <span class="cmt">// m04 · input ↓</span>
+    @if (store.links().length) {                     <span class="cmt">// m02 · control flow</span>
+      @for (l of store.links(); <span class="at">track l.code</span>) {
+        <span class="tg">&lt;link-card</span> <span class="at">[link]</span>=<span class="str">"l"</span> <span class="at">(remove)</span>=<span class="str">"drop($event)"</span><span class="tg">/&gt;</span>  <span class="cmt">// m04 · output ↑</span>
+      }
+    } @else { <span class="tg">&lt;create-link-form/&gt;</span> }                <span class="cmt">// m08 · reactive form</span>
+    <span class="tg">&lt;router-outlet/&gt;</span>                                 <span class="cmt">// m07 · /links/:code</span>
+  <span class="str">`</span> })
+<span class="kw">export class</span> <span class="typ">DashboardComponent</span> {
+  store = <span class="fn">inject</span>(<span class="typ">SnipStore</span>);                        <span class="cmt">// m05 · ask the tree</span>
+  <span class="kw">constructor</span>() {
+    <span class="fn">inject</span>(<span class="typ">SnipApi</span>).<span class="fn">stats$</span>()                       <span class="cmt">// m06 · HttpClient stream</span>
+      .<span class="fn">pipe</span>(<span class="fn">takeUntilDestroyed</span>())                   <span class="cmt">// m09 · lifecycle-safe</span>
+      .<span class="fn">subscribe</span>(ls =&gt; <span class="kw">this</span>.store.links.<span class="fn">set</span>(ls));   <span class="cmt">// m03 · signals</span>
+  }
+}</pre>
+        <div class="note key">
+          <div class="nh">One framework, one loop</div>
+          <p>Underneath the platform sits the same loop the parent course taught: <strong>signals hold state, templates render it, events update it</strong>. Angular's contribution is everything around the loop — a DI tree so parts swap, a router so the URL is state, typed forms so validity is a model, RxJS so time is composable, and a CLI so none of it needs assembling by hand. Learn the loop once; Angular is the loop with <strong>batteries and opinions included</strong> — and after fourteen courses, you know exactly why each opinion exists.</p>
+        </div>
+        <div class="xref"><span class="xi">↳ The Capstone · The Lifecycle</span><div>Snip is complete at last: the API from the <i>Capstone</i>, the queries from <i>Advanced SQL</i>, and now a production front end. One thing remains, and it\u2019s the coral course — put this app on the <i>Lifecycle</i>\u2019s loop and ship it.</div></div>
+        <div class="closing">
+          <h2>Batteries included.</h2>
+          <p>You've now seen a framework whole: components and their four wires, templates that branch with the compiler watching, signals counting their own dependents, an injector tree handing out instances, streams that cancel their own stale work, routes and guards and typed forms — and a change-detection story that ends with the screen updating exactly as much as the truth changed.</p>
+          <p>More than syntax, you've seen the point of opinions: every piece here was designed to fit the others, so the questions that consume glue-stack teams — which router, which forms, how do these version together — simply never arrive. That's the trade Angular offers, and now it's one you can evaluate from the inside. Take the box. Build something real.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · Mastering Angular — the second sequel, industrializing Front-End&nbsp;Engineering\u2019s loop: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, Mastering&nbsp;Testing&nbsp;in&nbsp;.NET, the Software&nbsp;Development&nbsp;Lifecycle, Advanced&nbsp;SQL&nbsp;&amp;&nbsp;PostgreSQL, Front-End&nbsp;Engineering, and the Capstone that built Snip. The concepts became a framework; the framework became your app.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/mastering-angular.js"></script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Capstone · Building Snip · The Growth Lab</title>
+<meta name="description" content="A capstone project that puts all ten Growth Lab courses to work in one real application — Snip, a URL shortener. Base-62 encoding, an O(1) cache, EF Core over Postgres, an ASP.NET minimal API, the repository and strategy patterns, and a full test suite. Every concept, in one codebase.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/capstone-building-snip.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <a class="brand" href="#top" style="text-decoration:none">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.5 14.5a3.4 3.4 0 0 0 4.8 0l2.6-2.6a3.4 3.4 0 0 0-4.8-4.8l-1 1" stroke="#F0B429" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M14.5 9.5a3.4 3.4 0 0 0-4.8 0l-2.6 2.6a3.4 3.4 0 0 0 4.8 4.8l1-1" stroke="#F0B429" stroke-width="1.7" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="brand-text"><b>The Growth Lab</b><span>Capstone</span></span>
+  </a>
+  <a class="lab-home" href="the-growth-lab.html">&#9670; All courses</a><button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<div class="app" id="top">
+  <aside class="nav" id="nav">
+    <div class="nav-head">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9.5 14.5a3.4 3.4 0 0 0 4.8 0l2.6-2.6a3.4 3.4 0 0 0-4.8-4.8l-1 1" stroke="#F0B429" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M14.5 9.5a3.4 3.4 0 0 0-4.8 0l-2.6 2.6a3.4 3.4 0 0 0 4.8 4.8l1-1" stroke="#F0B429" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text"><b>The Growth Lab</b><span>Capstone</span></span>
+      </a>
+    </div>
+    <nav class="nav-scroll">
+      <a class="module lab-home-nav" href="the-growth-lab.html"><span class="num">&#8962;</span><span>All courses &middot; The Growth Lab</span></a><div class="nav-group-label">The Blueprint · Beginner</div>
+      <a class="module" href="#m0"><span class="num">00</span><span>What we're building</span></a>
+      <a class="module" href="#m1"><span class="num">01</span><span>The domain model</span></a>
+      <a class="module" href="#m2"><span class="num">02</span><span>The short code</span></a>
+      <div class="nav-group-label">Storage &amp; Speed · Beginner → Intermediate</div>
+      <a class="module" href="#m3"><span class="num">03</span><span>The database</span></a>
+      <a class="module" href="#m4"><span class="num">04</span><span>EF Core mapping</span></a>
+      <a class="module" href="#m5"><span class="num">05</span><span>Making lookups fast</span></a>
+      <div class="nav-group-label">The Application · Intermediate</div>
+      <a class="module" href="#m6"><span class="num">06</span><span>Patterns in play</span></a>
+      <a class="module" href="#m7"><span class="num">07</span><span>The Web API</span></a>
+      <a class="module" href="#m8"><span class="num">08</span><span>Scale &amp; edge cases</span></a>
+      <div class="nav-group-label">Correctness &amp; Ship · Intermediate → Expert</div>
+      <a class="module" href="#m9"><span class="num">09</span><span>Testing the app</span></a>
+      <a class="module" href="#m10"><span class="num">10</span><span>Complexity review</span></a>
+      <a class="module" href="#m11"><span class="num">11</span><span>The whole system</span></a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">The Capstone Project · Beginner → Expert</div>
+        <h1>Ten courses.<br><span class="grad">One app.</span></h1>
+        <p class="lede">Every course so far taught one idea in isolation. This one puts them <strong>all</strong> to work in a single real application: <strong>Snip</strong>, a URL shortener. A long link goes in, a short code comes back, and a tap on that code redirects — simple on the surface, but underneath it touches everything. Base-62 encoding leans on <strong>bits</strong>; an in-memory cache and index turn lookups into <strong>O(1)</strong> using the right <strong>data structures</strong>; the repository and strategy <strong>patterns</strong> and <strong>SOLID</strong> shape the code; <strong>EF Core</strong> maps it onto <strong>Postgres</strong>; an <strong>ASP.NET</strong> minimal API serves it; and a full <strong>test</strong> suite keeps it honest. One codebase, ten courses, real example code at every layer.</p>
+        <div class="hero-figure">
+          <svg id="heroSvg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The Snip request flow: a long URL is encoded to a short code and stored; a tap on the short code is looked up and redirected"></svg>
+          <div class="hero-cap">POST a long URL → <span style="color:var(--accent)">snip.ly/4C92</span> → tap → <span style="color:var(--olog)">301 redirect</span> · every layer maps back to a course</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#m0">See the blueprint →</a>
+          <a class="btn btn-ghost" href="#m2">Jump to the encoder</a>
+        </div>
+      </header>
+
+      <section class="module-sec" id="m0">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl beginner">Beginner</span><span class="mod-num">Module 00</span></div><h2>What we're building</h2></div>
+        <p>Snip is a URL shortener. Its whole job is two endpoints: <code class="tok">POST /shorten</code> takes a long URL and returns a short one like <code class="tok">snip.ly/4C92</code>, and <code class="tok">GET /4C92</code> looks that code up and <strong>redirects</strong> to the original, counting the click on the way. Tiny surface, but building it well pulls in every course in this series.</p>
+        <p>The shape is a clean layered app: an <strong>ASP.NET Core</strong> minimal API at the edge, a <code class="tok">ShortenerService</code> holding the logic, a <strong>repository</strong> over <strong>EF Core</strong> for persistence to <strong>Postgres</strong>, and an in-memory <strong>cache</strong> in front of reads. A short code is just the row's <code class="tok">Id</code> rendered in <strong>base 62</strong>. Everything else — the patterns, the complexity choices, the tests — hangs off that skeleton.</p>
+        <p>Here's the map. Tap any course to see exactly where it shows up in Snip's code:</p>
+        <div class="lab" id="conceptLab">
+          <div class="lab-head"><div><div class="pt">Ten courses → one codebase</div><div class="ps">where each idea lives in Snip</div></div></div>
+          <div class="lab-body">
+            <div class="cmap-grid" id="cmapGrid"></div>
+            <div class="cmap-detail" id="cmapDetail"></div>
+          </div>
+          <div class="lab-foot" id="cmapFoot">Every layer of the app is some concept from the series made concrete. This module is the roadmap; the rest builds it.</div>
+        </div>
+        <div class="note key"><div class="nh">How to read this course</div><p>Each module builds one slice of Snip with <strong>real example code</strong>, then points back — with a <span style="color:var(--accent)">↳ callback</span> — to the course that idea came from. By Module 11 you'll have assembled a complete, tested, production-shaped application, and seen how ten separate topics were really one skill all along.</p></div>
+      </section>
+
+      <section class="module-sec" id="m1">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-oop);border-color:rgba(237,110,158,.4);background:rgba(237,110,158,.1)">OOP</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 01</span></div><h2>The domain model</h2></div>
+        <p>Start where the design should start: the <strong>domain type</strong>. A <code class="tok">ShortLink</code> is the row we store and the object the app reasons about. The instinct to make it a bag of public setters is the one to resist — instead we <strong>encapsulate</strong>, exposing only the operations that keep the object valid. A click is registered through a method, not by letting anyone assign the counter.</p>
+        <span class="filetag">Domain/ShortLink.cs</span>
+        <pre><span class="kw2">public class</span> <span class="typ">ShortLink</span>
+{
+    <span class="kw2">public long</span> Id { <span class="kw2">get</span>; <span class="kw2">private set</span>; }          <span class="cmt">// surrogate key → the short code</span>
+    <span class="kw2">public string</span> Code { <span class="kw2">get</span>; <span class="kw2">private set</span>; } = <span class="str">""</span>;
+    <span class="kw2">public string</span> LongUrl { <span class="kw2">get</span>; <span class="kw2">private set</span>; } = <span class="str">""</span>;
+    <span class="kw2">public</span> <span class="typ">DateTime</span> CreatedAt { <span class="kw2">get</span>; <span class="kw2">private set</span>; }
+    <span class="kw2">public long</span> Clicks { <span class="kw2">get</span>; <span class="kw2">private set</span>; }
+
+    <span class="kw2">private</span> <span class="fn">ShortLink</span>() { }                          <span class="cmt">// for EF</span>
+
+    <span class="kw2">public</span> <span class="fn">ShortLink</span>(<span class="typ">Uri</span> longUrl, <span class="typ">DateTime</span> createdAt)
+    {
+        LongUrl = longUrl.<span class="fn">ToString</span>();            <span class="cmt">// a valid Uri can't be malformed</span>
+        CreatedAt = createdAt;
+    }
+
+    <span class="kw2">public void</span> <span class="fn">RegisterClick</span>() => Clicks++;   <span class="hlok">// the only way Clicks changes</span>
+    <span class="kw2">public void</span> <span class="fn">AssignCode</span>(<span class="kw2">string</span> code) => Code = code;
+}</pre>
+        <p>Two small choices carry a lot of the design. Taking a <code class="tok">Uri</code> in the constructor makes an invalid URL <em>unrepresentable</em> — the type system enforces the invariant instead of a runtime check scattered everywhere. And a private setter on <code class="tok">Clicks</code> means the count can only move through <code class="tok">RegisterClick()</code>, so there's exactly one place that behavior lives.</p>
+        <div class="xref"><span class="xi">↳ OOP + C#</span><div>This is <b>encapsulation</b> and "make illegal states unrepresentable" from <i>OOP &amp; Coding Principles</i>, expressed with C# properties and a private constructor for EF. A rich domain object like this — behavior with its data — is the antidote to the anemic model the OOP course warns about.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Entities are just data — public getters and setters on everything.</div><div class="truth">That's the <b>anemic model</b>: data with no guardrails, so invariants leak into every caller. Encapsulating mutation behind methods keeps the rules in one place and the object always valid — the whole point of OOP.</div></div>
+          <div class="mc"><div class="myth">Store the URL as a plain string and validate it later.</div><div class="truth">Accepting a <code class="tok">Uri</code> pushes validation to the <b>boundary</b> — by the time you hold a <code class="tok">ShortLink</code>, the URL is known-good. Types that can't hold bad data beat checks you have to remember to run.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m2">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-bits);border-color:rgba(242,151,60,.4);background:rgba(242,151,60,.1)">Bits</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 02</span></div><h2>The short code</h2></div>
+        <p>Where does <code class="tok">4C92</code> come from? It's the row's numeric <code class="tok">Id</code> written in <strong>base 62</strong> — the digits <code class="tok">0-9</code>, then <code class="tok">A-Z</code>, then <code class="tok">a-z</code>. Base 62 packs a big number into few characters: id <code class="tok">1,000,000</code> becomes just four symbols. It's the same positional-notation idea as binary or hex from the bits course, only with 62 symbols instead of 2 or 16.</p>
+        <span class="filetag">Encoding/Base62.cs</span>
+        <pre><span class="kw2">public static class</span> <span class="typ">Base62</span>
+{
+    <span class="kw2">const string</span> Alphabet = <span class="str">"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"</span>;
+
+    <span class="kw2">public static string</span> <span class="fn">Encode</span>(<span class="kw2">long</span> n)
+    {
+        <span class="kw2">if</span> (n == <span class="num">0</span>) <span class="kw2">return</span> <span class="str">"0"</span>;
+        <span class="kw2">var</span> sb = <span class="kw2">new</span> <span class="typ">StringBuilder</span>();
+        <span class="kw2">while</span> (n &gt; <span class="num">0</span>)
+        {
+            sb.<span class="fn">Insert</span>(<span class="num">0</span>, Alphabet[(<span class="kw2">int</span>)(n % <span class="num">62</span>)]);   <span class="hl">// least-significant digit first</span>
+            n /= <span class="num">62</span>;
+        }
+        <span class="kw2">return</span> sb.<span class="fn">ToString</span>();
+    }
+
+    <span class="kw2">public static long</span> <span class="fn">Decode</span>(<span class="kw2">string</span> code)
+    {
+        <span class="kw2">long</span> n = <span class="num">0</span>;
+        <span class="kw2">foreach</span> (<span class="kw2">var</span> c <span class="kw2">in</span> code)
+            n = <span class="kw2">checked</span>(n * <span class="num">62</span> + Alphabet.<span class="fn">IndexOf</span>(c));  <span class="hl">// checked → throws on overflow</span>
+        <span class="kw2">return</span> n;
+    }
+}</pre>
+        <p>Type the id below and watch it convert digit by digit — then decode straight back, because the two must be exact inverses:</p>
+        <div class="lab" id="encoderLab">
+          <div class="lab-head"><div><div class="pt">Base-62 encode &amp; decode</div><div class="ps">a number becomes a short code — and back</div></div></div>
+          <div class="lab-body">
+            <div class="enc-io" id="encIo"></div>
+            <div class="enc-steps" id="encSteps"></div>
+            <div class="enc-verify" id="encVerify"></div>
+          </div>
+          <div class="lab-foot" id="encFoot">Repeated division by 62 peels off one digit at a time; decoding folds them back. Round-trip must be lossless.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Bits + Big O</span><div>Base 62 is positional notation — the <i>Bits, Pointers &amp; Overflow</i> idea behind binary and hex. Using <code class="tok">long</code> (not <code class="tok">int</code>) matters: <code class="tok">int</code> overflows near 2.1&nbsp;billion rows, and <code class="tok">checked</code> turns a silent wrap into an exception. Encoding is <b>O(log₆₂ n)</b> — the code grows one character per 62× more links.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Just use a random GUID as the short code.</div><div class="truth">A GUID is 32+ characters — the opposite of short — and needs collision handling. Encoding a unique <code class="tok">Id</code> is compact and <b>collision-free by construction</b>: distinct ids always map to distinct codes.</div></div>
+          <div class="mc"><div class="myth"><code class="tok">int</code> is plenty for the id.</div><div class="truth">An <code class="tok">int</code> caps at ~2.1&nbsp;billion; a popular shortener blows past that. <code class="tok">long</code> reaches ~9.2&nbsp;quintillion, and <code class="tok">checked</code> arithmetic makes any overflow loud instead of silently corrupting a code — exactly the overflow lesson from the bits course.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m3">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-sql);border-color:rgba(124,156,255,.4);background:rgba(124,156,255,.1)">SQL</span><span class="lvl beginner">Beginner</span><span class="mod-num">Module 03</span></div><h2>The database</h2></div>
+        <p>One table carries Snip. Each row is a link: a <code class="tok">bigserial</code> primary key (the number we base-62 encode), the generated <code class="tok">code</code>, the original URL, a timestamp, and a click counter. The key decision is the <strong>unique index on <code class="tok">code</code></strong> — every redirect is a lookup by code, so it's the hottest query in the system and must not be a table scan.</p>
+        <span class="filetag">db/schema.sql</span>
+        <pre><span class="kw">CREATE TABLE</span> links (
+    id          <span class="typ">bigserial</span>     <span class="kw">PRIMARY KEY</span>,
+    code        <span class="typ">text</span>          <span class="kw">NOT NULL</span>,
+    long_url    <span class="typ">text</span>          <span class="kw">NOT NULL</span>,
+    created_at  <span class="typ">timestamptz</span>   <span class="kw">NOT NULL DEFAULT</span> now(),
+    clicks      <span class="typ">bigint</span>        <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>
+);
+
+<span class="cmt">-- the redirect path: WHERE code = $1, on every single visit</span>
+<span class="kw">CREATE UNIQUE INDEX</span> ix_links_code <span class="kw">ON</span> links (code);</pre>
+        <p>With that index, Postgres finds a code by walking a <strong>B-tree</strong> — a handful of steps even across millions of rows — instead of scanning the table. The uniqueness constraint does double duty: it enforces that no two links share a code <em>and</em> provides the fast path. The redirect query itself is boring, which is exactly what you want on the hot path:</p>
+        <span class="filetag">db/redirect.sql</span>
+        <pre><span class="kw">SELECT</span> long_url <span class="kw">FROM</span> links <span class="kw">WHERE</span> code = <span class="str">'4C92'</span>;   <span class="hlok">-- index seek, not a scan</span></pre>
+        <div class="xref"><span class="xi">↳ SQL &amp; PostgreSQL</span><div>This is the indexing lesson from <i>SQL &amp; PostgreSQL</i> applied to the one query that matters most. The unique B-tree index turns an <b>O(n)</b> scan into an <b>O(log n)</b> seek — the difference between a shortener that scales and one that grinds to a halt as links pile up.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Add an index on every column to be safe.</div><div class="truth">Indexes cost write time and storage. Index the columns you actually <b>filter or join on</b> — here, <code class="tok">code</code>. Snip almost never queries by <code class="tok">long_url</code>, so indexing it would be pure overhead, as the SQL course explains.</div></div>
+          <div class="mc"><div class="myth">Count clicks by inserting a row per visit and running COUNT(*).</div><div class="truth">That turns every redirect into a growing aggregate query. A single <code class="tok">clicks</code> counter updated in place is <b>O(1)</b> to read. (If you later need per-visit analytics, that's a separate append-only table — a deliberate trade, not the default.)</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m4">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-ef);border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.1)">EF Core</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 04</span></div><h2>EF Core mapping</h2></div>
+        <p>EF Core connects the <code class="tok">ShortLink</code> object to the <code class="tok">links</code> table so we write LINQ, not SQL strings. The <code class="tok">DbContext</code> declares the set; the Fluent configuration mirrors the schema — the unique index especially, so EF's migrations create exactly the index we designed by hand.</p>
+        <span class="filetag">Data/SnipContext.cs</span>
+        <pre><span class="kw2">public class</span> <span class="typ">SnipContext</span>(<span class="typ">DbContextOptions</span>&lt;<span class="typ">SnipContext</span>&gt; options) : <span class="typ">DbContext</span>(options)
+{
+    <span class="kw2">public</span> <span class="typ">DbSet</span>&lt;<span class="typ">ShortLink</span>&gt; Links => <span class="fn">Set</span>&lt;<span class="typ">ShortLink</span>&gt;();
+
+    <span class="kw2">protected override void</span> <span class="fn">OnModelCreating</span>(<span class="typ">ModelBuilder</span> b)
+    {
+        <span class="kw2">var</span> link = b.<span class="fn">Entity</span>&lt;<span class="typ">ShortLink</span>&gt;();
+        link.<span class="fn">ToTable</span>(<span class="str">"links"</span>);
+        link.<span class="fn">Property</span>(x => x.Code).<span class="fn">HasMaxLength</span>(<span class="num">16</span>);
+        link.<span class="fn">HasIndex</span>(x => x.Code).<span class="fn">IsUnique</span>();      <span class="hlok">// → CREATE UNIQUE INDEX</span>
+    }
+}</pre>
+        <p>The repository's read is a single LINQ line that EF translates to the indexed <code class="tok">WHERE code = …</code> seek from the last module. Because <code class="tok">Code</code> is indexed and unique, <code class="tok">FirstOrDefaultAsync</code> stops at the first match:</p>
+        <span class="filetag">Data/LinkRepository.cs</span>
+        <pre><span class="kw2">public</span> <span class="typ">Task</span>&lt;<span class="typ">ShortLink</span>?&gt; <span class="fn">FindByCodeAsync</span>(<span class="kw2">string</span> code) =>
+    _db.Links.<span class="fn">FirstOrDefaultAsync</span>(x => x.Code == code);   <span class="cmt">// → SELECT ... WHERE code = @code</span></pre>
+        <div class="xref"><span class="xi">↳ EF Core</span><div>The <code class="tok">DbSet</code>, Fluent <code class="tok">HasIndex</code>, and LINQ-to-SQL translation are straight from <i>EF Core</i>. EF writes the SQL, but the index you configured is why that SQL is fast — the ORM doesn't excuse you from knowing what query runs underneath.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">EF Core means you never think about SQL again.</div><div class="truth">EF writes the query, but you still choose the <b>indexes and shape</b> that make it fast. Configure the wrong index and <code class="tok">FirstOrDefaultAsync</code> quietly becomes a full scan — the ORM hides the SQL, not the cost.</div></div>
+          <div class="mc"><div class="myth">Load the links and filter with LINQ in memory.</div><div class="truth"><code class="tok">Links.ToList().First(x =&gt; x.Code == code)</code> drags the whole table into the app. Keeping the predicate in the <code class="tok">IQueryable</code> lets EF push <code class="tok">WHERE</code> to Postgres and use the index — the translation lesson from the EF course.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m5">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-ds);border-color:rgba(91,214,194,.4);background:rgba(91,214,194,.1)">Data Structures</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 05</span></div><h2>Making lookups fast</h2></div>
+        <p>A popular short link gets hit constantly, and going to Postgres every time — even for an indexed seek — adds up. So Snip puts an in-memory <strong>cache</strong> in front of reads: a <code class="tok">Dictionary</code> keyed by code, which is an <strong>O(1)</strong> hash lookup. This is the classic three-tier speed story: a full scan is <strong>O(n)</strong>, the B-tree index is <strong>O(log n)</strong>, and a cache hit is <strong>O(1)</strong>.</p>
+        <p>Slide the number of links up and watch how many steps each strategy needs to find one code:</p>
+        <div class="lab" id="lookupLab">
+          <div class="lab-head"><div><div class="pt">Finding one code as Snip grows</div><div class="ps">scan vs index vs cache</div></div></div>
+          <div class="lab-body">
+            <div class="lk-scale"><span>links stored:</span><input type="range" id="lkRange" min="0" max="6" step="1" value="3"><span class="lk-n" id="lkN"></span></div>
+            <div id="lkRows"></div>
+          </div>
+          <div class="lab-foot" id="lkFoot">As the table grows, the scan explodes, the index barely moves, and the cache stays flat at one step.</div>
+        </div>
+        <p>In code it's the <strong>cache-aside</strong> pattern: check the dictionary, and only on a miss go to the repository and remember the answer. An LRU bound keeps memory finite by evicting the least-recently-used entries.</p>
+        <span class="filetag">Caching/LinkCache.cs</span>
+        <pre><span class="kw2">public async</span> <span class="typ">Task</span>&lt;<span class="kw2">string</span>?&gt; <span class="fn">ResolveAsync</span>(<span class="kw2">string</span> code)
+{
+    <span class="kw2">if</span> (_map.<span class="fn">TryGetValue</span>(code, <span class="kw2">out var</span> url)) <span class="kw2">return</span> url;  <span class="hlok">// O(1) hit</span>
+    <span class="kw2">var</span> link = <span class="kw2">await</span> _repo.<span class="fn">FindByCodeAsync</span>(code);           <span class="cmt">// miss → O(log n) index seek</span>
+    <span class="kw2">if</span> (link is <span class="kw2">null</span>) <span class="kw2">return null</span>;
+    _map.<span class="fn">Set</span>(code, link.LongUrl);                          <span class="cmt">// LRU-bounded</span>
+    <span class="kw2">return</span> link.LongUrl;
+}</pre>
+        <div class="xref"><span class="xi">↳ Data Structures + Big O</span><div>The dictionary is the <b>hash map</b> from <i>Data Structures</i> — average O(1) — and the index is a B-tree, O(log n); both beat the O(n) scan from <i>Big O</i>. Snip layers all three so the common case is constant time and the rare miss is still logarithmic.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Postgres is fast — a cache is premature optimization.</div><div class="truth">For a hot link served thousands of times a second, even a 1&nbsp;ms indexed query dominates the response. An O(1) in-memory hit is orders of magnitude cheaper, and the data structures course shows why the hash map wins here.</div></div>
+          <div class="mc"><div class="myth">Just cache everything and never evict.</div><div class="truth">Unbounded caches exhaust memory. An <b>LRU</b> bound keeps the hot set and drops the cold — trading a little hit rate for a hard memory ceiling, the eviction trade-off from the data structures course.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m6">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-dp);border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.1)">Patterns</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 06</span></div><h2>Patterns in play</h2></div>
+        <p>Three patterns do real work in Snip, and no more. The <strong>Repository</strong> hides EF behind an interface so the service depends on "somewhere links live," not on <code class="tok">DbContext</code>. The <strong>Strategy</strong> pattern makes code generation swappable — sequential today, random tomorrow — without touching the service. And <strong>Dependency Injection</strong> wires it together: the service asks for interfaces and receives whatever's registered.</p>
+        <span class="filetag">Services/ICodeStrategy.cs</span>
+        <pre><span class="kw2">public interface</span> <span class="intf">ICodeStrategy</span>
+{
+    <span class="kw2">string</span> <span class="fn">CodeFor</span>(<span class="typ">ShortLink</span> link);
+}
+
+<span class="cmt">// default: the id in base 62 — compact and collision-free</span>
+<span class="kw2">public class</span> <span class="typ">SequentialCodeStrategy</span> : <span class="intf">ICodeStrategy</span>
+{
+    <span class="kw2">public string</span> <span class="fn">CodeFor</span>(<span class="typ">ShortLink</span> link) => <span class="typ">Base62</span>.<span class="fn">Encode</span>(link.Id);
+}</pre>
+        <p>The service is the composition point. It takes its collaborators as interfaces — the repository, the strategy, a clock — so every dependency can be swapped, and (crucially for Module 09) replaced with a test double:</p>
+        <span class="filetag">Services/ShortenerService.cs</span>
+        <pre><span class="kw2">public class</span> <span class="typ">ShortenerService</span>(
+    <span class="intf">ILinkRepository</span> repo, <span class="intf">ICodeStrategy</span> strategy, <span class="intf">IClock</span> clock)
+{
+    <span class="kw2">public async</span> <span class="typ">Task</span>&lt;<span class="typ">ShortLink</span>&gt; <span class="fn">ShortenAsync</span>(<span class="typ">Uri</span> url)
+    {
+        <span class="kw2">var</span> link = <span class="kw2">new</span> <span class="typ">ShortLink</span>(url, clock.<span class="fn">UtcNow</span>);
+        <span class="kw2">await</span> repo.<span class="fn">AddAsync</span>(link);          <span class="cmt">// assigns Id</span>
+        link.<span class="fn">AssignCode</span>(strategy.<span class="fn">CodeFor</span>(link));
+        <span class="kw2">await</span> repo.<span class="fn">SaveAsync</span>();
+        <span class="kw2">return</span> link;
+    }
+}</pre>
+        <div class="xref"><span class="xi">↳ Design Patterns + OOP</span><div>Repository, Strategy, and DI all come from <i>Design Patterns</i>, and they rest on the <b>Dependency Inversion</b> principle from <i>OOP</i>: depend on abstractions. Taking an <code class="tok">IClock</code> instead of calling <code class="tok">DateTime.UtcNow</code> is what makes time controllable in tests — the payoff lands in Module 09.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">A well-designed app uses lots of patterns.</div><div class="truth">Patterns are tools for specific problems, not a quality score. Snip uses three because each removes a real coupling; adding a factory or observer here would be <b>ceremony</b>. The design patterns course is about knowing <i>when</i>, not applying all of them.</div></div>
+          <div class="mc"><div class="myth">Strategy is overkill when there's only one algorithm.</div><div class="truth">It isolates the one decision most likely to change and makes it <b>testable in isolation</b>. Even with a single strategy today, the seam costs almost nothing and pays off the moment you need random codes or a custom-alias scheme.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m7">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-aspnet);border-color:rgba(78,214,107,.4);background:rgba(78,214,107,.1)">ASP.NET</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 07</span></div><h2>The Web API</h2></div>
+        <p>Now the edge. Two minimal-API endpoints expose Snip over HTTP: one to create a link, one to follow it. Dependency injection hands each endpoint the services it needs, model binding turns the request body into a typed value, and the right <strong>status codes</strong> carry the meaning — <code class="tok">201 Created</code> for a new link, a <code class="tok">301</code> redirect to follow one, <code class="tok">404</code> when the code is unknown.</p>
+        <span class="filetag">Program.cs</span>
+        <pre><span class="kw2">var</span> builder = <span class="typ">WebApplication</span>.<span class="fn">CreateBuilder</span>(args);
+builder.Services.<span class="fn">AddDbContext</span>&lt;<span class="typ">SnipContext</span>&gt;(o => o.<span class="fn">UseNpgsql</span>(cs));
+builder.Services.<span class="fn">AddScoped</span>&lt;<span class="intf">ILinkRepository</span>, <span class="typ">LinkRepository</span>&gt;();
+builder.Services.<span class="fn">AddScoped</span>&lt;<span class="typ">ShortenerService</span>&gt;();
+builder.Services.<span class="fn">AddSingleton</span>&lt;<span class="intf">ICodeStrategy</span>, <span class="typ">SequentialCodeStrategy</span>&gt;();
+builder.Services.<span class="fn">AddSingleton</span>&lt;<span class="intf">ILinkCache</span>, <span class="typ">LinkCache</span>&gt;();     <span class="cmt">// one shared cache</span>
+<span class="kw2">var</span> app = builder.<span class="fn">Build</span>();
+
+app.<span class="fn">MapPost</span>(<span class="str">"/shorten"</span>, <span class="kw2">async</span> (<span class="typ">ShortenRequest</span> req, <span class="typ">ShortenerService</span> svc) =>
+{
+    <span class="kw2">var</span> link = <span class="kw2">await</span> svc.<span class="fn">ShortenAsync</span>(<span class="kw2">new</span> <span class="typ">Uri</span>(req.Url));
+    <span class="kw2">return</span> <span class="typ">Results</span>.<span class="fn">Created</span>($<span class="str">"/{link.Code}"</span>, <span class="kw2">new</span> { shortUrl = $<span class="str">"snip.ly/{link.Code}"</span> });
+});
+
+app.<span class="fn">MapGet</span>(<span class="str">"/{code}"</span>, <span class="kw2">async</span> (<span class="kw2">string</span> code, <span class="intf">ILinkCache</span> cache) =>
+{
+    <span class="kw2">var</span> url = <span class="kw2">await</span> cache.<span class="fn">ResolveAsync</span>(code);
+    <span class="kw2">return</span> url is <span class="kw2">null</span> ? <span class="typ">Results</span>.<span class="fn">NotFound</span>() : <span class="typ">Results</span>.<span class="fn">Redirect</span>(url, permanent: <span class="kw2">true</span>);
+});</pre>
+        <p>Pick an endpoint and send a request — watch it travel the pipeline and come back with a status:</p>
+        <div class="lab" id="apiLab">
+          <div class="lab-head"><div><div class="pt">The request pipeline</div><div class="ps">HTTP in → response out</div></div>
+            <div class="ds-controls" style="margin:0"><button class="ds-btn primary" id="apiSend">▸ send request</button></div>
+          </div>
+          <div class="lab-body">
+            <div class="api-tabs" id="apiTabs">
+              <span class="api-tab on" data-req="post">POST /shorten</span>
+              <span class="api-tab" data-req="get">GET /4C92</span>
+              <span class="api-tab" data-req="miss">GET /zzzz</span>
+            </div>
+            <div class="api-steps" id="apiSteps"></div>
+            <div class="api-resp" id="apiResp"></div>
+          </div>
+          <div class="lab-foot" id="apiFoot">Each request flows through middleware, routing, the injected services, and back out as an HTTP status.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ ASP.NET Core</span><div>Minimal APIs, the DI container with its <code class="tok">AddScoped</code>/<code class="tok">AddSingleton</code> lifetimes, model binding, and correct status codes are all from <i>ASP.NET Core</i>. The cache is a singleton (shared across requests) while the <code class="tok">DbContext</code> is scoped (one per request) — exactly the lifetime lesson from that course.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Return 200 with the URL in the body for a redirect.</div><div class="truth">A redirect is a <b>301/302</b> with a <code class="tok">Location</code> header — that's what browsers follow automatically. Returning 200 makes the client do extra work and breaks the one thing a shortener must do. Status codes are part of the contract.</div></div>
+          <div class="mc"><div class="myth">Put the shortening logic straight in the endpoint.</div><div class="truth">The endpoint should bind input, call a service, and shape the response — nothing more. Keeping logic in <code class="tok">ShortenerService</code> makes it reusable and testable without HTTP, the thin-controller idea from the ASP.NET course.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m8">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-bits);border-color:rgba(242,151,60,.4);background:rgba(242,151,60,.1)">Bits</span><span class="lvl intermediate">Intermediate</span><span class="mod-num">Module 08</span></div><h2>Scale &amp; edge cases</h2></div>
+        <p>A real service needs per-link options — disabled, one-time-use, private — and storing five booleans as five columns is wasteful. Instead we pack them into a single integer with a <code class="tok">[Flags]</code> enum, the <strong>bitmask</strong> from the bits course. Each flag is one bit; the set of them is one <code class="tok">int</code>, combined and tested with bitwise <code class="tok">|</code> and <code class="tok">&amp;</code>.</p>
+        <span class="filetag">Domain/LinkFlags.cs</span>
+        <pre>[<span class="typ">Flags</span>]
+<span class="kw2">public enum</span> <span class="typ">LinkFlags</span>
+{
+    None    = <span class="num">0</span>,
+    Disabled = <span class="num">1</span> &lt;&lt; <span class="num">0</span>,   <span class="cmt">// 0001</span>
+    OneTime  = <span class="num">1</span> &lt;&lt; <span class="num">1</span>,   <span class="cmt">// 0010</span>
+    Private  = <span class="num">1</span> &lt;&lt; <span class="num">2</span>    <span class="cmt">// 0100</span>
+}
+
+<span class="cmt">// combine with OR, test with AND — one int holds them all</span>
+<span class="kw2">var</span> flags = <span class="typ">LinkFlags</span>.OneTime | <span class="typ">LinkFlags</span>.Private;   <span class="hl">// 0110</span>
+<span class="kw2">bool</span> isPrivate = (flags &amp; <span class="typ">LinkFlags</span>.Private) != <span class="num">0</span>;   <span class="hlok">// true</span></pre>
+        <p>The other edge cases are about not corrupting data at scale. The click counter uses <code class="tok">checked</code> arithmetic so a wildly popular link can never silently wrap a <code class="tok">long</code>; and if you ever switch to the random code strategy, codes <em>can</em> collide, so a write must detect the unique-index violation and retry:</p>
+        <span class="filetag">Services/ShortenerService.cs (random-strategy path)</span>
+        <pre><span class="kw2">for</span> (<span class="kw2">int</span> attempt = <span class="num">0</span>; attempt &lt; <span class="num">5</span>; attempt++)
+{
+    link.<span class="fn">AssignCode</span>(strategy.<span class="fn">CodeFor</span>(link));
+    <span class="kw2">try</span> { <span class="kw2">await</span> repo.<span class="fn">SaveAsync</span>(); <span class="kw2">return</span> link; }
+    <span class="kw2">catch</span> (<span class="typ">UniqueViolationException</span>) { <span class="cmt">/* collision → try a new code */</span> }
+}</pre>
+        <div class="xref"><span class="xi">↳ Bits, Pointers &amp; Overflow</span><div>The <code class="tok">[Flags]</code> bitmask, the shift operators, and <code class="tok">checked</code> arithmetic are all from <i>Bits, Pointers &amp; Overflow</i>. Packing booleans into bits and guarding against silent overflow are exactly the low-level concerns that course drilled — here keeping Snip compact and correct under load.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Store each on/off option as its own boolean column.</div><div class="truth">A <code class="tok">[Flags]</code> enum packs many booleans into one integer — less storage, one field to read, and set operations for free via <code class="tok">|</code> and <code class="tok">&amp;</code>. That's the bitmask technique from the bits course, and it scales to dozens of flags in a single <code class="tok">int</code>.</div></div>
+          <div class="mc"><div class="myth">Random codes are unique — no need to check.</div><div class="truth">Randomness makes collisions <b>unlikely</b>, not impossible (the birthday problem bites as the table fills). The unique index is the source of truth: catch the violation and retry. Sequential codes sidestep this entirely — a design trade worth making on purpose.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m9">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-testing);border-color:rgba(232,179,65,.4);background:rgba(232,179,65,.1)">Testing</span><span class="lvl advanced">Advanced</span><span class="mod-num">Module 09</span></div><h2>Testing the app</h2></div>
+        <p>Snip earns confidence at three levels. A <strong>property test</strong> pins the encoder: for any id, decoding the code must return the id — a <code class="tok">[Theory]</code> over many values. A <strong>unit test</strong> with a mocked repository and clock checks the service's logic in isolation. And an <strong>integration test</strong> drives real HTTP through <code class="tok">WebApplicationFactory</code>, exercising routing, DI, and EF together.</p>
+        <span class="filetag">Tests/Base62Tests.cs</span>
+        <pre><span class="attr">[Theory]</span>
+<span class="attr">[InlineData(1)] [InlineData(125)] [InlineData(1_000_000)] [InlineData(long.MaxValue)]</span>
+<span class="kw2">public void</span> <span class="fn">Decode_is_the_inverse_of_Encode</span>(<span class="kw2">long</span> id)
+    => <span class="typ">Assert</span>.<span class="fn">Equal</span>(id, <span class="typ">Base62</span>.<span class="fn">Decode</span>(<span class="typ">Base62</span>.<span class="fn">Encode</span>(id)));   <span class="hlok">// round-trip must be lossless</span></pre>
+        <p>Run Snip's suite. Then flip the encoder to an <code class="tok">int</code> — the overflow bug from Module 02 — and watch the round-trip test catch it at the largest id:</p>
+        <div class="lab" id="testLab">
+          <div class="lab-head"><div><div class="pt">Snip's test suite</div><div class="ps">unit · mock · integration · property</div></div>
+            <div class="ds-controls" style="margin:0">
+              <button class="ds-btn primary" id="testRun">▸ run suite</button>
+              <button class="ds-btn" id="testBug">use int (overflow)</button>
+            </div>
+          </div>
+          <div class="lab-body">
+            <div id="testRows"></div>
+            <div id="testSummary" style="font-family:var(--font-mono);font-size:12.5px;text-align:center;margin-top:12px;color:var(--ink-soft)"></div>
+          </div>
+          <div class="lab-foot" id="testFoot">Green means every layer holds. Introduce the overflow bug and the property test goes red at long.MaxValue — a regression caught in milliseconds.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Testing + Bits</span><div>Property tests, mocking, and <code class="tok">WebApplicationFactory</code> are from <i>Testing in .NET</i>; the bug they catch is the <code class="tok">int</code> overflow from <i>Bits</i>. The <code class="tok">IClock</code> and <code class="tok">ILinkRepository</code> seams built back in Module 06 are what make the service unit-testable without a database or a real clock.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Clicking through the app by hand is enough testing.</div><div class="truth">Manual checks don't run on every change. This suite re-verifies encoding, the service, and the endpoints in <b>seconds</b>, so the overflow bug can't sneak back — the change-safety argument from the testing course.</div></div>
+          <div class="mc"><div class="myth">Write tests for EF and ASP.NET themselves.</div><div class="truth">Trust the frameworks; test <b>your</b> logic — the encoder, the service's decisions, your endpoints' contracts. One focused integration test confirms the wiring; you don't re-test what Microsoft already tests.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m10">
+        <div class="mod-head"><div class="mod-tag"><span class="cat" style="color:var(--co-bigo);border-color:rgba(86,199,255,.4);background:rgba(86,199,255,.1)">Big O</span><span class="lvl expert">Expert</span><span class="mod-num">Module 10</span></div><h2>Complexity review</h2></div>
+        <p>Step back and cost the whole system. Snip is designed so the operation that runs most — the redirect — is <strong>O(1)</strong> on a cache hit, and nothing on any path is worse than logarithmic. Encoding grows with the number of digits (O(log₆₂ n)); the indexed lookup is O(log n); a cache hit is flat. Slide N and watch the step counts diverge:</p>
+        <div class="lab" id="complexityLab">
+          <div class="lab-head"><div><div class="pt">Cost of each operation</div><div class="ps">how Snip scales with link count</div></div></div>
+          <div class="lab-body">
+            <div class="cx-scale"><span>links (N):</span><input type="range" id="cxRange" min="0" max="6" step="1" value="3"><span class="cx-n" id="cxN"></span></div>
+            <div id="cxRows"></div>
+          </div>
+          <div class="lab-foot" id="cxFoot">The redirect — Snip's busiest operation — stays constant. The rest are logarithmic. Nothing on the hot path is linear.</div>
+        </div>
+        <div class="xref"><span class="xi">↳ Big O &amp; Complexity</span><div>This is <i>Big O</i> applied to a real system: identify the hot path, make it the cheapest, and keep everything else sub-linear. The whole architecture — index plus cache — exists to keep the redirect O(1), because that's the operation multiplied by every visitor.</div></div>
+        <div class="mc-grid">
+          <div class="mc"><div class="myth">Optimize the encoder — it runs on every shorten.</div><div class="truth">Encoding is O(log n) over a handful of digits — already negligible. The operation that scales with <i>traffic</i> is the redirect lookup, so that's where the cache and index go. Optimize the hot path, not the cheap one — the Big O course's core discipline.</div></div>
+          <div class="mc"><div class="myth">Big O is academic; real perf is just constant factors.</div><div class="truth">Constants matter at the margins, but <b>growth</b> decides whether Snip survives a million links. An O(n) redirect would be fine in testing and fatal in production. Getting the complexity class right first is what makes the constants worth tuning later.</div></div>
+        </div>
+      </section>
+
+      <section class="module-sec" id="m11">
+        <div class="mod-head"><div class="mod-tag"><span class="lvl expert">Expert</span><span class="mod-num">Module 11</span></div><h2>The whole system</h2></div>
+        <p>Here is Snip end to end — one request's journey through every layer, and every layer labeled with the course that built it. A shorten travels down the left; a redirect returns up the right, short-circuited by the cache. It's a complete, tested, production-shaped application, and there isn't a piece of it that didn't come from somewhere in this series.</p>
+        <div class="hero-figure" style="margin-top:6px">
+          <svg id="archSvg" viewBox="0 0 860 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Snip's architecture: client to ASP.NET API to service to cache and repository to EF Core to Postgres, with base-62 encoding and tests, each layer labeled by course"></svg>
+          <div class="arch-cap">every box is a course · the redirect hot path is <span style="color:var(--pass)">O(1)</span> through the cache</div>
+        </div>
+        <div class="note key">
+          <div class="nh">Ten courses, accounted for</div>
+          <p>Every course shows up in Snip: <strong style="color:var(--co-bigo)">Big&nbsp;O</strong> chose the O(1) hot path; <strong style="color:var(--co-ds)">Data&nbsp;Structures</strong> gave the hash-map cache; <strong style="color:var(--co-dp)">Design&nbsp;Patterns</strong> supplied repository, strategy, and DI; <strong style="color:var(--co-sql)">SQL</strong> shaped the indexed schema; <strong style="color:var(--co-oop)">OOP</strong> made the domain model encapsulated; <strong style="color:var(--co-bits)">Bits</strong> encoded the code and packed the flags; <strong style="color:var(--co-csharp)">C#</strong> is the language throughout; <strong style="color:var(--co-aspnet)">ASP.NET</strong> served the endpoints; <strong style="color:var(--co-ef)">EF&nbsp;Core</strong> mapped objects to rows; and <strong style="color:var(--co-testing)">Testing</strong> keeps the whole thing changeable. Ten topics that turned out to be one skill.</p>
+        </div>
+        <div class="closing">
+          <h2>Ten courses. One app.</h2>
+          <p>Snip is small enough to read in an afternoon and complete enough to deploy — and that's the point. The ideas you met one at a time were never really separate. Big O told you which operation to make cheap; data structures gave you the tool; the patterns kept it swappable; the database and ORM stored it; the API served it; and the tests let you change any of it without fear. Concepts become an application only when they meet, and they only meet in the building.</p>
+          <p>So take the blueprint and make it yours — add analytics, custom aliases, rate limiting, expiry. Every extension is another place these same ten ideas show up. That's what mastery looks like: not ten facts, but one fluent motion from problem to working system.</p>
+        </div>
+        <div class="foot-rule">The Growth Lab · The Capstone — building Snip, a URL shortener, from all ten courses in the series: Big&nbsp;O&nbsp;Complexity, Data&nbsp;Structures, Design&nbsp;Patterns, SQL&nbsp;&amp;&nbsp;PostgreSQL, OOP&nbsp;&amp;&nbsp;Coding&nbsp;Principles, Bits,&nbsp;Pointers&nbsp;&amp;&nbsp;Overflow, Mastering&nbsp;C#, Mastering&nbsp;ASP.NET&nbsp;Core, Mastering&nbsp;Entity&nbsp;Framework&nbsp;Core, and Mastering&nbsp;Testing&nbsp;in&nbsp;.NET. One codebase where all of it comes together.</div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="js/capstone-building-snip.js"></script>
+</body>
+</html>
