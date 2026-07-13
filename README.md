@@ -4,14 +4,14 @@
 
 A twenty-one-piece interactive curriculum: six CS-fundamentals courses, a four-course C# application track, a capstone project, a front-end engineering course, a software-lifecycle course, advanced SQL, Angular, Angular internals, advanced C# (and its Vol. II), a TypeScript type-system deep dive, and a distributed-systems course.
 
-**Start here → [`the-growth-lab.html`](the-growth-lab.html)** — the index. Every course links back to it from its sidebar and topbar.
+**Start here → [`index.html`](index.html)** — the index. Every course links back to it from its sidebar and topbar.
 
 ---
 
 ## Structure
 
 ```
-*.html      21 pages (open the-growth-lab.html to start)
+*.html      21 pages (open index.html to start)
 css/*.css   one stylesheet per page
 js/*.js     one script per page
 ```
